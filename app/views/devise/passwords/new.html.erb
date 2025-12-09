@@ -1,0 +1,20 @@
+<div class="flex justify-center items-center min-h-[calc(100vh-8rem)] bg-base-200">
+  <div class="card w-96 bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title justify-center mb-4">Reset Password</h2>
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
+        <%= render "devise/shared/error_messages", resource: resource %>
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">Email</span></label>
+          <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "input input-bordered w-full" %>
+        </div>
+        <div class="card-actions justify-end mt-4">
+          <%= f.submit "Send instructions", class: "btn btn-primary w-full" %>
+        </div>
+      <% end %>
+      <div class="text-center mt-4">
+        <a href="<%= new_session_path(resource_name) %>" class="link link-hover text-sm">Back to Login</a>
+      </div>
+    </div>
+  </div>
+</div>

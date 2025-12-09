@@ -1,0 +1,25 @@
+<div class="hero min-h-[calc(100vh-4rem)] bg-base-200">
+  <div class="hero-content text-center">
+    <div class="max-w-md">
+      <h1 class="text-5xl font-bold">Role System Active</h1>
+      <p class="py-6">
+        Users now have a <code>role</code> column.
+        <br>
+        <% if user_signed_in? %>
+          <div class="badge badge-lg gap-2 mt-2
+            <%= current_user.admin? ? 'badge-warning' : (current_user.super_admin? ? 'badge-error' : 'badge-primary') %>">
+            Role: <%= current_user.role.titleize %>
+          </div>
+        <% else %>
+          <span class="badge badge-neutral gap-2">Guest</span>
+        <% end %>
+      </p>
+      <% unless user_signed_in? %>
+        <div class="flex gap-4 justify-center">
+          <a href="/users/sign_in" class="btn btn-primary">Log In</a>
+          <a href="/users/sign_up" class="btn btn-outline">Sign Up</a>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
