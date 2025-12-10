@@ -10,7 +10,142 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_09_211326) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_10_213850) do
+  create_table "ai_documents", force: :cascade do |t|
+    t.string "document_type", null: false
+    t.integer "child_profile_id", null: false
+    t.integer "onboarding_session_id"
+    t.integer "created_by_id", null: false
+    t.text "content_markdown", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_profile_id", "document_type", "created_at"], name: "idx_on_child_profile_id_document_type_created_at_0dcd06a998"
+    t.index ["child_profile_id"], name: "index_ai_documents_on_child_profile_id"
+    t.index ["created_by_id"], name: "index_ai_documents_on_created_by_id"
+    t.index ["document_type"], name: "index_ai_documents_on_document_type"
+    t.index ["onboarding_session_id"], name: "index_ai_documents_on_onboarding_session_id"
+  end
+
+  create_table "answers", force: :cascade do |t|
+    t.integer "onboarding_session_id", null: false
+    t.integer "question_id", null: false
+    t.integer "question_option_id"
+    t.integer "numeric_value"
+    t.text "free_text"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["numeric_value"], name: "index_answers_on_numeric_value"
+    t.index ["onboarding_session_id", "question_id"], name: "index_answers_on_onboarding_session_id_and_question_id", unique: true
+    t.index ["onboarding_session_id"], name: "index_answers_on_onboarding_session_id"
+    t.index ["question_id"], name: "index_answers_on_question_id"
+    t.index ["question_option_id"], name: "index_answers_on_question_option_id"
+  end
+
+  create_table "child_domain_profiles", force: :cascade do |t|
+    t.integer "child_profile_id", null: false
+    t.integer "profile_domain_id", null: false
+    t.integer "level_estimate"
+    t.text "strengths_summary"
+    t.text "needs_summary"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_profile_id", "profile_domain_id"], name: "idx_on_child_profile_id_profile_domain_id_dc88cab075", unique: true
+    t.index ["child_profile_id"], name: "index_child_domain_profiles_on_child_profile_id"
+    t.index ["profile_domain_id"], name: "index_child_domain_profiles_on_profile_domain_id"
+  end
+
+  create_table "child_goals", force: :cascade do |t|
+    t.integer "child_profile_id", null: false
+    t.integer "profile_domain_id", null: false
+    t.string "status", default: "suggested", null: false
+    t.string "short_title", null: false
+    t.text "description"
+    t.integer "priority_rank"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_profile_id", "status"], name: "index_child_goals_on_child_profile_id_and_status"
+    t.index ["child_profile_id"], name: "index_child_goals_on_child_profile_id"
+    t.index ["deleted_at"], name: "index_child_goals_on_deleted_at"
+    t.index ["priority_rank"], name: "index_child_goals_on_priority_rank"
+    t.index ["profile_domain_id"], name: "index_child_goals_on_profile_domain_id"
+    t.index ["status"], name: "index_child_goals_on_status"
+  end
+
+  create_table "child_memberships", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "child_profile_id", null: false
+    t.string "role", null: false
+    t.boolean "is_primary", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_profile_id", "is_primary"], name: "index_child_memberships_on_child_profile_id_and_is_primary", unique: true, where: "is_primary = true"
+    t.index ["child_profile_id"], name: "index_child_memberships_on_child_profile_id"
+    t.index ["is_primary"], name: "index_child_memberships_on_is_primary"
+    t.index ["role"], name: "index_child_memberships_on_role"
+    t.index ["user_id", "child_profile_id"], name: "index_child_memberships_on_user_id_and_child_profile_id", unique: true
+    t.index ["user_id"], name: "index_child_memberships_on_user_id"
+  end
+
+  create_table "child_profiles", force: :cascade do |t|
+    t.integer "primary_caregiver_id", null: false
+    t.string "name", null: false
+    t.date "birth_date", null: false
+    t.text "diagnosis_summary"
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["deleted_at"], name: "index_child_profiles_on_deleted_at"
+    t.index ["primary_caregiver_id"], name: "index_child_profiles_on_primary_caregiver_id"
+  end
+
+  create_table "onboarding_sessions", force: :cascade do |t|
+    t.integer "child_profile_id", null: false
+    t.integer "user_id", null: false
+    t.string "status", default: "in_progress", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_profile_id", "status"], name: "index_onboarding_sessions_on_child_profile_id_and_status"
+    t.index ["child_profile_id"], name: "index_onboarding_sessions_on_child_profile_id"
+    t.index ["status"], name: "index_onboarding_sessions_on_status"
+    t.index ["user_id"], name: "index_onboarding_sessions_on_user_id"
+  end
+
+  create_table "profile_domains", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "label", null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_profile_domains_on_key", unique: true
+  end
+
+  create_table "question_options", force: :cascade do |t|
+    t.integer "question_id", null: false
+    t.string "label", null: false
+    t.integer "value", null: false
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["question_id", "position"], name: "index_question_options_on_question_id_and_position"
+    t.index ["question_id"], name: "index_question_options_on_question_id"
+  end
+
+  create_table "questions", force: :cascade do |t|
+    t.string "code", null: false
+    t.text "text", null: false
+    t.string "domain"
+    t.string "response_type", null: false
+    t.integer "position"
+    t.integer "profile_domain_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["code"], name: "index_questions_on_code", unique: true
+    t.index ["domain"], name: "index_questions_on_domain"
+    t.index ["profile_domain_id", "position"], name: "index_questions_on_profile_domain_id_and_position"
+    t.index ["profile_domain_id"], name: "index_questions_on_profile_domain_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -23,4 +158,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_09_211326) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "ai_documents", "child_profiles"
+  add_foreign_key "ai_documents", "onboarding_sessions"
+  add_foreign_key "ai_documents", "users", column: "created_by_id"
+  add_foreign_key "answers", "onboarding_sessions"
+  add_foreign_key "answers", "question_options"
+  add_foreign_key "answers", "questions"
+  add_foreign_key "child_domain_profiles", "child_profiles"
+  add_foreign_key "child_domain_profiles", "profile_domains"
+  add_foreign_key "child_goals", "child_profiles"
+  add_foreign_key "child_goals", "profile_domains"
+  add_foreign_key "child_memberships", "child_profiles"
+  add_foreign_key "child_memberships", "users"
+  add_foreign_key "child_profiles", "users", column: "primary_caregiver_id"
+  add_foreign_key "onboarding_sessions", "child_profiles"
+  add_foreign_key "onboarding_sessions", "users"
+  add_foreign_key "question_options", "questions"
+  add_foreign_key "questions", "profile_domains"
 end
