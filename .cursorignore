@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+vendor/bundle/
+.bundle/
+
+# Build artifacts
+app/assets/builds/
+tmp/
+log/
+*.log
+
+# Database
+*.sqlite3
+*.sqlite3-*
+db/*.sqlite3
+db/*.sqlite3-journal
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Rails
+.sass-cache/
+*.sassc
+public/assets/
+public/packs/
+public/packs-test/
+
+# Bootsnap
+tmp/cache/bootsnap/
+
+# Credentials
+config/credentials/*.key
+config/master.key
+
+# Test coverage
+coverage/
+
+# Yarn
+.yarn/
+.pnp.*
+yarn-error.log
+
+# Package lock files (keep Gemfile.lock, ignore others if needed)
+package-lock.json
+
+# Cache
+.cache/
+
+# Compiled assets
+public/assets/
+

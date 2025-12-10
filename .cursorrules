@@ -1,0 +1,242 @@
+# Autism Therapy App - Cursor Rules
+
+## Project Overview
+AI-powered home therapy companion for autistic kids that builds a living autism profile through onboarding questionnaires and ongoing activity logging. Built with Rails 8.0, Hotwire (Turbo + Stimulus), Tailwind CSS, and Flowbite.
+
+## Technology Stack
+- **Framework**: Ruby on Rails 8.0.2
+- **Ruby Version**: 3.4.1
+- **Database**: PostgreSQL (production-ready)
+- **Frontend**: Hotwire (Turbo + Stimulus), Tailwind CSS 4.x, Flowbite v3.1.2
+- **Authentication**: Devise
+- **Authorization**: Pundit (to be installed)
+- **Background Jobs**: Solid Queue (Rails default)
+- **Testing**: Minitest
+
+## Code Style & Conventions
+
+### Ruby/Rails
+- Follow Rails conventions and best practices
+- Use snake_case for files, methods, variables
+- Use CamelCase for classes and modules
+- Prefer single quotes unless interpolation needed
+- Use descriptive method names (e.g., `user_signed_in?`, `calculate_total`)
+- Follow RESTful routing conventions
+- Use service objects for complex business logic
+- Use form objects for complex forms (e.g., onboarding wizard)
+- Use query objects for complex queries
+- Implement concerns for shared behavior
+
+### Database & Models
+- Always add `timestamps` to all tables
+- Use proper indexes on foreign keys and frequently queried fields
+- Use `dependent: :destroy` or `dependent: :nullify` appropriately
+- Add validations in models
+- Use scopes for common queries
+- Consider soft deletes (`deleted_at`) for important data (child profiles, goals)
+
+### Controllers
+- Keep controllers thin - delegate to service objects
+- Use strong parameters
+- Handle errors gracefully with flash messages
+- Use Pundit policies for authorization
+
+### Views
+- Use partials to keep views DRY
+- Use Hotwire (Turbo + Stimulus) for dynamic interactions
+- Use Tailwind CSS and Flowbite components for UI
+- Ensure responsive design
+- Use semantic HTML
+
+## Domain-Specific Patterns
+
+### Child Profile & Membership System
+- A `User` can have multiple `ChildMembership` records (one per child)
+- Each `ChildMembership` has a role: `parent`, `therapist`, `co_parent`, `caregiver`
+- One user per child is marked as `is_primary` (the primary caregiver)
+- Always check permissions via Pundit before accessing child data
+
+### Onboarding Flow
+- Onboarding is session-based (`OnboardingSession`)
+- Questions are organized by domain (communication, social, flexibility, etc.)
+- Questions can have dependencies (adaptive questionnaire)
+- Answers are stored with both structured (option_id) and free-text data
+- Profile generation happens after onboarding completion
+
+### Profile Generation (Phase 1)
+- Start with template-based profile generation
+- Design service layer to be AI-ready (easy to swap templates for AI later)
+- Store AI prompts/instructions in database for future integration
+- Profile includes: strengths, challenges, domain scores, suggested goals
+
+### Goals System
+- Goals belong to a child profile and a profile domain
+- Goals have status: `suggested`, `active`, `paused`, `archived`
+- Goals have priority ranking
+- Goals are generated from profile analysis
+
+## File Organization
+
+### Services
+- Place in `app/services/`
+- Naming: `DomainService` (e.g., `OnboardingService`, `ProfileGenerationService`)
+- Services should be stateless when possible
+- Return result objects or raise exceptions for errors
+
+### Forms
+- Place in `app/forms/`
+- Inherit from `ActiveModel::Model` or similar
+- Use for complex multi-step forms (e.g., `OnboardingWizardForm`)
+
+### Policies (Pundit)
+- Place in `app/policies/`
+- Naming: `ResourcePolicy` (e.g., `ChildProfilePolicy`)
+- Check permissions based on `ChildMembership` roles
+
+### Queries
+- Place in `app/queries/`
+- Naming: `ResourceQuery` (e.g., `ChildProfileQuery`)
+- Use for complex filtering/searching
+
+## AI Integration Strategy
+
+### Phase 1 (Template-Based)
+- Use YAML/JSON templates for profile patterns
+- Simple scoring algorithms to match templates to answers
+- Service objects designed with AI-ready interfaces
+
+### Future AI Integration
+- Service layer should be AI-agnostic
+- Store prompts/instructions in database
+- Use background jobs for AI processing
+- Cache AI-generated content appropriately
+
+## Security & Privacy
+
+### Data Protection
+- This app handles sensitive health/developmental data
+- Always use strong parameters
+- Implement proper authorization checks
+- Consider encryption for sensitive fields
+- Follow HIPAA considerations (if applicable)
+- Never log sensitive data
+
+### Authentication/Authorization
+- Use Devise for authentication
+- Use Pundit for authorization
+- Always verify user has access to child profile via `ChildMembership`
+- Check role permissions before allowing actions
+
+## Testing
+
+### Test Structure
+- Use Minitest (Rails default)
+- Follow TDD/BDD practices
+- Test models, controllers, services, policies
+- Use factories (FactoryBot) for test data
+- Test authorization thoroughly
+
+### Test Naming
+- Model tests: `test/models/child_profile_test.rb`
+- Controller tests: `test/controllers/child_profiles_controller_test.rb`
+- Service tests: `test/services/onboarding_service_test.rb`
+- Policy tests: `test/policies/child_profile_policy_test.rb`
+
+## Common Patterns
+
+### Service Object Pattern
+```ruby
+class OnboardingService
+  def self.complete_session(session)
+    new(session).complete
+  end
+
+  def initialize(session)
+    @session = session
+  end
+
+  def complete
+    # Business logic here
+    # Return result or raise exception
+  end
+end
+```
+
+### Form Object Pattern
+```ruby
+class OnboardingWizardForm
+  include ActiveModel::Model
+  include ActiveModel::Attributes
+
+  attribute :step, :integer
+  # ... other attributes
+
+  validates :step, presence: true
+  # ... other validations
+
+  def save
+    return false unless valid?
+    # Save logic
+  end
+end
+```
+
+## Rails Generators
+
+### Preferred Generators
+- Model: `bin/rails generate model ModelName field:type`
+- Controller: `bin/rails generate controller ControllerName action1 action2`
+- Migration: `bin/rails generate migration DescriptiveMigrationName`
+- Component: `bin/rails generate component ComponentName` (if using ViewComponent)
+
+### Avoid
+- Scaffold (too much boilerplate, prefer explicit controllers/views)
+
+## Error Handling
+
+### Controllers
+- Use `rescue_from` for common exceptions
+- Return appropriate HTTP status codes
+- Provide user-friendly error messages
+- Log errors appropriately
+
+### Services
+- Raise custom exceptions for business logic errors
+- Return result objects for success/failure states
+- Never rescue and swallow exceptions silently
+
+## Performance
+
+### Database
+- Use `includes`/`joins` to avoid N+1 queries
+- Add indexes on foreign keys and frequently queried columns
+- Use `select` to limit columns when appropriate
+
+### Caching
+- Use fragment caching for expensive views
+- Cache profile summaries and AI documents
+- Consider Russian Doll caching for nested data
+
+## Accessibility
+
+### UI/UX
+- Ensure all interactive elements are keyboard accessible
+- Use proper ARIA labels
+- Ensure sufficient color contrast
+- Test with screen readers
+- Make forms clear and easy to complete
+
+## Notes
+
+### Sensitive Domain
+- This app deals with autism therapy and child development
+- Use respectful, person-first language in code comments and UI
+- Consider emotional impact of features (e.g., meltdown tracking)
+- Design for parents who may be stressed or overwhelmed
+
+### Future Phases
+- Phase 2: Activities & Logging
+- Phase 3: Multi-user collaboration
+- Phase 4: Adaptive coaching
+- Keep architecture flexible for these additions
+
