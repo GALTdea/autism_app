@@ -138,7 +138,7 @@ class ProfileGenerationService
       ChildGoal.create!(
         child_profile: @child_profile,
         profile_domain: domain,
-        status: 'suggested',
+        status: "suggested",
         short_title: goal_title,
         description: goal_description,
         priority_rank: priority_rank
@@ -164,7 +164,7 @@ class ProfileGenerationService
         ChildGoal.create!(
           child_profile: @child_profile,
           profile_domain: domain,
-          status: 'suggested',
+          status: "suggested",
           short_title: goal_title,
           description: goal_description,
           priority_rank: priority_rank
@@ -179,16 +179,16 @@ class ProfileGenerationService
     # Simple template-based goal generation
     # Later, replace with AI or more sophisticated templates
     case domain.key
-    when 'communication'
-      level <= 1 ? 'Responds when name is called' : 'Uses words to express needs'
-    when 'social'
-      level <= 1 ? 'Engages in parallel play' : 'Initiates social interactions'
-    when 'flexibility'
-      level <= 1 ? 'Handles routine changes with support' : 'Adapts to unexpected changes'
-    when 'sensory'
-      level <= 1 ? 'Identifies sensory preferences' : 'Uses sensory strategies for regulation'
-    when 'emotional_regulation'
-      level <= 1 ? 'Recognizes emotions' : 'Uses coping strategies when upset'
+    when "communication"
+      level <= 1 ? "Responds when name is called" : "Uses words to express needs"
+    when "social"
+      level <= 1 ? "Engages in parallel play" : "Initiates social interactions"
+    when "flexibility"
+      level <= 1 ? "Handles routine changes with support" : "Adapts to unexpected changes"
+    when "sensory"
+      level <= 1 ? "Identifies sensory preferences" : "Uses sensory strategies for regulation"
+    when "emotional_regulation"
+      level <= 1 ? "Recognizes emotions" : "Uses coping strategies when upset"
     else
       "Develop skills in #{domain.label.downcase}"
     end
@@ -203,7 +203,7 @@ class ProfileGenerationService
     content = build_profile_summary_markdown(domain_scores)
 
     AiDocument.create!(
-      document_type: 'profile_summary',
+      document_type: "profile_summary",
       child_profile: @child_profile,
       onboarding_session: @onboarding_session,
       created_by: @onboarding_session.user,
@@ -247,4 +247,3 @@ class ProfileGenerationService
     markdown
   end
 end
-

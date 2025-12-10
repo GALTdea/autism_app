@@ -91,4 +91,3 @@ class OnboardingService
     @session
   end
 end
-
