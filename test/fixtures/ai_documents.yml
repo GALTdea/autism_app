@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  document_type: MyString
+  child_profile: one
+  onboarding_session: one
+  created_by: one
+  content_markdown: MyText
+
+two:
+  document_type: MyString
+  child_profile: two
+  onboarding_session: two
+  created_by: two
+  content_markdown: MyText

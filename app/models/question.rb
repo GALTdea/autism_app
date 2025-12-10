@@ -1,3 +1,23 @@
 class Question < ApplicationRecord
+  # Associations
   belongs_to :profile_domain
+  has_many :question_options, dependent: :destroy, -> { order(:position) }
+  has_many :answers, dependent: :destroy
+
+  # Enums
+  enum :response_type, {
+    scale: 'scale',
+    multi_choice: 'multi_choice',
+    text: 'text'
+  }
+
+  # Validations
+  validates :code, presence: true, uniqueness: true
+  validates :text, presence: true
+  validates :response_type, presence: true
+  validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
+  # Scopes
+  scope :ordered, -> { order(:position) }
+  scope :for_domain, ->(domain) { where(domain: domain) }
 end
