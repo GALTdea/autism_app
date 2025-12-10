@@ -1,4 +1,8 @@
 class OnboardingSessionPolicy < ApplicationPolicy
+  def start?
+    has_membership_for_child? && is_parent_or_primary?
+  end
+
   def show?
     has_membership_for_child? || is_session_owner?
   end

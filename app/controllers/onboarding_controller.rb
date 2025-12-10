@@ -79,7 +79,7 @@ class OnboardingController < ApplicationController
   private
 
   def set_child_profile
-    @child_profile = ChildProfile.find(params[:child_profile_id])
+    @child_profile = ChildProfile.find(params[:id])
   end
 
   def set_onboarding_session
