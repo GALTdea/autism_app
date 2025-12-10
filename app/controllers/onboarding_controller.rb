@@ -56,6 +56,15 @@ class OnboardingController < ApplicationController
   end
 
   def complete
+    @onboarding_session = @child_profile.onboarding_sessions
+                                        .where(user: current_user, status: 'in_progress')
+                                        .first
+    
+    unless @onboarding_session
+      redirect_to start_onboarding_child_profile_path(@child_profile), alert: 'No active onboarding session found.'
+      return
+    end
+
     authorize @onboarding_session
 
     begin

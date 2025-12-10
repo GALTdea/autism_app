@@ -3,3 +3,6 @@
 // ./bin/rails generate stimulus controllerName
 
 import { application } from "./application"
+
+import OnboardingWizardController from "./onboarding_wizard_controller"
+application.register("onboarding-wizard", OnboardingWizardController)
