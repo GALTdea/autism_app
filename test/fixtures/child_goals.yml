@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  child_profile: one
+  profile_domain: one
+  status: MyString
+  short_title: MyString
+  description: MyText
+  priority_rank: 1
+  deleted_at: 2025-12-10 13:37:29
+
+two:
+  child_profile: two
+  profile_domain: two
+  status: MyString
+  short_title: MyString
+  description: MyText
+  priority_rank: 1
+  deleted_at: 2025-12-10 13:37:29
