@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  primary_caregiver: one
+  name: MyString
+  birth_date: 2025-12-10
+  diagnosis_summary: MyText
+  deleted_at: 2025-12-10 13:28:02
+
+two:
+  primary_caregiver: two
+  name: MyString
+  birth_date: 2025-12-10
+  diagnosis_summary: MyText
+  deleted_at: 2025-12-10 13:28:02
