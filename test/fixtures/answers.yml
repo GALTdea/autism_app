@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  onboarding_session: one
+  question: one
+  question_option: one
+  numeric_value: 1
+  free_text: MyText
+
+two:
+  onboarding_session: two
+  question: two
+  question_option: two
+  numeric_value: 1
+  free_text: MyText
