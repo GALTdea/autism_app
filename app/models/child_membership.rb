@@ -4,7 +4,7 @@ class ChildMembership < ApplicationRecord
   belongs_to :child_profile
 
   # Enums
-  enum role: {
+  enum :role, {
     parent: 'parent',
     therapist: 'therapist',
     co_parent: 'co_parent',

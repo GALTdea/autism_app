@@ -14,7 +14,12 @@
           <span class="badge badge-neutral gap-2">Guest</span>
         <% end %>
       </p>
-      <% unless user_signed_in? %>
+      <% if user_signed_in? %>
+        <div class="flex gap-4 justify-center">
+          <%= link_to "Add Child Profile", new_child_profile_path, class: "btn btn-primary" %>
+          <%= link_to "My Children", child_profiles_path, class: "btn btn-outline" %>
+        </div>
+      <% else %>
         <div class="flex gap-4 justify-center">
           <a href="/users/sign_in" class="btn btn-primary">Log In</a>
           <a href="/users/sign_up" class="btn btn-outline">Sign Up</a>

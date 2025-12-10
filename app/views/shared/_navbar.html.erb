@@ -6,6 +6,10 @@
       </div>
       <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
         <li><a href="/">Home</a></li>
+        <% if user_signed_in? %>
+          <li><%= link_to "Add Child", new_child_profile_path %></li>
+          <li><%= link_to "My Children", child_profiles_path %></li>
+        <% end %>
         <% if user_signed_in? && (current_user.admin? || current_user.super_admin?) %>
           <li><a class="text-warning">Admin Panel</a></li>
         <% end %>
@@ -24,7 +28,10 @@
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1">
       <li><a href="/">Home</a></li>
-
+      <% if user_signed_in? %>
+        <li><%= link_to "Add Child", new_child_profile_path %></li>
+        <li><%= link_to "My Children", child_profiles_path %></li>
+      <% end %>
       <% if user_signed_in? && (current_user.admin? || current_user.super_admin?) %>
          <li><a class="text-warning font-bold">Admin Panel</a></li>
       <% end %>

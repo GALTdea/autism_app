@@ -1,0 +1,44 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">My Children</h1>
+    <%= link_to "Add Child", new_child_profile_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @child_profiles.any? %>
+    <div class="grid gap-4">
+      <% @child_profiles.each do |child_profile| %>
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-xl font-semibold text-gray-900 mb-2">
+                <%= link_to child_profile.name, child_profile_path(child_profile), class: "hover:text-blue-600" %>
+              </h2>
+              <p class="text-gray-600">
+                Born: <%= child_profile.birth_date.strftime("%B %d, %Y") %>
+              </p>
+              <% if child_profile.diagnosis_summary.present? %>
+                <p class="text-gray-600 mt-2 text-sm"><%= truncate(child_profile.diagnosis_summary, length: 100) %></p>
+              <% end %>
+            </div>
+            <div class="flex flex-col items-end gap-2">
+              <% if child_profile.onboarding_sessions.completed.any? %>
+                <span class="badge badge-success">Profile Complete</span>
+              <% elsif child_profile.onboarding_sessions.in_progress.any? %>
+                <span class="badge badge-warning">Onboarding In Progress</span>
+              <% else %>
+                <span class="badge badge-neutral">Not Started</span>
+              <% end %>
+              <%= link_to "View", child_profile_path(child_profile), class: "btn btn-sm btn-ghost" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+      <p class="text-gray-600 mb-4">You haven't added any children yet.</p>
+      <%= link_to "Add Your First Child", new_child_profile_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>
+

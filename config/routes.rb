@@ -3,13 +3,13 @@ Rails.application.routes.draw do
   devise_for :users
 
   # Child Profiles
-  resources :child_profiles, only: [:new, :create, :show] do
+  resources :child_profiles, only: [ :index, :new, :create, :show ] do
     # Onboarding flow
     member do
-      get 'onboarding/start', to: 'onboarding#start', as: :start_onboarding
-      get 'onboarding', to: 'onboarding#show', as: :onboarding
-      patch 'onboarding', to: 'onboarding#update'
-      post 'onboarding/complete', to: 'onboarding#complete', as: :complete_onboarding
+      get "onboarding/start", to: "onboarding#start", as: :start_onboarding
+      get "onboarding", to: "onboarding#show", as: :onboarding
+      patch "onboarding", to: "onboarding#update"
+      post "onboarding/complete", to: "onboarding#complete", as: :complete_onboarding
     end
   end
 

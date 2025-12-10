@@ -1,7 +1,11 @@
 class ChildProfilesController < ApplicationController
   before_action :authenticate_user!
   before_action :set_child_profile, only: [:show]
-  after_action :verify_authorized, except: [:new, :create]
+  after_action :verify_authorized, except: [:index, :new, :create]
+
+  def index
+    @child_profiles = policy_scope(ChildProfile).active.includes(:primary_caregiver).order(created_at: :desc)
+  end
 
   def new
     @child_profile = ChildProfile.new
