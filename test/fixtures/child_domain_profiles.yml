@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  child_profile: one
+  profile_domain: one
+  level_estimate: 1
+  strengths_summary: MyText
+  needs_summary: MyText
+
+two:
+  child_profile: two
+  profile_domain: two
+  level_estimate: 1
+  strengths_summary: MyText
+  needs_summary: MyText
