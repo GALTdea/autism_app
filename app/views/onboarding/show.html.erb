@@ -80,7 +80,7 @@
               <%= link_to "Next →", onboarding_child_profile_path(@child_profile, step: @current_step + 1), 
                   class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
             <% else %>
-              <%= form_with url: complete_onboarding_child_profiles_path, method: :post, local: true do |complete_form| %>
+              <%= form_with url: complete_onboarding_child_profile_path(@child_profile), method: :post, local: true do |complete_form| %>
                 <%= complete_form.submit "Complete Onboarding", 
                     class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700",
                     data: { confirm: "Are you ready to complete the onboarding? Your profile will be generated." } %>
