@@ -297,7 +297,7 @@ end
 [comm_questions, social_questions, flex_questions, sensory_questions, emotion_questions].each_with_index do |questions, index|
   domain_keys = ['communication', 'social', 'flexibility', 'sensory', 'emotional_regulation']
   domain = profile_domains[domain_keys[index]]
-  
+
   questions.each do |q_data|
     create_question(domain, q_data)
     puts "  ✓ #{q_data[:code]}: #{q_data[:text][0..60]}..."
