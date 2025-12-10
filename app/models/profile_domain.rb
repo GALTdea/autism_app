@@ -1,0 +1,2 @@
+class ProfileDomain < ApplicationRecord
+end
