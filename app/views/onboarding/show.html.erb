@@ -1,0 +1,100 @@
+<div class="max-w-3xl mx-auto px-4 py-8" data-controller="onboarding-wizard" data-onboarding-wizard-current-step-value="<%= @current_step %>" data-onboarding-wizard-total-steps-value="<%= @total_steps %>">
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <!-- Progress Bar -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-2">
+        <span class="text-sm font-medium text-gray-700">Step <%= @current_step %> of <%= @total_steps %></span>
+        <span class="text-sm text-gray-500"><%= (@onboarding_session.progress_percentage) %>% Complete</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-2">
+        <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: <%= (@current_step.to_f / @total_steps * 100) %>%"></div>
+      </div>
+    </div>
+
+    <% if @current_domain %>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2"><%= @current_domain.label %></h1>
+      <% if @current_domain.description.present? %>
+        <p class="text-gray-600 mb-6"><%= @current_domain.description %></p>
+      <% end %>
+
+      <%= form_with url: onboarding_child_profile_path(@child_profile), method: :patch, local: true, data: { turbo_frame: "question_form" } do |form| %>
+        <%= hidden_field_tag :current_step, @current_step %>
+        
+        <div class="space-y-6">
+          <% @questions.each do |question| %>
+            <div class="border border-gray-200 rounded-lg p-4" data-question-id="<%= question.id %>">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4"><%= question.text %></h3>
+              
+              <% existing_answer = @answers[question.id] %>
+              
+              <% case question.response_type %>
+              <% when 'scale', 'multi_choice' %>
+                <div class="space-y-2">
+                  <% question.question_options.ordered.each do |option| %>
+                    <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer <%= 'bg-blue-50 border-blue-500' if existing_answer&.question_option_id == option.id %>">
+                      <%= radio_button_tag "question_option_id", option.id, existing_answer&.question_option_id == option.id, 
+                          name: "question_option_id",
+                          data: { 
+                            action: "change->onboarding-wizard#saveAnswer",
+                            question_id: question.id,
+                            current_step: @current_step
+                          },
+                          class: "mr-3" %>
+                      <span class="flex-1"><%= option.label %></span>
+                    </label>
+                  <% end %>
+                </div>
+              <% when 'text' %>
+                <div>
+                  <%= text_area_tag "free_text", existing_answer&.free_text, 
+                      rows: 4,
+                      name: "free_text",
+                      data: {
+                        action: "blur->onboarding-wizard#saveAnswer",
+                        question_id: question.id,
+                        current_step: @current_step
+                      },
+                      class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+                      placeholder: "Share your thoughts..." %>
+                </div>
+              <% end %>
+
+              <%= hidden_field_tag :question_id, question.id %>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
+          <% if @current_step > 1 %>
+            <%= link_to "← Previous", onboarding_child_profile_path(@child_profile, step: @current_step - 1), 
+                class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
+          <% else %>
+            <div></div>
+          <% end %>
+
+          <div class="flex space-x-4">
+            <%= link_to "Save & Continue Later", child_profile_path(@child_profile), 
+                class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
+            
+            <% if @current_step < @total_steps %>
+              <%= link_to "Next →", onboarding_child_profile_path(@child_profile, step: @current_step + 1), 
+                  class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+            <% else %>
+              <%= form_with url: complete_onboarding_child_profiles_path, method: :post, local: true do |complete_form| %>
+                <%= complete_form.submit "Complete Onboarding", 
+                    class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700",
+                    data: { confirm: "Are you ready to complete the onboarding? Your profile will be generated." } %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="text-center py-8">
+        <p class="text-gray-600">Loading questions...</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= turbo_frame_tag "question_form" %>

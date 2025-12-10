@@ -5,9 +5,13 @@ Rails.application.routes.draw do
   # Child Profiles
   resources :child_profiles, only: [:new, :create, :show] do
     # Onboarding flow
-    resources :onboarding, only: [:show, :update], controller: 'onboarding'
     member do
       get 'onboarding/start', to: 'onboarding#start', as: :start_onboarding
+      get 'onboarding', to: 'onboarding#show', as: :onboarding
+      patch 'onboarding', to: 'onboarding#update'
+    end
+    collection do
+      post 'onboarding/complete', to: 'onboarding#complete', as: :complete_onboarding
     end
   end
 
