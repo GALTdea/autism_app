@@ -84,14 +84,18 @@ class ProfileGenerationService
       strengths = generate_strengths_summary(domain, level, avg_score)
       needs = generate_needs_summary(domain, level, avg_score)
 
-      ChildDomainProfile.find_or_create_by(
+      domain_profile = ChildDomainProfile.find_or_initialize_by(
         child_profile: @child_profile,
         profile_domain: domain
-      ) do |profile|
-        profile.level_estimate = level
-        profile.strengths_summary = strengths
-        profile.needs_summary = needs
-      end
+      )
+
+      domain_profile.assign_attributes(
+        level_estimate: level,
+        strengths_summary: strengths,
+        needs_summary: needs
+      )
+
+      domain_profile.save!
     end
   end
 

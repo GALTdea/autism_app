@@ -34,7 +34,8 @@ class ChildProfilesController < ApplicationController
     authorize @child_profile
     @onboarding_session = @child_profile.onboarding_sessions.completed.recent.first
     @profile_summary = @child_profile.ai_documents.profile_summary.recent.first
-    @suggested_goals = @child_profile.child_goals.suggested.ordered_by_priority
+    @suggested_goals = @child_profile.child_goals.suggested.ordered_by_priority.includes(:profile_domain)
+    @domain_profiles = @child_profile.child_domain_profiles.includes(:profile_domain).ordered
   end
 
   private

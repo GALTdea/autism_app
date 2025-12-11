@@ -17,7 +17,7 @@
         <p class="text-gray-600 mb-6"><%= @current_domain.description %></p>
       <% end %>
 
-      <%= form_with url: onboarding_child_profile_path(@child_profile), method: :patch, local: true, data: { turbo_frame: "question_form" } do |form| %>
+      <%= form_with url: onboarding_child_profile_path(@child_profile), method: :patch, local: true, data: { turbo_frame: "question_form", controller: "onboarding-form" } do |form| %>
         <%= hidden_field_tag :current_step, @current_step %>
         
         <div class="space-y-6">
@@ -64,31 +64,33 @@
           <% end %>
         </div>
 
-        <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
-          <% if @current_step > 1 %>
-            <%= link_to "← Previous", onboarding_child_profile_path(@child_profile, step: @current_step - 1), 
-                class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
-          <% else %>
-            <div></div>
-          <% end %>
-
-          <div class="flex space-x-4">
-            <%= link_to "Save & Continue Later", child_profile_path(@child_profile), 
-                class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
-            
-            <% if @current_step < @total_steps %>
-              <%= link_to "Next →", onboarding_child_profile_path(@child_profile, step: @current_step + 1), 
-                  class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
-            <% else %>
-              <%= form_with url: complete_onboarding_child_profile_path(@child_profile), method: :post, local: true do |complete_form| %>
-                <%= complete_form.submit "Complete Onboarding", 
-                    class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700",
-                    data: { confirm: "Are you ready to complete the onboarding? Your profile will be generated." } %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
       <% end %>
+
+      <!-- Navigation outside form to avoid conflicts -->
+      <div class="flex justify-between mt-8 pt-6 border-t border-gray-200">
+        <% if @current_step > 1 %>
+          <%= link_to "← Previous", onboarding_child_profile_path(@child_profile, step: @current_step - 1), 
+              class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
+        <% else %>
+          <div></div>
+        <% end %>
+
+        <div class="flex space-x-4">
+          <%= link_to "Save & Continue Later", child_profile_path(@child_profile), 
+              class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
+          
+          <% if @current_step < @total_steps %>
+            <%= link_to "Next →", onboarding_child_profile_path(@child_profile, step: @current_step + 1), 
+                class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+          <% else %>
+            <%= form_with url: complete_onboarding_child_profile_path(@child_profile), method: :post, local: true, data: { turbo: false }, class: "inline" do |f| %>
+              <%= f.submit "Complete Onboarding", 
+                  class: "px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700",
+                  data: { confirm: "Are you ready to complete the onboarding? Your profile will be generated." } %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
     <% else %>
       <div class="text-center py-8">
         <p class="text-gray-600">Loading questions...</p>
