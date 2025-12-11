@@ -44,14 +44,23 @@ class OnboardingController < ApplicationController
     begin
       OnboardingService.save_answer(@onboarding_session, question_id, answer_data)
 
-      if turbo_frame_request?
+      # Handle AJAX/fetch requests (from Stimulus)
+      if request.xhr? || request.headers['X-Requested-With'] == 'XMLHttpRequest'
+        render json: { status: 'ok' }, status: :ok
+      elsif turbo_frame_request?
         head :ok
       else
-        redirect_to onboarding_child_profile_path(@child_profile, step: params[:current_step])
+        # Regular form submission - redirect
+        redirect_to onboarding_child_profile_path(@child_profile, step: params[:current_step] || params[:step])
       end
     rescue OnboardingService::Error => e
-      flash[:alert] = e.message
-      redirect_to onboarding_child_profile_path(@child_profile, step: params[:current_step])
+      # Handle errors for AJAX requests
+      if request.xhr? || request.headers['X-Requested-With'] == 'XMLHttpRequest'
+        render json: { error: e.message }, status: :unprocessable_entity
+      else
+        flash[:alert] = e.message
+        redirect_to onboarding_child_profile_path(@child_profile, step: params[:current_step] || params[:step])
+      end
     end
   end
 

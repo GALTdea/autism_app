@@ -32,8 +32,8 @@
                 <div class="space-y-2">
                   <% question.question_options.ordered.each do |option| %>
                     <label class="flex items-center p-3 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer <%= 'bg-blue-50 border-blue-500' if existing_answer&.question_option_id == option.id %>">
-                      <%= radio_button_tag "question_option_id", option.id, existing_answer&.question_option_id == option.id, 
-                          name: "question_option_id",
+                      <%= radio_button_tag "question_option_id_#{question.id}", option.id, existing_answer&.question_option_id == option.id, 
+                          name: "question_option_id_#{question.id}",
                           data: { 
                             action: "change->onboarding-wizard#saveAnswer",
                             question_id: question.id,
@@ -46,9 +46,9 @@
                 </div>
               <% when 'text' %>
                 <div>
-                  <%= text_area_tag "free_text", existing_answer&.free_text, 
+                  <%= text_area_tag "free_text_#{question.id}", existing_answer&.free_text, 
                       rows: 4,
-                      name: "free_text",
+                      name: "free_text_#{question.id}",
                       data: {
                         action: "blur->onboarding-wizard#saveAnswer",
                         question_id: question.id,

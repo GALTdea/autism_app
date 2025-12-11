@@ -23,13 +23,13 @@ class OnboardingService
   end
 
   def start_session
-    raise Error, 'User and child_profile are required' if @user.nil? || @child_profile.nil?
+    raise Error, "User and child_profile are required" if @user.nil? || @child_profile.nil?
 
     # Check if there's an existing in-progress session
     existing_session = OnboardingSession.find_by(
       child_profile: @child_profile,
       user: @user,
-      status: 'in_progress'
+      status: "in_progress"
     )
 
     return existing_session if existing_session.present?
@@ -37,13 +37,13 @@ class OnboardingService
     OnboardingSession.create!(
       child_profile: @child_profile,
       user: @user,
-      status: 'in_progress'
+      status: "in_progress"
     )
   end
 
   def save_answer(question_id, answer_data)
-    raise SessionNotFoundError, 'Session not found' if @session.nil?
-    raise Error, 'Session is already completed' if @session.completed?
+    raise SessionNotFoundError, "Session not found" if @session.nil?
+    raise Error, "Session is already completed" if @session.completed?
 
     question = Question.find_by(id: question_id)
     raise QuestionNotFoundError, "Question #{question_id} not found" if question.nil?
@@ -56,7 +56,7 @@ class OnboardingService
     # Set numeric_value from question_option if provided
     if question_option_id.present?
       question_option = QuestionOption.find_by(id: question_option_id)
-      raise InvalidAnswerError, 'Invalid question option' if question_option.nil? || question_option.question_id != question.id
+      raise InvalidAnswerError, "Invalid question option" if question_option.nil? || question_option.question_id != question.id
       numeric_value ||= question_option.value
     end
 
@@ -66,24 +66,26 @@ class OnboardingService
       question: question
     )
 
-    answer.assign_attributes(
-      question_option_id: question_option_id,
-      numeric_value: numeric_value,
-      free_text: free_text
-    )
+    # Only update attributes that are provided (not nil/empty)
+    attributes_to_update = {}
+    attributes_to_update[:question_option_id] = question_option_id if question_option_id.present?
+    attributes_to_update[:numeric_value] = numeric_value if numeric_value.present?
+    attributes_to_update[:free_text] = free_text if free_text.present?
+
+    answer.assign_attributes(attributes_to_update)
 
     if answer.save
       answer
     else
-      raise InvalidAnswerError, answer.errors.full_messages.join(', ')
+      raise InvalidAnswerError, answer.errors.full_messages.join(", ")
     end
   end
 
   def complete_session
-    raise SessionNotFoundError, 'Session not found' if @session.nil?
-    raise Error, 'Session is already completed' if @session.completed?
+    raise SessionNotFoundError, "Session not found" if @session.nil?
+    raise Error, "Session is already completed" if @session.completed?
 
-    @session.update!(status: 'completed')
+    @session.update!(status: "completed")
 
     # Trigger profile generation
     ProfileGenerationService.generate_profile(@session.child_profile, @session)
