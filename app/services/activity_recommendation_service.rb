@@ -78,7 +78,7 @@ class ActivityRecommendationService
     sensory_profile = @child_profile.sensory_profile
     if sensory_profile
       sensitivity_tags = sensory_profile[:sensitivity_tags] || []
-      
+
       # Exclude activities that conflict with sensory avoidances
       if sensitivity_tags.include?("avoids_loud_noise")
         activities = activities.reject do |activity|
@@ -90,7 +90,7 @@ class ActivityRecommendationService
     # Difficulty (exclude activities far above child's level)
     # For now, we'll use a simple heuristic based on average domain level
     avg_level = @child_profile.child_domain_profiles.average(:level_estimate).to_f
-    max_difficulty = [avg_level.to_i + 2, 5].min
+    max_difficulty = [ avg_level.to_i + 2, 5 ].min
     activities = activities.select do |activity|
       activity.difficulty_level <= max_difficulty
     end
@@ -186,7 +186,7 @@ class ActivityRecommendationService
   end
 
   def context_priority_match?(activity)
-    contexts = @child_profile.preferred_contexts.presence || ["home"]
+    contexts = @child_profile.preferred_contexts.presence || [ "home" ]
     (activity.contexts & contexts).any?
   end
 end

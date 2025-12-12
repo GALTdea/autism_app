@@ -22,6 +22,9 @@ class ProfileGenerationService
     # Generate suggested goals
     generate_goals(domain_scores)
 
+    # Set default preferred contexts (Phase 2b)
+    set_default_preferred_contexts
+
     # Create profile summary document
     create_profile_summary(domain_scores)
 
@@ -348,5 +351,12 @@ class ProfileGenerationService
     MARKDOWN
 
     markdown
+  end
+
+  def set_default_preferred_contexts
+    # Set default to home if not already set
+    if @child_profile.preferred_contexts.blank?
+      @child_profile.update(preferred_contexts: [ "home" ])
+    end
   end
 end

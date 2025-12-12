@@ -103,6 +103,22 @@
       </div>
     <% end %>
 
+    <!-- Activities Section (Phase 2b) -->
+    <% if @onboarding_session.present? %>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6 print:shadow-none print:border print:border-gray-300">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-2xl font-bold text-gray-900 print:text-xl">Today's Activities</h2>
+          <%= link_to "View Recommendations", child_profile_activities_path(@child_profile), 
+              class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 print:hidden" %>
+        </div>
+        <p class="text-gray-600 mb-4">
+          Get personalized activity recommendations based on your child's profile and goals.
+        </p>
+        <%= link_to "View Today's Recommendations →", child_profile_activities_path(@child_profile), 
+            class: "text-blue-600 hover:text-blue-800 font-medium" %>
+      </div>
+    <% end %>
+
     <!-- Actions -->
     <div class="bg-gray-50 rounded-lg p-4 print:hidden">
       <div class="flex gap-4">

@@ -11,6 +11,9 @@ Rails.application.routes.draw do
       patch "onboarding", to: "onboarding#update"
       post "onboarding/complete", to: "onboarding#complete", as: :complete_onboarding
     end
+
+    # Activities (Phase 2b)
+    resources :activities, only: [ :index ], controller: "activities"
   end
 
   # Activity Templates (Phase 2a)
