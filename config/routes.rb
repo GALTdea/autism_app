@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  get "activity_templates/index"
-  get "activity_templates/show"
   root "pages#home"
   devise_for :users
 
