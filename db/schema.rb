@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_12_021442) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_12_184932) do
   create_table "activity_templates", force: :cascade do |t|
     t.integer "primary_target_id", null: false
     t.string "title", null: false
@@ -156,6 +156,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_021442) do
     t.index ["primary_caregiver_id"], name: "index_child_profiles_on_primary_caregiver_id"
   end
 
+  create_table "daily_recommendations", force: :cascade do |t|
+    t.integer "child_profile_id", null: false
+    t.date "date", null: false
+    t.json "activity_template_ids", default: [], null: false
+    t.datetime "computed_at", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["child_profile_id", "date"], name: "index_daily_recommendations_on_child_profile_id_and_date", unique: true
+    t.index ["child_profile_id"], name: "index_daily_recommendations_on_child_profile_id"
+    t.index ["date"], name: "index_daily_recommendations_on_date"
+  end
+
   create_table "onboarding_sessions", force: :cascade do |t|
     t.integer "child_profile_id", null: false
     t.integer "user_id", null: false
@@ -230,6 +242,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_021442) do
   add_foreign_key "child_memberships", "child_profiles"
   add_foreign_key "child_memberships", "users"
   add_foreign_key "child_profiles", "users", column: "primary_caregiver_id"
+  add_foreign_key "daily_recommendations", "child_profiles"
   add_foreign_key "onboarding_sessions", "child_profiles"
   add_foreign_key "onboarding_sessions", "users"
   add_foreign_key "question_options", "questions"
