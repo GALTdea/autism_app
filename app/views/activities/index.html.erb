@@ -1,7 +1,15 @@
 <div class="container mx-auto px-4 py-8">
   <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-900">Today's Recommended Activities</h1>
-    <p class="text-gray-600 mt-2">Personalized activities for <%= @child_profile.name %></p>
+    <div class="flex justify-between items-start">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Today's Recommended Activities</h1>
+        <p class="text-gray-600 mt-2">Personalized activities for <%= @child_profile.name %></p>
+      </div>
+      <div>
+        <%= link_to "View Log History", child_profile_activity_logs_path(@child_profile), 
+            class: "px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors" %>
+      </div>
+    </div>
     <% if @daily_recommendation %>
       <p class="text-sm text-gray-500 mt-1">
         Generated on <%= @daily_recommendation.computed_at.strftime("%B %d at %I:%M %p") %>

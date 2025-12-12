@@ -130,11 +130,18 @@ class ActivityRecommendationService
         score += 1
       end
 
-      # Recent enjoyment (will be implemented in Phase 2c)
-      # For now, skip this scoring
+      # Recent enjoyment (Phase 2c)
+      recent_logs = ActivityLog.recent_logs_for_activity(@child_profile, activity, limit: 3)
+      if recent_logs.count >= 3 && recent_logs.all? { |log| log.enjoyment == "thumbs_down" }
+        score -= 2
+      elsif recent_logs.last&.enjoyment == "thumbs_up"
+        score += 1
+      end
 
-      # Recency penalty (will be implemented in Phase 2c)
-      # For now, skip this scoring
+      # Recency penalty (Phase 2c)
+      if ActivityLog.used_recently?(@child_profile, activity, days: 2)
+        score -= 1
+      end
 
       { activity: activity, score: score }
     end.sort_by { |item| -item[:score] }

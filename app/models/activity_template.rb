@@ -86,4 +86,3 @@ class ActivityTemplate < ApplicationRecord
     errors.add(:contexts, "must be an array") unless contexts.is_a?(Array)
   end
 end
-

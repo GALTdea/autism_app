@@ -121,11 +121,13 @@
 
     <!-- Actions -->
     <div class="bg-gray-50 rounded-lg p-4 print:hidden">
-      <div class="flex gap-4">
+      <div class="flex gap-4 flex-wrap">
         <%= link_to "View Full Onboarding", onboarding_child_profile_path(@child_profile), class: "text-blue-600 hover:text-blue-800" %>
         <% if @onboarding_session.present? %>
           <span class="text-gray-400">|</span>
           <span class="text-gray-600 text-sm">Completed: <%= @onboarding_session.created_at.strftime("%B %d, %Y") %></span>
+          <span class="text-gray-400">|</span>
+          <%= link_to "Activity Log History", child_profile_activity_logs_path(@child_profile), class: "text-blue-600 hover:text-blue-800" %>
         <% end %>
       </div>
     </div>

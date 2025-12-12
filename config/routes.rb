@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
     # Activities (Phase 2b)
     resources :activities, only: [ :index ], controller: "activities"
+
+    # Activity Logs (Phase 2c)
+    resources :activity_logs, only: [ :create, :index ]
   end
 
   # Activity Templates (Phase 2a)

@@ -1,0 +1,75 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Activity Log History</h1>
+    <p class="text-gray-600 mt-2">Past activities for <%= @child_profile.name %></p>
+    <%= link_to "← Back to Profile", child_profile_path(@child_profile), 
+        class: "text-blue-600 hover:text-blue-800 mt-2 inline-block" %>
+  </div>
+
+  <% if @activity_logs.empty? %>
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+      <p class="text-gray-600 mb-4">No activities logged yet.</p>
+      <%= link_to "View Today's Recommendations", child_profile_activities_path(@child_profile), 
+          class: "inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
+    </div>
+  <% else %>
+    <div class="space-y-4">
+      <% @activity_logs.each do |log| %>
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+          <div class="flex items-start justify-between mb-3">
+            <div class="flex-1">
+              <h3 class="text-lg font-semibold text-gray-900 mb-1">
+                <%= log.activity_template.title %>
+              </h3>
+              <p class="text-sm text-gray-500">
+                <%= log.occurred_at.strftime("%B %d, %Y at %I:%M %p") %>
+              </p>
+            </div>
+            <div class="flex items-center gap-3">
+              <!-- Completion Badge -->
+              <% if log.completed %>
+                <span class="px-3 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                  ✅ Completed
+                </span>
+              <% else %>
+                <span class="px-3 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                  ❌ Not Completed
+                </span>
+              <% end %>
+
+              <!-- Enjoyment Badge -->
+              <% case log.enjoyment %>
+              <% when "thumbs_up" %>
+                <span class="text-2xl">👍</span>
+              <% when "neutral" %>
+                <span class="text-2xl">😐</span>
+              <% when "thumbs_down" %>
+                <span class="text-2xl">👎</span>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 mb-3">
+            <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+              <%= log.activity_template.primary_target.label %>
+            </span>
+            <span class="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded">
+              <%= log.activity_template.duration_minutes %> min
+            </span>
+          </div>
+
+          <% if log.note.present? %>
+            <div class="bg-gray-50 rounded-lg p-3 mt-3">
+              <p class="text-sm text-gray-700"><%= log.note %></p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-6 text-center">
+      <%= link_to "View Today's Recommendations", child_profile_activities_path(@child_profile), 
+          class: "inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700" %>
+    </div>
+  <% end %>
+</div>
