@@ -10,7 +10,51 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_10_213850) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_12_021442) do
+  create_table "activity_templates", force: :cascade do |t|
+    t.integer "primary_target_id", null: false
+    t.string "title", null: false
+    t.integer "duration_minutes", null: false
+    t.text "materials", null: false
+    t.text "parent_script", null: false
+    t.text "variation", null: false
+    t.json "secondary_target_ids", default: []
+    t.json "target_tags", default: []
+    t.json "age_bands", default: [], null: false
+    t.string "language_level_required"
+    t.string "motor_demands"
+    t.integer "difficulty_level", null: false
+    t.string "energy_level"
+    t.json "contexts", default: []
+    t.string "materials_category"
+    t.json "scripts_by_level", default: {}
+    t.json "sensory_fit", default: {}
+    t.json "noise_level", default: {}
+    t.json "movement_level", default: {}
+    t.json "variations", default: []
+    t.json "prerequisites", default: {}
+    t.json "sensory_profile_tags", default: []
+    t.json "supports_concerns", default: []
+    t.boolean "active", default: true, null: false
+    t.integer "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_activity_templates_on_active"
+    t.index ["age_bands"], name: "index_activity_templates_on_age_bands"
+    t.index ["contexts"], name: "index_activity_templates_on_contexts"
+    t.index ["difficulty_level"], name: "index_activity_templates_on_difficulty_level"
+    t.index ["duration_minutes"], name: "index_activity_templates_on_duration_minutes"
+    t.index ["energy_level"], name: "index_activity_templates_on_energy_level"
+    t.index ["language_level_required"], name: "index_activity_templates_on_language_level_required"
+    t.index ["materials_category"], name: "index_activity_templates_on_materials_category"
+    t.index ["motor_demands"], name: "index_activity_templates_on_motor_demands"
+    t.index ["primary_target_id"], name: "index_activity_templates_on_primary_target_id"
+    t.index ["secondary_target_ids"], name: "index_activity_templates_on_secondary_target_ids"
+    t.index ["sensory_profile_tags"], name: "index_activity_templates_on_sensory_profile_tags"
+    t.index ["supports_concerns"], name: "index_activity_templates_on_supports_concerns"
+    t.index ["target_tags"], name: "index_activity_templates_on_target_tags"
+  end
+
   create_table "ai_documents", force: :cascade do |t|
     t.string "document_type", null: false
     t.integer "child_profile_id", null: false
@@ -49,9 +93,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_10_213850) do
     t.text "needs_summary"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "expressive_level"
+    t.string "receptive_level"
+    t.json "supports", default: []
+    t.integer "seeking_level"
+    t.integer "avoiding_level"
+    t.json "sensitivity_tags", default: []
     t.index ["child_profile_id", "profile_domain_id"], name: "idx_on_child_profile_id_profile_domain_id_dc88cab075", unique: true
     t.index ["child_profile_id"], name: "index_child_domain_profiles_on_child_profile_id"
+    t.index ["expressive_level"], name: "index_child_domain_profiles_on_expressive_level"
     t.index ["profile_domain_id"], name: "index_child_domain_profiles_on_profile_domain_id"
+    t.index ["receptive_level"], name: "index_child_domain_profiles_on_receptive_level"
+    t.index ["sensitivity_tags"], name: "index_child_domain_profiles_on_sensitivity_tags"
   end
 
   create_table "child_goals", force: :cascade do |t|
@@ -64,12 +117,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_10_213850) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "target_tags", default: []
     t.index ["child_profile_id", "status"], name: "index_child_goals_on_child_profile_id_and_status"
     t.index ["child_profile_id"], name: "index_child_goals_on_child_profile_id"
     t.index ["deleted_at"], name: "index_child_goals_on_deleted_at"
     t.index ["priority_rank"], name: "index_child_goals_on_priority_rank"
     t.index ["profile_domain_id"], name: "index_child_goals_on_profile_domain_id"
     t.index ["status"], name: "index_child_goals_on_status"
+    t.index ["target_tags"], name: "index_child_goals_on_target_tags"
   end
 
   create_table "child_memberships", force: :cascade do |t|
@@ -95,7 +150,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_10_213850) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "preferred_contexts", default: []
     t.index ["deleted_at"], name: "index_child_profiles_on_deleted_at"
+    t.index ["preferred_contexts"], name: "index_child_profiles_on_preferred_contexts"
     t.index ["primary_caregiver_id"], name: "index_child_profiles_on_primary_caregiver_id"
   end
 
@@ -159,6 +216,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_10_213850) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "activity_templates", "profile_domains", column: "primary_target_id"
   add_foreign_key "ai_documents", "child_profiles"
   add_foreign_key "ai_documents", "onboarding_sessions"
   add_foreign_key "ai_documents", "users", column: "created_by_id"

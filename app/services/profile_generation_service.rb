@@ -95,8 +95,107 @@ class ProfileGenerationService
         needs_summary: needs
       )
 
+      # Extract Phase 2 specific data
+      extract_language_profile(domain_profile) if domain.key == 'communication'
+      extract_sensory_profile(domain_profile) if domain.key == 'sensory'
+
       domain_profile.save!
     end
+  end
+
+  def extract_language_profile(domain_profile)
+    # Extract expressive level from COMM_1 (How does your child communicate their needs and wants?)
+    expressive_answer = @onboarding_session.answers
+      .joins(:question)
+      .find_by(questions: { code: 'COMM_1' })
+
+    if expressive_answer&.numeric_value
+      expressive_level = case expressive_answer.numeric_value
+      when 4 then 'sentences'
+      when 3 then 'short_phrases'
+      when 2 then 'single_words'
+      when 0, 1 then 'pre_verbal'
+      else 'single_words'
+      end
+      domain_profile.expressive_level = expressive_level
+    end
+
+    # Extract receptive level from COMM_3 (How well does your child understand spoken instructions?)
+    receptive_answer = @onboarding_session.answers
+      .joins(:question)
+      .find_by(questions: { code: 'COMM_3' })
+
+    if receptive_answer&.numeric_value
+      receptive_level = case receptive_answer.numeric_value
+      when 4 then 'sentences'
+      when 3 then 'short_phrases'
+      when 2 then 'single_words'
+      when 0, 1 then 'pre_verbal'
+      else 'single_words'
+      end
+      domain_profile.receptive_level = receptive_level
+    end
+
+    # Extract supports from COMM_4 (Does your child use visual supports?)
+    supports_answer = @onboarding_session.answers
+      .joins(:question)
+      .find_by(questions: { code: 'COMM_4' })
+
+    supports = []
+    if supports_answer&.numeric_value
+      if supports_answer.numeric_value >= 2
+        supports << 'visual_supports'
+      end
+    end
+    domain_profile.supports = supports if supports.any?
+  end
+
+  def extract_sensory_profile(domain_profile)
+    # Extract seeking level from SENSORY_2 (Does your child seek out sensory input?)
+    seeking_answer = @onboarding_session.answers
+      .joins(:question)
+      .find_by(questions: { code: 'SENSORY_2' })
+
+    if seeking_answer&.numeric_value
+      # Invert scale: lower value = more seeking
+      seeking_level = 4 - seeking_answer.numeric_value
+      domain_profile.seeking_level = [seeking_level, 0].max
+    end
+
+    # Extract avoiding level from SENSORY_1 (How does your child respond to loud sounds?)
+    avoiding_answer = @onboarding_session.answers
+      .joins(:question)
+      .find_by(questions: { code: 'SENSORY_1' })
+
+    if avoiding_answer&.numeric_value
+      # Lower value = more avoiding
+      avoiding_level = 4 - avoiding_answer.numeric_value
+      domain_profile.avoiding_level = [avoiding_level, 0].max
+    end
+
+    # Extract sensitivity tags
+    sensitivity_tags = []
+    
+    # Loud sounds sensitivity
+    if avoiding_answer&.numeric_value && avoiding_answer.numeric_value <= 2
+      sensitivity_tags << 'avoids_loud_noise'
+    end
+
+    # Texture sensitivity from SENSORY_3
+    texture_answer = @onboarding_session.answers
+      .joins(:question)
+      .find_by(questions: { code: 'SENSORY_3' })
+
+    if texture_answer&.numeric_value && texture_answer.numeric_value <= 2
+      sensitivity_tags << 'texture_sensitivity'
+    end
+
+    # Seeking behaviors
+    if seeking_answer&.numeric_value && seeking_answer.numeric_value <= 2
+      sensitivity_tags << 'seeks_movement'
+    end
+
+    domain_profile.sensitivity_tags = sensitivity_tags if sensitivity_tags.any?
   end
 
   def generate_strengths_summary(domain, level, score)

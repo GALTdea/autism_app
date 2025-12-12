@@ -15,6 +15,13 @@ class ChildGoal < ApplicationRecord
   validates :status, presence: true
   validates :short_title, presence: true
   validates :priority_rank, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, allow_nil: true
+  validate :target_tags_is_array, if: -> { target_tags.present? }
+
+  private
+
+  def target_tags_is_array
+    errors.add(:target_tags, 'must be an array') unless target_tags.is_a?(Array)
+  end
 
   # Scopes
   scope :active, -> { where(status: 'active') }
