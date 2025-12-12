@@ -1,0 +1,46 @@
+<div class="container mx-auto px-4 py-8 max-w-3xl">
+  <%= link_to "← Back to Activities", activity_templates_path, 
+      class: "text-blue-600 hover:text-blue-800 mb-6 inline-block" %>
+
+  <div class="bg-white rounded-lg shadow-md p-8">
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2"><%= @activity_template.title %></h1>
+        <div class="flex items-center gap-3">
+          <span class="px-3 py-1 text-sm font-medium bg-blue-100 text-blue-800 rounded">
+            <%= @activity_template.primary_target.label %>
+          </span>
+          <span class="px-3 py-1 text-sm font-medium bg-gray-100 text-gray-800 rounded">
+            <%= @activity_template.duration_minutes %> minutes
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <!-- Materials -->
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900 mb-3">Materials Needed</h2>
+        <div class="bg-gray-50 rounded-lg p-4">
+          <p class="text-gray-700 whitespace-pre-line"><%= @activity_template.materials %></p>
+        </div>
+      </div>
+
+      <!-- Parent Script -->
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900 mb-3">Parent Script</h2>
+        <div class="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+          <p class="text-gray-700 whitespace-pre-line"><%= @activity_template.parent_script %></p>
+        </div>
+      </div>
+
+      <!-- Variation -->
+      <div>
+        <h2 class="text-xl font-semibold text-gray-900 mb-3">Simple Variation</h2>
+        <div class="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+          <p class="text-gray-700 whitespace-pre-line"><%= @activity_template.variation %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-900">Activity Templates</h1>
+    <p class="text-gray-600 mt-2">Browse available activities for home therapy</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @activity_templates.each do |activity| %>
+      <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+        <div class="flex items-start justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900"><%= activity.title %></h2>
+          <span class="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">
+            <%= activity.duration_minutes %> min
+          </span>
+        </div>
+
+        <div class="mb-4">
+          <span class="inline-block px-3 py-1 text-sm font-medium bg-gray-100 text-gray-800 rounded">
+            <%= activity.primary_target.label %>
+          </span>
+        </div>
+
+        <p class="text-gray-600 mb-4 line-clamp-2">
+          <%= truncate(activity.parent_script, length: 100) %>
+        </p>
+
+        <%= link_to "View Details", activity_template_path(activity), 
+            class: "inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" %>
+      </div>
+    <% end %>
+  </div>
+</div>

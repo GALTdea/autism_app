@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "activity_templates/index"
+  get "activity_templates/show"
   root "pages#home"
   devise_for :users
 
@@ -12,6 +14,9 @@ Rails.application.routes.draw do
       post "onboarding/complete", to: "onboarding#complete", as: :complete_onboarding
     end
   end
+
+  # Activity Templates (Phase 2a)
+  resources :activity_templates, only: [:index, :show]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
