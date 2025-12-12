@@ -9,6 +9,7 @@ class ChildProfile < ApplicationRecord
   has_many :child_goals, dependent: :destroy
   has_many :ai_documents, dependent: :destroy
   has_many :daily_recommendations, dependent: :destroy
+  has_many :activity_logs, dependent: :destroy
 
   # Validations
   validates :name, presence: true

@@ -1,6 +1,7 @@
 class ActivityTemplate < ApplicationRecord
   # Associations
   belongs_to :primary_target, class_name: "ProfileDomain", foreign_key: "primary_target_id"
+  has_many :activity_logs, dependent: :destroy
 
   # Enums
   enum :language_level_required, {

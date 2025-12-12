@@ -10,7 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_12_184932) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_12_190852) do
+  create_table "activity_logs", force: :cascade do |t|
+    t.integer "child_profile_id", null: false
+    t.integer "activity_template_id", null: false
+    t.datetime "occurred_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.boolean "completed", default: false, null: false
+    t.integer "enjoyment", null: false
+    t.text "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["activity_template_id", "occurred_at"], name: "index_activity_logs_on_activity_template_id_and_occurred_at"
+    t.index ["activity_template_id"], name: "index_activity_logs_on_activity_template_id"
+    t.index ["child_profile_id", "activity_template_id", "occurred_at"], name: "idx_on_child_profile_id_activity_template_id_occurr_921a8a4096"
+    t.index ["child_profile_id", "occurred_at"], name: "index_activity_logs_on_child_profile_id_and_occurred_at"
+    t.index ["child_profile_id"], name: "index_activity_logs_on_child_profile_id"
+    t.index ["completed"], name: "index_activity_logs_on_completed"
+    t.index ["enjoyment"], name: "index_activity_logs_on_enjoyment"
+  end
+
   create_table "activity_templates", force: :cascade do |t|
     t.integer "primary_target_id", null: false
     t.string "title", null: false
@@ -228,6 +246,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_184932) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "activity_logs", "activity_templates"
+  add_foreign_key "activity_logs", "child_profiles"
   add_foreign_key "activity_templates", "profile_domains", column: "primary_target_id"
   add_foreign_key "ai_documents", "child_profiles"
   add_foreign_key "ai_documents", "onboarding_sessions"
