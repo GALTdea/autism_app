@@ -5,18 +5,18 @@ class ChildDomainProfile < ApplicationRecord
 
   # Enums (for communication domain)
   enum :expressive_level, {
-    pre_verbal: 'pre_verbal',
-    single_words: 'single_words',
-    short_phrases: 'short_phrases',
-    sentences: 'sentences'
-  }, prefix: 'expressive'
+    pre_verbal: "pre_verbal",
+    single_words: "single_words",
+    short_phrases: "short_phrases",
+    sentences: "sentences"
+  }, prefix: "expressive"
 
   enum :receptive_level, {
-    pre_verbal: 'pre_verbal',
-    single_words: 'single_words',
-    short_phrases: 'short_phrases',
-    sentences: 'sentences'
-  }, prefix: 'receptive'
+    pre_verbal: "pre_verbal",
+    single_words: "single_words",
+    short_phrases: "short_phrases",
+    sentences: "sentences"
+  }, prefix: "receptive"
 
   # Validations
   validates :level_estimate, presence: true,
@@ -26,16 +26,16 @@ class ChildDomainProfile < ApplicationRecord
   validate :sensitivity_tags_is_array, if: -> { sensitivity_tags.present? }
 
   # Scopes
-  scope :ordered, -> { joins(:profile_domain).order('profile_domains.label') }
+  scope :ordered, -> { joins(:profile_domain).order("profile_domains.label") }
   scope :by_level, -> { order(:level_estimate) }
 
   private
 
   def supports_is_array
-    errors.add(:supports, 'must be an array') unless supports.is_a?(Array)
+    errors.add(:supports, "must be an array") unless supports.is_a?(Array)
   end
 
   def sensitivity_tags_is_array
-    errors.add(:sensitivity_tags, 'must be an array') unless sensitivity_tags.is_a?(Array)
+    errors.add(:sensitivity_tags, "must be an array") unless sensitivity_tags.is_a?(Array)
   end
 end

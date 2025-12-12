@@ -5,10 +5,10 @@ class ChildGoal < ApplicationRecord
 
   # Enums
   enum :status, {
-    suggested: 'suggested',
-    active: 'active',
-    paused: 'paused',
-    archived: 'archived'
+    suggested: "suggested",
+    active: "active",
+    paused: "paused",
+    archived: "archived"
   }
 
   # Validations
@@ -20,12 +20,12 @@ class ChildGoal < ApplicationRecord
   private
 
   def target_tags_is_array
-    errors.add(:target_tags, 'must be an array') unless target_tags.is_a?(Array)
+    errors.add(:target_tags, "must be an array") unless target_tags.is_a?(Array)
   end
 
   # Scopes
-  scope :active, -> { where(status: 'active') }
-  scope :suggested, -> { where(status: 'suggested') }
+  scope :active, -> { where(status: "active") }
+  scope :suggested, -> { where(status: "suggested") }
   scope :not_deleted, -> { where(deleted_at: nil) }
   scope :ordered_by_priority, -> { order(priority_rank: :asc, created_at: :asc) }
   scope :for_domain, ->(domain_id) { where(profile_domain_id: domain_id) }

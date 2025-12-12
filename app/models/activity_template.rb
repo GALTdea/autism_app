@@ -1,37 +1,37 @@
 class ActivityTemplate < ApplicationRecord
   # Associations
-  belongs_to :primary_target, class_name: 'ProfileDomain', foreign_key: 'primary_target_id'
+  belongs_to :primary_target, class_name: "ProfileDomain", foreign_key: "primary_target_id"
 
   # Enums
   enum :language_level_required, {
-    pre_verbal: 'pre_verbal',
-    single_words: 'single_words',
-    short_phrases: 'short_phrases',
-    sentences: 'sentences'
+    pre_verbal: "pre_verbal",
+    single_words: "single_words",
+    short_phrases: "short_phrases",
+    sentences: "sentences"
   }
 
   enum :motor_demands, {
-    low: 'low',
-    medium: 'medium',
-    high: 'high'
+    low: "low",
+    medium: "medium",
+    high: "high"
   }
 
   enum :energy_level, {
-    calming: 'calming',
-    neutral: 'neutral',
-    energizing: 'energizing'
+    calming: "calming",
+    neutral: "neutral",
+    energizing: "energizing"
   }
 
   enum :materials_category, {
-    household: 'household',
-    toys: 'toys',
-    craft: 'craft',
-    none: 'none'
+    household: "household",
+    toys: "toys",
+    craft: "craft",
+    not_needed: "not_needed"
   }
 
   # Validations
   validates :title, presence: true
-  validates :duration_minutes, inclusion: { in: [5, 10] }
+  validates :duration_minutes, inclusion: { in: [ 5, 10 ] }
   validates :difficulty_level, inclusion: { in: 1..5 }
   validates :age_bands, presence: true
   validates :primary_target_id, presence: true
@@ -48,15 +48,15 @@ class ActivityTemplate < ApplicationRecord
   scope :active, -> { where(active: true) }
   scope :for_age, ->(age) { where("json_extract(age_bands, '$') LIKE ?", "%#{age_band_for_age(age)}%") }
   scope :for_duration, ->(minutes) { where(duration_minutes: minutes) }
-  scope :for_difficulty, ->(max_level) { where('difficulty_level <= ?', max_level) }
+  scope :for_difficulty, ->(max_level) { where("difficulty_level <= ?", max_level) }
   scope :for_energy_level, ->(level) { where(energy_level: level) }
 
   # Helper methods
   def self.age_band_for_age(age)
     case age
-    when 3..5 then '3-5'
-    when 6..8 then '6-8'
-    when 9..11 then '9-11'
+    when 3..5 then "3-5"
+    when 6..8 then "6-8"
+    when 9..11 then "9-11"
     else nil
     end
   end
@@ -74,14 +74,14 @@ class ActivityTemplate < ApplicationRecord
   private
 
   def age_bands_is_array
-    errors.add(:age_bands, 'must be an array') unless age_bands.is_a?(Array)
+    errors.add(:age_bands, "must be an array") unless age_bands.is_a?(Array)
   end
 
   def target_tags_is_array
-    errors.add(:target_tags, 'must be an array') unless target_tags.is_a?(Array)
+    errors.add(:target_tags, "must be an array") unless target_tags.is_a?(Array)
   end
 
   def contexts_is_array
-    errors.add(:contexts, 'must be an array') unless contexts.is_a?(Array)
+    errors.add(:contexts, "must be an array") unless contexts.is_a?(Array)
   end
 end

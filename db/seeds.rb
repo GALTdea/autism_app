@@ -294,8 +294,8 @@ def create_question(domain, question_data)
 end
 
 # Create all questions
-[comm_questions, social_questions, flex_questions, sensory_questions, emotion_questions].each_with_index do |questions, index|
-  domain_keys = ['communication', 'social', 'flexibility', 'sensory', 'emotional_regulation']
+[ comm_questions, social_questions, flex_questions, sensory_questions, emotion_questions ].each_with_index do |questions, index|
+  domain_keys = [ 'communication', 'social', 'flexibility', 'sensory', 'emotional_regulation' ]
   domain = profile_domains[domain_keys[index]]
 
   questions.each do |q_data|
@@ -320,12 +320,12 @@ def create_activity_template(domain, data)
     a.variation = data[:variation]
     a.secondary_target_ids = data[:secondary_target_ids] || []
     a.target_tags = data[:target_tags] || []
-    a.age_bands = data[:age_bands] || ['3-5', '6-8', '9-11']
+    a.age_bands = data[:age_bands] || [ '3-5', '6-8', '9-11' ]
     a.language_level_required = data[:language_level_required] || 'single_words'
     a.motor_demands = data[:motor_demands] || 'low'
     a.difficulty_level = data[:difficulty_level] || 2
     a.energy_level = data[:energy_level] || 'neutral'
-    a.contexts = data[:contexts] || ['home']
+    a.contexts = data[:contexts] || [ 'home' ]
     a.materials_category = data[:materials_category] || 'household'
     a.scripts_by_level = data[:scripts_by_level] || {}
     a.sensory_fit = data[:sensory_fit] || {}
@@ -349,12 +349,12 @@ comm_activities = [
     materials: "None needed",
     parent_script: "Let's practice saying your name! When I call your name, you can say 'Here!' or just look at me.",
     variation: "Try using a favorite toy - 'Where's [Toy Name]?' and have them point or say the name.",
-    target_tags: ['name_response', 'attention'],
-    age_bands: ['3-5', '6-8'],
+    target_tags: [ 'name_response', 'attention' ],
+    age_bands: [ '3-5', '6-8' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 1,
-    contexts: ['home', 'car'],
-    supports_concerns: ['name_response', 'attention']
+    contexts: [ 'home', 'car' ],
+    supports_concerns: [ 'name_response', 'attention' ]
   },
   {
     title: "Picture Choice Board",
@@ -362,13 +362,13 @@ comm_activities = [
     materials: "Pictures of favorite items (toys, snacks, activities), cardboard or paper, tape",
     parent_script: "Let's make choices! Show me which picture you want. You can point or say the word.",
     variation: "Start with just 2 choices, then add more as they get comfortable.",
-    target_tags: ['choice_making', 'communication'],
-    age_bands: ['3-5', '6-8'],
+    target_tags: [ 'choice_making', 'communication' ],
+    age_bands: [ '3-5', '6-8' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 2,
-    contexts: ['home'],
+    contexts: [ 'home' ],
     materials_category: 'craft',
-    supports_concerns: ['choice_making', 'communication']
+    supports_concerns: [ 'choice_making', 'communication' ]
   },
   {
     title: "What's in the Bag?",
@@ -376,12 +376,12 @@ comm_activities = [
     materials: "Small bag or box, 3-5 familiar objects (cup, ball, book, etc.)",
     parent_script: "Let's see what's in here! Can you tell me what this is? What do we do with it?",
     variation: "Use mystery box - child reaches in and describes what they feel before seeing it.",
-    target_tags: ['vocabulary', 'describing'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'vocabulary', 'describing' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'single_words',
     difficulty_level: 2,
-    contexts: ['home'],
-    supports_concerns: ['vocabulary', 'describing']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'vocabulary', 'describing' ]
   },
   {
     title: "I Spy",
@@ -389,12 +389,12 @@ comm_activities = [
     materials: "None needed - use items around you",
     parent_script: "I spy something blue! Can you find it? Now you spy something!",
     variation: "Use colors, shapes, or first letter sounds depending on child's level.",
-    target_tags: ['vocabulary', 'turn_taking'],
-    age_bands: ['6-8', '9-11'],
+    target_tags: [ 'vocabulary', 'turn_taking' ],
+    age_bands: [ '6-8', '9-11' ],
     language_level_required: 'short_phrases',
     difficulty_level: 2,
-    contexts: ['home', 'car'],
-    supports_concerns: ['vocabulary', 'turn_taking']
+    contexts: [ 'home', 'car' ],
+    supports_concerns: [ 'vocabulary', 'turn_taking' ]
   },
   {
     title: "Story Time with Questions",
@@ -402,13 +402,13 @@ comm_activities = [
     materials: "Favorite book",
     parent_script: "Let's read together! What do you think will happen next? Who is this?",
     variation: "Use wordless picture books and have child tell the story.",
-    target_tags: ['wh_questions', 'comprehension'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'wh_questions', 'comprehension' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'short_phrases',
     difficulty_level: 3,
-    contexts: ['home', 'bedtime'],
+    contexts: [ 'home', 'bedtime' ],
     materials_category: 'household',
-    supports_concerns: ['wh_questions', 'comprehension']
+    supports_concerns: [ 'wh_questions', 'comprehension' ]
   }
 ]
 
@@ -420,12 +420,12 @@ social_activities = [
     materials: "Two sets of similar toys (blocks, cars, dolls)",
     parent_script: "Let's play side by side! You play with your blocks, I'll play with mine. Look what I'm making!",
     variation: "Gradually move closer together, then try sharing one toy.",
-    target_tags: ['parallel_play', 'social_proximity'],
-    age_bands: ['3-5', '6-8'],
+    target_tags: [ 'parallel_play', 'social_proximity' ],
+    age_bands: [ '3-5', '6-8' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 1,
-    contexts: ['home'],
-    supports_concerns: ['parallel_play', 'social_proximity']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'parallel_play', 'social_proximity' ]
   },
   {
     title: "Turn Taking with Toys",
@@ -433,12 +433,12 @@ social_activities = [
     materials: "One special toy (ball, car, puzzle piece)",
     parent_script: "My turn! Now your turn! Can you wait while I have a turn?",
     variation: "Use a timer - when it beeps, it's the other person's turn.",
-    target_tags: ['turn_taking', 'waiting'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'turn_taking', 'waiting' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'single_words',
     difficulty_level: 2,
-    contexts: ['home'],
-    supports_concerns: ['turn_taking', 'waiting']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'turn_taking', 'waiting' ]
   },
   {
     title: "Mirror Game",
@@ -446,12 +446,12 @@ social_activities = [
     materials: "None needed",
     parent_script: "Copy what I do! Make the same face, do the same action. Now you lead!",
     variation: "Use emotions - make a happy face, sad face, surprised face.",
-    target_tags: ['imitation', 'social_attention'],
-    age_bands: ['3-5', '6-8'],
+    target_tags: [ 'imitation', 'social_attention' ],
+    age_bands: [ '3-5', '6-8' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 1,
-    contexts: ['home'],
-    supports_concerns: ['imitation', 'social_attention']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'imitation', 'social_attention' ]
   },
   {
     title: "Greeting Practice",
@@ -459,12 +459,12 @@ social_activities = [
     materials: "None needed",
     parent_script: "When someone says 'Hi!', you can say 'Hi!' back and wave. Let's practice!",
     variation: "Practice with family photos or stuffed animals first.",
-    target_tags: ['greetings', 'social_interaction'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'greetings', 'social_interaction' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'single_words',
     difficulty_level: 2,
-    contexts: ['home'],
-    supports_concerns: ['greetings', 'social_interaction']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'greetings', 'social_interaction' ]
   }
 ]
 
@@ -476,13 +476,13 @@ flexibility_activities = [
     materials: "Paper, markers, pictures or drawings of daily activities",
     parent_script: "Let's make a picture schedule! First we do this, then this. Sometimes things change, and that's okay!",
     variation: "Use actual photos of your child doing activities for more personal connection.",
-    target_tags: ['transitions', 'routine', 'visual_support'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'transitions', 'routine', 'visual_support' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 2,
-    contexts: ['home'],
+    contexts: [ 'home' ],
     materials_category: 'craft',
-    supports_concerns: ['transitions', 'routine_changes']
+    supports_concerns: [ 'transitions', 'routine_changes' ]
   },
   {
     title: "Change the Plan",
@@ -490,12 +490,12 @@ flexibility_activities = [
     materials: "None needed",
     parent_script: "We were going to do X, but now let's do Y instead! That's okay, we can be flexible.",
     variation: "Start with very small changes (different cup, different chair) and build up.",
-    target_tags: ['flexibility', 'routine_changes'],
-    age_bands: ['6-8', '9-11'],
+    target_tags: [ 'flexibility', 'routine_changes' ],
+    age_bands: [ '6-8', '9-11' ],
     language_level_required: 'short_phrases',
     difficulty_level: 3,
-    contexts: ['home'],
-    supports_concerns: ['routine_changes', 'flexibility']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'routine_changes', 'flexibility' ]
   },
   {
     title: "First-Then Board",
@@ -503,13 +503,13 @@ flexibility_activities = [
     materials: "Cardboard, pictures, velcro or tape",
     parent_script: "First we do this (point), then we do this (point). Let's check it off when we're done!",
     variation: "Use a simple whiteboard and draw quick pictures.",
-    target_tags: ['transitions', 'following_directions'],
-    age_bands: ['3-5', '6-8'],
+    target_tags: [ 'transitions', 'following_directions' ],
+    age_bands: [ '3-5', '6-8' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 2,
-    contexts: ['home'],
+    contexts: [ 'home' ],
     materials_category: 'craft',
-    supports_concerns: ['transitions', 'following_directions']
+    supports_concerns: [ 'transitions', 'following_directions' ]
   },
   {
     title: "Unexpected Change Practice",
@@ -517,12 +517,12 @@ flexibility_activities = [
     materials: "None needed",
     parent_script: "Oops! Something changed. That's okay, we can handle it. Let's take a deep breath.",
     variation: "Practice with very small, positive changes first (different snack, different route).",
-    target_tags: ['flexibility', 'emotional_regulation'],
-    age_bands: ['6-8', '9-11'],
+    target_tags: [ 'flexibility', 'emotional_regulation' ],
+    age_bands: [ '6-8', '9-11' ],
     language_level_required: 'short_phrases',
     difficulty_level: 4,
-    contexts: ['home'],
-    supports_concerns: ['routine_changes', 'flexibility']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'routine_changes', 'flexibility' ]
   }
 ]
 
@@ -534,14 +534,14 @@ sensory_activities = [
     materials: "Pillows, weighted blanket, or your hands",
     parent_script: "Let's give you a big, gentle squeeze! Does that feel good? Tell me when to stop.",
     variation: "Use a compression shirt or wrap child in a blanket like a burrito.",
-    target_tags: ['deep_pressure', 'calming'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'deep_pressure', 'calming' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 1,
     energy_level: 'calming',
-    contexts: ['home', 'bedtime'],
-    sensory_profile_tags: ['likes_deep_pressure'],
-    supports_concerns: ['sensory_regulation', 'calming']
+    contexts: [ 'home', 'bedtime' ],
+    sensory_profile_tags: [ 'likes_deep_pressure' ],
+    supports_concerns: [ 'sensory_regulation', 'calming' ]
   },
   {
     title: "Sensory Bin",
@@ -549,14 +549,14 @@ sensory_activities = [
     materials: "Bin or container, rice/beans/sand, small toys or objects",
     parent_script: "Let's dig and find treasures! How does this feel? Is it smooth or rough?",
     variation: "Use different textures - water beads, shaving cream, dry pasta.",
-    target_tags: ['sensory_exploration', 'tactile'],
-    age_bands: ['3-5', '6-8'],
+    target_tags: [ 'sensory_exploration', 'tactile' ],
+    age_bands: [ '3-5', '6-8' ],
     language_level_required: 'single_words',
     difficulty_level: 2,
-    contexts: ['home'],
+    contexts: [ 'home' ],
     materials_category: 'household',
-    sensory_profile_tags: ['seeks_tactile'],
-    supports_concerns: ['sensory_exploration']
+    sensory_profile_tags: [ 'seeks_tactile' ],
+    supports_concerns: [ 'sensory_exploration' ]
   },
   {
     title: "Movement Break",
@@ -564,15 +564,15 @@ sensory_activities = [
     materials: "None needed",
     parent_script: "Let's move our bodies! Jump, spin, stretch. How does that feel?",
     variation: "Follow movement cards or YouTube videos for guided movement.",
-    target_tags: ['movement', 'proprioception'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'movement', 'proprioception' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 1,
     energy_level: 'energizing',
     motor_demands: 'medium',
-    contexts: ['home'],
-    sensory_profile_tags: ['seeks_movement'],
-    supports_concerns: ['sensory_regulation']
+    contexts: [ 'home' ],
+    sensory_profile_tags: [ 'seeks_movement' ],
+    supports_concerns: [ 'sensory_regulation' ]
   },
   {
     title: "Quiet Time Corner",
@@ -580,14 +580,14 @@ sensory_activities = [
     materials: "Pillows, blanket, soft lighting, maybe headphones",
     parent_script: "This is your quiet space. When things feel too loud or busy, you can come here.",
     variation: "Add favorite calming items - stuffed animal, favorite book, fidget toy.",
-    target_tags: ['calming', 'self_regulation'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'calming', 'self_regulation' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 2,
     energy_level: 'calming',
-    contexts: ['home'],
-    sensory_profile_tags: ['avoids_loud_noise', 'needs_quiet'],
-    supports_concerns: ['sensory_overload', 'calming']
+    contexts: [ 'home' ],
+    sensory_profile_tags: [ 'avoids_loud_noise', 'needs_quiet' ],
+    supports_concerns: [ 'sensory_overload', 'calming' ]
   },
   {
     title: "Texture Walk",
@@ -595,14 +595,14 @@ sensory_activities = [
     materials: "Different textures on floor (towel, bubble wrap, carpet square, smooth tile)",
     parent_script: "Walk on this! How does it feel? Soft? Bumpy? Let's try the next one!",
     variation: "Blindfold and guess the texture, or match textures with hands and feet.",
-    target_tags: ['tactile', 'sensory_exploration'],
-    age_bands: ['3-5', '6-8'],
+    target_tags: [ 'tactile', 'sensory_exploration' ],
+    age_bands: [ '3-5', '6-8' ],
     language_level_required: 'single_words',
     difficulty_level: 2,
     motor_demands: 'low',
-    contexts: ['home'],
-    sensory_profile_tags: ['seeks_tactile'],
-    supports_concerns: ['sensory_exploration']
+    contexts: [ 'home' ],
+    sensory_profile_tags: [ 'seeks_tactile' ],
+    supports_concerns: [ 'sensory_exploration' ]
   }
 ]
 
@@ -614,12 +614,12 @@ emotion_activities = [
     materials: "Mirror, emotion cards or pictures",
     parent_script: "Let's make faces! Show me happy, sad, angry, surprised. How do you feel right now?",
     variation: "Use emotion cards to match feelings, or draw faces together.",
-    target_tags: ['emotion_recognition', 'emotion_expression'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'emotion_recognition', 'emotion_expression' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'single_words',
     difficulty_level: 2,
-    contexts: ['home'],
-    supports_concerns: ['emotion_recognition']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'emotion_recognition' ]
   },
   {
     title: "Calm Down Box",
@@ -627,13 +627,13 @@ emotion_activities = [
     materials: "Box, calming items (fidget toy, stress ball, favorite picture, calming music)",
     parent_script: "When you feel upset, you can use things from this box to help you feel better.",
     variation: "Create the box together, letting child choose what goes inside.",
-    target_tags: ['self_regulation', 'coping_strategies'],
-    age_bands: ['6-8', '9-11'],
+    target_tags: [ 'self_regulation', 'coping_strategies' ],
+    age_bands: [ '6-8', '9-11' ],
     language_level_required: 'short_phrases',
     difficulty_level: 3,
-    contexts: ['home'],
+    contexts: [ 'home' ],
     materials_category: 'household',
-    supports_concerns: ['emotional_regulation', 'coping_strategies']
+    supports_concerns: [ 'emotional_regulation', 'coping_strategies' ]
   },
   {
     title: "Breathing Buddy",
@@ -641,13 +641,13 @@ emotion_activities = [
     materials: "Stuffed animal or small toy",
     parent_script: "Watch your breathing buddy go up and down as you breathe. In... out... slow and calm.",
     variation: "Use bubbles - blow slowly and watch them float. Or use a pinwheel.",
-    target_tags: ['breathing', 'calming'],
-    age_bands: ['3-5', '6-8', '9-11'],
+    target_tags: [ 'breathing', 'calming' ],
+    age_bands: [ '3-5', '6-8', '9-11' ],
     language_level_required: 'pre_verbal',
     difficulty_level: 2,
     energy_level: 'calming',
-    contexts: ['home', 'bedtime'],
-    supports_concerns: ['calming', 'self_regulation']
+    contexts: [ 'home', 'bedtime' ],
+    supports_concerns: [ 'calming', 'self_regulation' ]
   },
   {
     title: "Feelings Check-In",
@@ -655,21 +655,21 @@ emotion_activities = [
     materials: "Feelings chart or emotion cards",
     parent_script: "How are you feeling right now? Point to the face that matches, or tell me.",
     variation: "Use a feelings thermometer (1-5 scale) or color-coded feelings.",
-    target_tags: ['emotion_identification', 'self_awareness'],
-    age_bands: ['6-8', '9-11'],
+    target_tags: [ 'emotion_identification', 'self_awareness' ],
+    age_bands: [ '6-8', '9-11' ],
     language_level_required: 'short_phrases',
     difficulty_level: 2,
-    contexts: ['home'],
-    supports_concerns: ['emotion_identification']
+    contexts: [ 'home' ],
+    supports_concerns: [ 'emotion_identification' ]
   }
 ]
 
 # Create activities
 position = 1
-[comm_activities, social_activities, flexibility_activities, sensory_activities, emotion_activities].each_with_index do |activities, domain_index|
-  domain_key = ['communication', 'social', 'flexibility', 'sensory', 'emotional_regulation'][domain_index]
+[ comm_activities, social_activities, flexibility_activities, sensory_activities, emotion_activities ].each_with_index do |activities, domain_index|
+  domain_key = [ 'communication', 'social', 'flexibility', 'sensory', 'emotional_regulation' ][domain_index]
   domain = profile_domains[domain_key]
-  
+
   activities.each do |activity_data|
     activity_data[:position] = position
     create_activity_template(domain, activity_data)

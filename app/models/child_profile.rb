@@ -1,6 +1,6 @@
 class ChildProfile < ApplicationRecord
   # Associations
-  belongs_to :primary_caregiver, class_name: 'User', foreign_key: 'primary_caregiver_id'
+  belongs_to :primary_caregiver, class_name: "User", foreign_key: "primary_caregiver_id"
   has_many :child_memberships, dependent: :destroy
   has_many :users, through: :child_memberships
   has_many :onboarding_sessions, dependent: :destroy
@@ -35,7 +35,7 @@ class ChildProfile < ApplicationRecord
   def language_profile
     communication_profile = child_domain_profiles
       .joins(:profile_domain)
-      .find_by(profile_domains: { key: 'communication' })
+      .find_by(profile_domains: { key: "communication" })
     return nil unless communication_profile
 
     {
@@ -48,7 +48,7 @@ class ChildProfile < ApplicationRecord
   def sensory_profile
     sensory_domain_profile = child_domain_profiles
       .joins(:profile_domain)
-      .find_by(profile_domains: { key: 'sensory' })
+      .find_by(profile_domains: { key: "sensory" })
     return nil unless sensory_domain_profile
 
     {
@@ -60,7 +60,7 @@ class ChildProfile < ApplicationRecord
 
   def top_goals(limit = 3)
     child_goals
-      .where(status: ['active', 'suggested'])
+      .where(status: [ "active", "suggested" ])
       .where(deleted_at: nil)
       .order(priority_rank: :asc, created_at: :asc)
       .limit(limit)
@@ -80,6 +80,6 @@ class ChildProfile < ApplicationRecord
   def birth_date_not_in_future
     return unless birth_date.present?
 
-    errors.add(:birth_date, 'cannot be in the future') if birth_date > Date.today
+    errors.add(:birth_date, "cannot be in the future") if birth_date > Date.today
   end
 end
