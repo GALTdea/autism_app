@@ -197,3 +197,4 @@ class ActivityRecommendationService
     (activity.contexts & contexts).any?
   end
 end
+
