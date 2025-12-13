@@ -35,7 +35,7 @@ class ActivityLog < ApplicationRecord
     logs.where(completed: true).count.to_f / logs.count
   end
 
-  def self.recent_logs_for_activity(child_profile, activity_template, limit = 3)
+  def self.recent_logs_for_activity(child_profile, activity_template, limit: 3)
     where(child_profile: child_profile, activity_template: activity_template)
       .recent
       .limit(limit)

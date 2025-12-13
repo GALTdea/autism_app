@@ -69,10 +69,39 @@ class ActivityTemplate < ApplicationRecord
 
   def matches_target_tags?(goal_tags)
     return false if target_tags.blank? || goal_tags.blank?
-    (target_tags & goal_tags).any?
+    tags = ensure_array(target_tags)
+    goal_tags_array = ensure_array(goal_tags)
+    (tags & goal_tags_array).any?
+  end
+
+  def secondary_target_ids_array
+    ensure_array(secondary_target_ids)
+  end
+
+  def age_bands_array
+    ensure_array(age_bands)
+  end
+
+  def contexts_array
+    ensure_array(contexts)
+  end
+
+  def sensory_profile_tags_array
+    ensure_array(sensory_profile_tags)
   end
 
   private
+
+  def ensure_array(value)
+    return [] if value.blank?
+    return value if value.is_a?(Array)
+    # Handle JSON string from SQLite
+    return JSON.parse(value) if value.is_a?(String)
+    # Fallback: try to convert to array
+    Array(value)
+  rescue JSON::ParserError
+    []
+  end
 
   def age_bands_is_array
     errors.add(:age_bands, "must be an array") unless age_bands.is_a?(Array)
@@ -86,4 +115,3 @@ class ActivityTemplate < ApplicationRecord
     errors.add(:contexts, "must be an array") unless contexts.is_a?(Array)
   end
 end
-

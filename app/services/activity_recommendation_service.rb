@@ -58,19 +58,20 @@ class ActivityRecommendationService
     if age_band = @child_profile.age_band
       # SQLite JSON querying is limited, so we'll filter in Ruby for now
       activities = activities.select do |activity|
-        activity.age_bands.include?(age_band)
+        activity.age_bands_array.include?(age_band)
       end
     end
 
     # Contexts
-    if contexts = @child_profile.preferred_contexts.presence
+    preferred_contexts = ensure_array(@child_profile.preferred_contexts)
+    if preferred_contexts.any?
       activities = activities.select do |activity|
-        (activity.contexts & contexts).any?
+        (activity.contexts_array & preferred_contexts).any?
       end
     else
       # Default to home if no preferences set
       activities = activities.select do |activity|
-        activity.contexts.include?("home")
+        activity.contexts_array.include?("home")
       end
     end
 
@@ -82,7 +83,7 @@ class ActivityRecommendationService
       # Exclude activities that conflict with sensory avoidances
       if sensitivity_tags.include?("avoids_loud_noise")
         activities = activities.reject do |activity|
-          activity.sensory_profile_tags&.include?("loud_noise")
+          activity.sensory_profile_tags_array.include?("loud_noise")
         end
       end
     end
@@ -101,7 +102,7 @@ class ActivityRecommendationService
   def score_activities(candidates)
     top_goals = @child_profile.top_goals(2)
     goal_domains = top_goals.map(&:profile_domain_id)
-    goal_tags = top_goals.flat_map { |g| g.target_tags || [] }.uniq
+    goal_tags = top_goals.flat_map { |g| ensure_array(g.target_tags) }.uniq
     language_profile = @child_profile.language_profile
 
     candidates.map do |activity|
@@ -116,7 +117,8 @@ class ActivityRecommendationService
         end
       end
 
-      if (activity.secondary_target_ids & goal_domains).any?
+      secondary_ids = activity.secondary_target_ids_array
+      if (secondary_ids & goal_domains).any?
         score += 1
       end
 
@@ -131,10 +133,10 @@ class ActivityRecommendationService
       end
 
       # Recent enjoyment (Phase 2c)
-      recent_logs = ActivityLog.recent_logs_for_activity(@child_profile, activity, limit: 3)
-      if recent_logs.count >= 3 && recent_logs.all? { |log| log.enjoyment == "thumbs_down" }
+      recent_logs = ActivityLog.recent_logs_for_activity(@child_profile, activity, limit: 3).to_a
+      if recent_logs.size >= 3 && recent_logs.all? { |log| log.thumbs_down? }
         score -= 2
-      elsif recent_logs.last&.enjoyment == "thumbs_up"
+      elsif recent_logs.last&.thumbs_up?
         score += 1
       end
 
@@ -193,8 +195,19 @@ class ActivityRecommendationService
   end
 
   def context_priority_match?(activity)
-    contexts = @child_profile.preferred_contexts.presence || [ "home" ]
-    (activity.contexts & contexts).any?
+    preferred_contexts = ensure_array(@child_profile.preferred_contexts)
+    contexts = preferred_contexts.any? ? preferred_contexts : [ "home" ]
+    (activity.contexts_array & contexts).any?
+  end
+
+  def ensure_array(value)
+    return [] if value.blank?
+    return value if value.is_a?(Array)
+    # Handle JSON string from SQLite
+    return JSON.parse(value) if value.is_a?(String)
+    # Fallback: try to convert to array
+    Array(value)
+  rescue JSON::ParserError
+    []
   end
 end
-
