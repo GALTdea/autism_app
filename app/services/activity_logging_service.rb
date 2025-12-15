@@ -22,3 +22,4 @@ class ActivityLoggingService
     )
   end
 end
+

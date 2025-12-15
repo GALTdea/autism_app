@@ -325,3 +325,4 @@ Once Phase 2a is verified:
 - ✅ Activities are ready to be used in recommendations
 - ✅ Profile data is ready to inform recommendation algorithm
 
+
