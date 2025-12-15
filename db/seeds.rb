@@ -678,8 +678,50 @@ position = 1
   end
 end
 
+puts "\nSeeding Assessments..."
+
+# Full Assessment - includes all domains
+full_assessment = Assessment.find_or_initialize_by(name: "Full Assessment", version: "1.0")
+full_assessment.assign_attributes(
+  description: "Complete assessment with all profile domains",
+  active: true,
+  is_default: true
+)
+full_assessment.save!
+
+# Deactivate other assessments if this is being set as default
+Assessment.where.not(id: full_assessment.id).update_all(is_default: false)
+
+# Add all domains to Full Assessment in order (idempotent - won't duplicate)
+ProfileDomain.ordered.each_with_index do |domain, index|
+  full_assessment.add_domain(domain, position: index)
+end
+
+puts "  ✓ Full Assessment v1.0 (#{full_assessment.domain_count} domains)"
+
+# Quick Assessment - example with only 2 domains for testing
+quick_assessment = Assessment.find_or_initialize_by(name: "Quick Assessment", version: "1.0")
+quick_assessment.assign_attributes(
+  description: "Fast assessment focusing on communication and sensory domains",
+  active: true,
+  is_default: false
+)
+quick_assessment.save!
+
+# Clear existing domains and add only communication and sensory
+quick_assessment.assessment_domains.destroy_all
+comm_domain = profile_domains['communication']
+sensory_domain = profile_domains['sensory']
+
+if comm_domain && sensory_domain
+  quick_assessment.add_domain(comm_domain, position: 0)
+  quick_assessment.add_domain(sensory_domain, position: 1)
+  puts "  ✓ Quick Assessment v1.0 (#{quick_assessment.domain_count} domains)"
+end
+
 puts "\n✓ Seed data complete!"
 puts "  - #{ProfileDomain.count} profile domains"
 puts "  - #{Question.count} questions"
 puts "  - #{QuestionOption.count} question options"
 puts "  - #{ActivityTemplate.count} activity templates"
+puts "  - #{Assessment.count} assessments"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_12_190852) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_202219) do
   create_table "activity_logs", force: :cascade do |t|
     t.integer "child_profile_id", null: false
     t.integer "activity_template_id", null: false
@@ -103,6 +103,31 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_190852) do
     t.index ["question_option_id"], name: "index_answers_on_question_option_id"
   end
 
+  create_table "assessment_domains", force: :cascade do |t|
+    t.integer "assessment_id", null: false
+    t.integer "profile_domain_id", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_id", "position"], name: "index_assessment_domains_on_assessment_id_and_position"
+    t.index ["assessment_id", "profile_domain_id"], name: "index_assessment_domains_on_assessment_and_profile_domain", unique: true
+    t.index ["assessment_id"], name: "index_assessment_domains_on_assessment_id"
+    t.index ["profile_domain_id"], name: "index_assessment_domains_on_profile_domain_id"
+  end
+
+  create_table "assessments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "version", null: false
+    t.text "description"
+    t.boolean "active", default: true, null: false
+    t.boolean "is_default", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_assessments_on_active"
+    t.index ["is_default"], name: "index_assessments_on_is_default"
+    t.index ["name", "version"], name: "index_assessments_on_name_and_version", unique: true
+  end
+
   create_table "child_domain_profiles", force: :cascade do |t|
     t.integer "child_profile_id", null: false
     t.integer "profile_domain_id", null: false
@@ -192,6 +217,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_190852) do
     t.string "status", default: "in_progress", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "assessment_id"
+    t.index ["assessment_id"], name: "index_onboarding_sessions_on_assessment_id"
     t.index ["child_profile_id", "status"], name: "index_onboarding_sessions_on_child_profile_id_and_status"
     t.index ["child_profile_id"], name: "index_onboarding_sessions_on_child_profile_id"
     t.index ["status"], name: "index_onboarding_sessions_on_status"
@@ -255,6 +282,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_190852) do
   add_foreign_key "answers", "onboarding_sessions"
   add_foreign_key "answers", "question_options"
   add_foreign_key "answers", "questions"
+  add_foreign_key "assessment_domains", "assessments", on_delete: :cascade
+  add_foreign_key "assessment_domains", "profile_domains"
   add_foreign_key "child_domain_profiles", "child_profiles"
   add_foreign_key "child_domain_profiles", "profile_domains"
   add_foreign_key "child_goals", "child_profiles"
@@ -263,6 +292,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_12_190852) do
   add_foreign_key "child_memberships", "users"
   add_foreign_key "child_profiles", "users", column: "primary_caregiver_id"
   add_foreign_key "daily_recommendations", "child_profiles"
+  add_foreign_key "onboarding_sessions", "assessments"
   add_foreign_key "onboarding_sessions", "child_profiles"
   add_foreign_key "onboarding_sessions", "users"
   add_foreign_key "question_options", "questions"
