@@ -34,10 +34,14 @@ class OnboardingService
 
     return existing_session if existing_session.present?
 
+    # Get default or active assessment
+    assessment = Assessment.default.first || Assessment.active.first
+
     OnboardingSession.create!(
       child_profile: @child_profile,
       user: @user,
-      status: "in_progress"
+      status: "in_progress",
+      assessment: assessment
     )
   end
 

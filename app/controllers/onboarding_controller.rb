@@ -14,8 +14,9 @@ class OnboardingController < ApplicationController
   def show
     authorize @onboarding_session
 
-    # Get questions organized by domain
-    @domains = ProfileDomain.ordered.includes(:questions)
+    # Get domains from the assessment, or fall back to all domains
+    assessment = @onboarding_session.assessment || Assessment.default.first || Assessment.active.first
+    @domains = assessment ? assessment.ordered_domains.includes(:questions) : ProfileDomain.ordered.includes(:questions)
     @current_step = params[:step]&.to_i || 1
     @total_steps = calculate_total_steps
 
@@ -103,6 +104,8 @@ class OnboardingController < ApplicationController
   end
 
   def calculate_total_steps
-    ProfileDomain.count
+    # Use assessment domains if available, otherwise count all domains
+    assessment = @onboarding_session&.assessment || Assessment.default.first || Assessment.active.first
+    assessment ? assessment.domain_count : ProfileDomain.count
   end
 end

@@ -2,6 +2,7 @@ class OnboardingSession < ApplicationRecord
   # Associations
   belongs_to :child_profile
   belongs_to :user
+  belongs_to :assessment, optional: true
   has_many :answers, dependent: :destroy
   has_many :questions, through: :answers
   has_many :ai_documents, dependent: :destroy
@@ -30,12 +31,15 @@ class OnboardingSession < ApplicationRecord
   end
 
   def progress_percentage
-    return 0 if child_profile.profile_domains.empty?
+    # Use assessment domains if assessment is present, otherwise fall back to all domains
+    domains_to_check = assessment&.profile_domains || child_profile.profile_domains
+    return 0 if domains_to_check.empty?
 
     answered_domains = answers.joins(question: :profile_domain)
+                             .where(profile_domains: { id: domains_to_check.pluck(:id) })
                              .select('DISTINCT profile_domains.id')
                              .count
-    total_domains = child_profile.profile_domains.count
+    total_domains = domains_to_check.count
 
     return 0 if total_domains.zero?
 

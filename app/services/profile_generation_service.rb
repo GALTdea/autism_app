@@ -36,7 +36,11 @@ class ProfileGenerationService
   def calculate_domain_scores
     scores = {}
 
-    ProfileDomain.all.each do |domain|
+    # Get domains from the assessment, or fall back to all domains for backward compatibility
+    assessment = @onboarding_session.assessment
+    domains_to_process = assessment ? assessment.ordered_domains : ProfileDomain.all
+
+    domains_to_process.each do |domain|
       domain_answers = @onboarding_session.answers
                                           .joins(question: :profile_domain)
                                           .where(profile_domains: { id: domain.id })

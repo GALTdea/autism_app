@@ -4,6 +4,8 @@ class ProfileDomain < ApplicationRecord
   has_many :child_domain_profiles, dependent: :destroy
   has_many :child_profiles, through: :child_domain_profiles
   has_many :child_goals, dependent: :destroy
+  has_many :assessment_domains, dependent: :destroy
+  has_many :assessments, through: :assessment_domains
 
   # Validations
   validates :key, presence: true, uniqueness: true
