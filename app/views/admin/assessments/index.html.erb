@@ -1,0 +1,143 @@
+<% content_for :title, "Assessments" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold">Assessments</h1>
+    <%= link_to "New Assessment", new_admin_assessment_path, class: "btn btn-primary" %>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total</div>
+      <div class="stat-value text-primary"><%= number_with_delimiter(@assessments.count) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Active</div>
+      <div class="stat-value text-success"><%= number_with_delimiter(@assessments.select(&:active?).count) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Default</div>
+      <div class="stat-value text-info"><%= number_with_delimiter(@assessments.select(&:is_default?).count) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">With Sessions</div>
+      <div class="stat-value text-warning"><%= number_with_delimiter(@assessments.select { |a| a.onboarding_sessions.any? }.count) %></div>
+    </div>
+  </div>
+
+  <!-- Assessments Table -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Version</th>
+              <th>Status</th>
+              <th>Domains</th>
+              <th>Questions</th>
+              <th>Sessions</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @assessments.any? %>
+              <% @assessments.each do |assessment| %>
+                <tr>
+                  <td>
+                    <div class="font-semibold">
+                      <%= link_to assessment.name, admin_assessment_path(assessment), class: "link link-primary" %>
+                    </div>
+                    <% if assessment.description.present? %>
+                      <div class="text-sm text-base-content/60 mt-1">
+                        <%= truncate(assessment.description, length: 60) %>
+                      </div>
+                    <% end %>
+                  </td>
+                  <td>
+                    <span class="badge badge-outline"><%= assessment.version %></span>
+                  </td>
+                  <td>
+                    <% if assessment.is_default? %>
+                      <span class="badge badge-info">Default</span>
+                    <% elsif assessment.active? %>
+                      <span class="badge badge-success">Active</span>
+                    <% else %>
+                      <span class="badge badge-ghost">Inactive</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <span class="badge badge-primary badge-lg">
+                      <%= assessment.domain_count %>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="text-base-content/80">
+                      <%= assessment.total_questions_count %>
+                    </span>
+                  </td>
+                  <td>
+                    <% session_count = assessment.onboarding_sessions.count %>
+                    <% if session_count > 0 %>
+                      <div class="flex flex-col gap-1">
+                        <span class="text-sm"><%= session_count %> total</span>
+                        <span class="text-xs text-base-content/60">
+                          <%= assessment.onboarding_sessions.in_progress.count %> active
+                        </span>
+                      </div>
+                    <% else %>
+                      <span class="text-base-content/60">0</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <div class="text-sm">
+                      <%= assessment.created_at.strftime("%b %d, %Y") %>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex gap-2">
+                      <%= link_to "View", admin_assessment_path(assessment), class: "btn btn-sm btn-ghost" %>
+                      <%= link_to "Edit", edit_admin_assessment_path(assessment), class: "btn btn-sm btn-ghost" %>
+                      <% if current_user.super_admin? && assessment.can_be_deleted? %>
+                        <%= link_to "Delete", admin_assessment_path(assessment), 
+                            method: :delete,
+                            data: { 
+                              turbo_method: :delete,
+                              turbo_confirm: "Are you sure you want to delete this assessment? This action cannot be undone."
+                            },
+                            class: "btn btn-sm btn-error btn-ghost" %>
+                      <% end %>
+                      <%= link_to "Clone", clone_admin_assessment_path(assessment),
+                          method: :post,
+                          data: { turbo_method: :post },
+                          class: "btn btn-sm btn-info btn-ghost" %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="8" class="text-center text-base-content/60 py-8">
+                  <div class="flex flex-col items-center gap-4">
+                    <p class="text-lg">No assessments found</p>
+                    <%= link_to "Create Your First Assessment", new_admin_assessment_path, class: "btn btn-primary" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="flex justify-end gap-2">
+    <%= link_to "Back to Dashboard", admin_root_path, class: "btn btn-ghost" %>
+    <%= link_to "View in Madmin", madmin_assessments_path, class: "btn btn-ghost" %>
+  </div>
+</div>
+
