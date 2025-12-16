@@ -1,6 +1,30 @@
 Rails.application.routes.draw do
+  draw :madmin
+
   root "pages#home"
   devise_for :users
+
+  # Admin routes (custom admin dashboard and features)
+  namespace :admin do
+    root to: "dashboard#index"
+
+    # Custom admin resources
+    resources :child_profiles, only: [:index, :show] do
+      member do
+        get :onboarding_sessions
+        get :activity_logs
+      end
+    end
+
+    resources :onboarding_sessions, only: [:index, :show] do
+      member do
+        post :regenerate_profile
+      end
+    end
+
+    resources :activity_logs, only: [:index]
+    resources :analytics, only: [:index]
+  end
 
   # Child Profiles
   resources :child_profiles, only: [ :index, :new, :create, :show ] do
