@@ -46,35 +46,104 @@ class Assessment < ApplicationRecord
                    .distinct
   end
 
+  # Validation helpers
+  def has_domains?
+    profile_domains.any?
+  end
+
+  def can_be_deleted?
+    onboarding_sessions.empty?
+  end
+
+  def has_active_sessions?
+    onboarding_sessions.in_progress.any?
+  end
+
+  def has_completed_sessions?
+    onboarding_sessions.completed.any?
+  end
+
+  def is_usable?
+    active? && has_domains?
+  end
+
+  def domain_included?(profile_domain)
+    profile_domains.include?(profile_domain)
+  end
+
+  # Query methods for questions
+  def questions_for_domain(profile_domain)
+    return Question.none unless domain_included?(profile_domain)
+    profile_domain.questions.ordered
+  end
+
+  def questions_for_domain_by_key(domain_key)
+    domain = profile_domains.find_by(key: domain_key)
+    return Question.none unless domain
+    questions_for_domain(domain)
+  end
+
+  def total_questions_count
+    profile_domains.joins(:questions).count("questions.id")
+  end
+
+  def questions_count_for_domain(profile_domain)
+    return 0 unless domain_included?(profile_domain)
+    profile_domain.questions.count
+  end
+
+  def questions_in_order
+    # Returns all questions from all domains, ordered by domain position, then question position
+    Question.joins(profile_domain: :assessment_domains)
+            .where(assessment_domains: { assessment_id: id })
+            .merge(AssessmentDomain.ordered)
+            .order("assessment_domains.position ASC, questions.position ASC")
+  end
+
+  def domains_with_question_counts
+    ordered_domains.map do |domain|
+      {
+        domain: domain,
+        question_count: questions_count_for_domain(domain),
+        position: assessment_domains.find_by(profile_domain: domain)&.position
+      }
+    end
+  end
+
+  # Clone helper method (delegates to service)
+  def clone(new_name: nil, new_version: nil)
+    AssessmentCloningService.clone(self, new_name: new_name, new_version: new_version)
+  end
+
   # Scoring configuration methods
   def scoring_config
     super || {}
   end
 
   def scoring_method
-    scoring_config['scoring_method'] || 'average'
+    scoring_config["scoring_method"] || "average"
   end
 
   def level_thresholds
-    scoring_config['level_thresholds'] || default_level_thresholds
+    scoring_config["level_thresholds"] || default_level_thresholds
   end
 
   def domain_overrides
-    scoring_config['domain_overrides'] || {}
+    scoring_config["domain_overrides"] || {}
   end
 
   def extraction_rules
-    scoring_config['extraction_rules'] || {}
+    scoring_config["extraction_rules"] || {}
   end
 
   # Helper to get scoring method for a specific domain
   def scoring_method_for_domain(domain_key)
-    domain_overrides.dig(domain_key.to_s, 'scoring_method') || scoring_method
+    domain_overrides.dig(domain_key.to_s, "scoring_method") || scoring_method
   end
 
   # Helper to get question weights for a domain
   def question_weights_for_domain(domain_key)
-    domain_overrides.dig(domain_key.to_s, 'question_weights') || {}
+    domain_overrides.dig(domain_key.to_s, "question_weights") || {}
   end
 
   # Helper to get extraction rules for a domain
@@ -91,11 +160,11 @@ class Assessment < ApplicationRecord
 
   def default_level_thresholds
     {
-      '0' => { 'min' => 0.0, 'max' => 1.0 },
-      '1' => { 'min' => 1.0, 'max' => 2.0 },
-      '2' => { 'min' => 2.0, 'max' => 3.0 },
-      '3' => { 'min' => 3.0, 'max' => 4.0 },
-      '4' => { 'min' => 4.0, 'max' => 5.0 }
+      "0" => { "min" => 0.0, "max" => 1.0 },
+      "1" => { "min" => 1.0, "max" => 2.0 },
+      "2" => { "min" => 2.0, "max" => 3.0 },
+      "3" => { "min" => 3.0, "max" => 4.0 },
+      "4" => { "min" => 4.0, "max" => 5.0 }
     }
   end
 end
