@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
     resources :activity_logs, only: [:index]
     resources :analytics, only: [:index]
+    resources :assessments
   end
 
   # Child Profiles

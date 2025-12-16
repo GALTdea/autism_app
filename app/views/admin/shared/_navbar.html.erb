@@ -14,6 +14,7 @@
         <li><%= link_to "Question Options", madmin_question_options_path %></li>
         <li><%= link_to "Activity Templates", madmin_activity_templates_path %></li>
         <li class="menu-title">Custom Admin</li>
+        <li><%= link_to "Assessments", admin_assessments_path %></li>
         <li><%= link_to "Child Profiles", admin_child_profiles_path %></li>
         <li><%= link_to "Onboarding Sessions", admin_onboarding_sessions_path %></li>
         <li><%= link_to "Activity Logs", admin_activity_logs_path %></li>
@@ -40,6 +41,7 @@
       <li class="dropdown">
         <div tabindex="0" role="button" class="btn btn-ghost">Custom Admin</div>
         <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[100] mt-1">
+          <li><%= link_to "Assessments", admin_assessments_path %></li>
           <li><%= link_to "Child Profiles", admin_child_profiles_path %></li>
           <li><%= link_to "Onboarding Sessions", admin_onboarding_sessions_path %></li>
           <li><%= link_to "Activity Logs", admin_activity_logs_path %></li>
