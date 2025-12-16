@@ -1,0 +1,84 @@
+<%= form_with model: [:admin, @assessment], local: true, class: "space-y-6" do |form| %>
+  <% if @assessment.errors.any? %>
+    <div class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">Please fix the following errors:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% @assessment.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-control w-full">
+    <%= form.label :name, class: "label" do %>
+      <span class="label-text">Assessment Name</span>
+    <% end %>
+    <%= form.text_field :name, 
+        class: "input input-bordered w-full", 
+        placeholder: "e.g., Full Assessment, Quick Assessment",
+        required: true %>
+    <label class="label">
+      <span class="label-text-alt">A descriptive name for this assessment</span>
+    </label>
+  </div>
+
+  <div class="form-control w-full">
+    <%= form.label :version, class: "label" do %>
+      <span class="label-text">Version</span>
+    <% end %>
+    <%= form.text_field :version, 
+        class: "input input-bordered w-full", 
+        placeholder: "e.g., 1.0, 2.1, beta",
+        required: true %>
+    <label class="label">
+      <span class="label-text-alt">Version identifier (must be unique for the same name)</span>
+    </label>
+  </div>
+
+  <div class="form-control w-full">
+    <%= form.label :description, class: "label" do %>
+      <span class="label-text">Description</span>
+    <% end %>
+    <%= form.text_area :description, 
+        rows: 4,
+        class: "textarea textarea-bordered w-full", 
+        placeholder: "Describe the purpose and scope of this assessment..." %>
+    <label class="label">
+      <span class="label-text-alt">Optional description of the assessment</span>
+    </label>
+  </div>
+
+  <div class="flex gap-6">
+    <div class="form-control">
+      <label class="label cursor-pointer justify-start gap-3">
+        <%= form.check_box :active, class: "checkbox checkbox-primary" %>
+        <div>
+          <span class="label-text font-semibold">Active</span>
+          <p class="text-xs text-base-content/60 mt-1">Assessment is available for use</p>
+        </div>
+      </label>
+    </div>
+
+    <div class="form-control">
+      <label class="label cursor-pointer justify-start gap-3">
+        <%= form.check_box :is_default, class: "checkbox checkbox-info" %>
+        <div>
+          <span class="label-text font-semibold">Default</span>
+          <p class="text-xs text-base-content/60 mt-1">Set as the default assessment (only one can be default)</p>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-4 border-t">
+    <%= link_to "Cancel", admin_assessments_path, class: "btn btn-ghost" %>
+    <%= form.submit @assessment.persisted? ? "Update Assessment" : "Create Assessment", class: "btn btn-primary" %>
+  </div>
+<% end %>
+

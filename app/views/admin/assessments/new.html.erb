@@ -1,0 +1,53 @@
+<% content_for :title, "New Assessment" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Create New Assessment</h1>
+      <p class="text-base-content/70 mt-2">
+        Start by providing basic information about your assessment. You'll configure domains next.
+      </p>
+    </div>
+    <%= link_to "← Back to Assessments", admin_assessments_path, class: "btn btn-ghost" %>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <%= render "form" %>
+    </div>
+  </div>
+
+  <!-- Help Section -->
+  <div class="card bg-base-200 shadow">
+    <div class="card-body">
+      <h2 class="card-title text-lg">Assessment Builder Steps</h2>
+      <div class="steps steps-vertical lg:steps-horizontal">
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 1: Basic Info</div>
+            <div class="text-sm text-base-content/60">Name, version, description</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 2: Select Domains</div>
+            <div class="text-sm text-base-content/60">Choose profile domains</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 3: Order Domains</div>
+            <div class="text-sm text-base-content/60">Arrange display order</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 4: Configure Scoring</div>
+            <div class="text-sm text-base-content/60">Set scoring criteria</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

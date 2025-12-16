@@ -1,0 +1,53 @@
+<% content_for :title, "Edit Assessment: #{@assessment.name}" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Edit Assessment</h1>
+      <p class="text-base-content/70 mt-2">
+        Update the basic information for this assessment.
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "← Back", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+      <%= link_to "View All", admin_assessments_path, class: "btn btn-ghost" %>
+    </div>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <%= render "form" %>
+    </div>
+  </div>
+
+  <!-- Assessment Info -->
+  <div class="card bg-base-200 shadow">
+    <div class="card-body">
+      <h2 class="card-title">Assessment Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <div class="text-sm text-base-content/60">Domains</div>
+          <div class="font-semibold text-lg">
+            <%= @assessment.domain_count %>
+            <% if @assessment.domain_count > 0 %>
+              <%= link_to "Manage", select_domains_admin_assessment_path(@assessment), class: "btn btn-xs btn-ghost ml-2" %>
+            <% end %>
+          </div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60">Total Questions</div>
+          <div class="font-semibold text-lg"><%= @assessment.total_questions_count %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60">Created</div>
+          <div class="font-semibold text-lg"><%= @assessment.created_at.strftime("%B %d, %Y") %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60">Last Updated</div>
+          <div class="font-semibold text-lg"><%= @assessment.updated_at.strftime("%B %d, %Y") %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
