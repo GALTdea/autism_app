@@ -25,7 +25,17 @@ Rails.application.routes.draw do
 
     resources :activity_logs, only: [:index]
     resources :analytics, only: [:index]
-    resources :assessments
+    resources :assessments do
+      # Assessment Builder wizard routes
+      member do
+        get :select_domains
+        patch :update_domains
+        get :order_domains
+        patch :reorder_domains
+        get :preview
+        post :clone
+      end
+    end
   end
 
   # Child Profiles

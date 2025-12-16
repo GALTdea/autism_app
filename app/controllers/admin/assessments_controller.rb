@@ -1,6 +1,9 @@
 module Admin
   class AssessmentsController < Admin::ApplicationController
-    before_action :set_assessment, only: [:show, :edit, :update, :destroy]
+    before_action :set_assessment, only: [:show, :edit, :update, :destroy,
+                                          :select_domains, :update_domains,
+                                          :order_domains, :reorder_domains,
+                                          :preview, :clone]
     after_action :verify_authorized
 
     def index
@@ -30,8 +33,8 @@ module Admin
       authorize [:admin, @assessment]
 
       if @assessment.save
-        redirect_to admin_assessment_path(@assessment),
-                    notice: "Assessment created successfully."
+        redirect_to select_domains_admin_assessment_path(@assessment),
+                    notice: "Assessment created. Now select domains."
       else
         render :new, status: :unprocessable_entity
       end
@@ -62,6 +65,54 @@ module Admin
       else
         redirect_to admin_assessments_path,
                     alert: "Cannot delete assessment with existing onboarding sessions."
+      end
+    end
+
+    # Assessment Builder Wizard Actions
+
+    def select_domains
+      authorize [:admin, @assessment]
+      @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
+      @available_domains = ProfileDomain.ordered - @assessment.profile_domains
+    end
+
+    def update_domains
+      authorize [:admin, @assessment]
+      # TODO: Implement in next step with AssessmentDomainService
+      redirect_to order_domains_admin_assessment_path(@assessment),
+                  notice: "Domains updated successfully."
+    end
+
+    def order_domains
+      authorize [:admin, @assessment]
+      @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
+      redirect_to select_domains_admin_assessment_path(@assessment),
+                  alert: "Please select at least one domain first." if @assessment_domains.empty?
+    end
+
+    def reorder_domains
+      authorize [:admin, @assessment]
+      # TODO: Implement in next step with drag-and-drop support
+      redirect_to order_domains_admin_assessment_path(@assessment),
+                  notice: "Domain order updated successfully."
+    end
+
+    def preview
+      authorize [:admin, @assessment]
+      @domains = @assessment.ordered_domains.includes(:questions)
+      redirect_to select_domains_admin_assessment_path(@assessment),
+                  alert: "Please select at least one domain first." if @domains.empty?
+    end
+
+    def clone
+      authorize [:admin, @assessment]
+      begin
+        cloned_assessment = @assessment.clone
+        redirect_to edit_admin_assessment_path(cloned_assessment),
+                    notice: "Assessment cloned successfully. Update version and details."
+      rescue AssessmentCloningService::Error => e
+        redirect_to admin_assessments_path,
+                    alert: "Failed to clone assessment: #{e.message}"
       end
     end
 
