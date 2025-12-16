@@ -1,4 +1,7 @@
 module Madmin
+  # Load the concern explicitly since it's in a subdirectory
+  require_relative "concerns/resource_authorization"
+
   class ApplicationController < Madmin::BaseController
     include Pundit::Authorization
     include ResourceAuthorization

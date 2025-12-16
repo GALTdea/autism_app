@@ -13,12 +13,31 @@ module Madmin
       # Get the resource from instance variable (set by Madmin's ResourceController)
       # or find it using the model class and params[:id]
       resource = instance_variable_get(:@resource) || find_resource_by_id
-      authorize [:madmin, resource] if resource
+      return unless resource
+
+      # Try to authorize with specific policy, fallback to ApplicationPolicy
+      begin
+        authorize [:madmin, resource]
+      rescue Pundit::NotDefinedError
+        # No specific policy found, use ApplicationPolicy
+        policy = Madmin::ApplicationPolicy.new(pundit_user, resource)
+        action_method = "#{params[:action]}?"
+        raise Pundit::NotAuthorizedError unless policy.public_send(action_method)
+      end
     end
 
     def authorize_index_action
       model_class = resource_model_class
-      authorize [:madmin, model_class] if model_class
+      return unless model_class
+
+      # Try to authorize with specific policy, fallback to ApplicationPolicy
+      begin
+        authorize [:madmin, model_class]
+      rescue Pundit::NotDefinedError
+        # No specific policy found, use ApplicationPolicy
+        policy = Madmin::ApplicationPolicy.new(pundit_user, model_class)
+        raise Pundit::NotAuthorizedError unless policy.index?
+      end
     end
 
     def find_resource_by_id
