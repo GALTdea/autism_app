@@ -3,6 +3,8 @@ module Madmin
     include Pundit::Authorization
     include ResourceAuthorization
 
+    layout "admin"
+
     before_action :authenticate_user!
     before_action :ensure_admin
 
