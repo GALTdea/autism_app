@@ -45,4 +45,57 @@ class Assessment < ApplicationRecord
                    .merge(AssessmentDomain.ordered)
                    .distinct
   end
+
+  # Scoring configuration methods
+  def scoring_config
+    super || {}
+  end
+
+  def scoring_method
+    scoring_config['scoring_method'] || 'average'
+  end
+
+  def level_thresholds
+    scoring_config['level_thresholds'] || default_level_thresholds
+  end
+
+  def domain_overrides
+    scoring_config['domain_overrides'] || {}
+  end
+
+  def extraction_rules
+    scoring_config['extraction_rules'] || {}
+  end
+
+  # Helper to get scoring method for a specific domain
+  def scoring_method_for_domain(domain_key)
+    domain_overrides.dig(domain_key.to_s, 'scoring_method') || scoring_method
+  end
+
+  # Helper to get question weights for a domain
+  def question_weights_for_domain(domain_key)
+    domain_overrides.dig(domain_key.to_s, 'question_weights') || {}
+  end
+
+  # Helper to get extraction rules for a domain
+  def extraction_rules_for_domain(domain_key)
+    extraction_rules[domain_key.to_s] || {}
+  end
+
+  # Update scoring config by deep merging
+  def update_scoring_config(config_hash)
+    update(scoring_config: scoring_config.deep_merge(config_hash))
+  end
+
+  private
+
+  def default_level_thresholds
+    {
+      '0' => { 'min' => 0.0, 'max' => 1.0 },
+      '1' => { 'min' => 1.0, 'max' => 2.0 },
+      '2' => { 'min' => 2.0, 'max' => 3.0 },
+      '3' => { 'min' => 3.0, 'max' => 4.0 },
+      '4' => { 'min' => 4.0, 'max' => 5.0 }
+    }
+  end
 end
