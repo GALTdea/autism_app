@@ -32,8 +32,7 @@ class ActivityTemplateResource < Madmin::Resource
   attribute :primary_target
   attribute :activity_logs
 
-  # Add scopes to easily filter records
-  # scope :published
+  # Note: Use model scope (ActivityTemplate.active) in controllers
 
   # Add actions to the resource's show page
   # member_action do |record|
@@ -41,10 +40,16 @@ class ActivityTemplateResource < Madmin::Resource
   # end
 
   # Customize the display name of records in the admin area.
-  # def self.display_name(record) = record.name
+  def self.display_name(record)
+    record.title
+  end
 
   # Customize the default sort column and direction.
-  # def self.default_sort_column = "created_at"
-  #
-  # def self.default_sort_direction = "desc"
+  def self.default_sort_column
+    "title"
+  end
+
+  def self.default_sort_direction
+    "asc"
+  end
 end

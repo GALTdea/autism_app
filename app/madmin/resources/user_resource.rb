@@ -2,34 +2,32 @@ class UserResource < Madmin::Resource
   # Attributes
   attribute :id, form: false
   attribute :email
-  attribute :encrypted_password
-  attribute :reset_password_token
-  attribute :reset_password_sent_at
-  attribute :remember_created_at
+  attribute :password, form: true, type: :password
+  attribute :password_confirmation, form: true, type: :password
+  attribute :role
   attribute :created_at, form: false
   attribute :updated_at, form: false
-  attribute :role
 
   # Associations
-  attribute :child_memberships
-  attribute :child_profiles
-  attribute :primary_child_profiles
-  attribute :onboarding_sessions
-  attribute :ai_documents
+  attribute :child_memberships, form: false
+  attribute :child_profiles, form: false
+  attribute :primary_child_profiles, form: false
+  attribute :onboarding_sessions, form: false
+  attribute :ai_documents, form: false
 
-  # Add scopes to easily filter records
-  # scope :published
-
-  # Add actions to the resource's show page
-  # member_action do |record|
-  #   link_to "Do Something", some_path
-  # end
+  # Note: Scopes can be added in the controller or use model scopes
 
   # Customize the display name of records in the admin area.
-  # def self.display_name(record) = record.name
+  def self.display_name(record)
+    record.email
+  end
 
   # Customize the default sort column and direction.
-  # def self.default_sort_column = "created_at"
-  #
-  # def self.default_sort_direction = "desc"
+  def self.default_sort_column
+    "created_at"
+  end
+
+  def self.default_sort_direction
+    "desc"
+  end
 end

@@ -10,23 +10,23 @@ class AssessmentResource < Madmin::Resource
   attribute :updated_at, form: false
 
   # Associations
-  attribute :assessment_domains
-  attribute :profile_domains
-  attribute :onboarding_sessions
+  attribute :assessment_domains, form: false
+  attribute :profile_domains, form: false
+  attribute :onboarding_sessions, form: false
 
-  # Add scopes to easily filter records
-  # scope :published
-
-  # Add actions to the resource's show page
-  # member_action do |record|
-  #   link_to "Do Something", some_path
-  # end
+  # Note: Use model scopes (Assessment.active, Assessment.default) in controllers
 
   # Customize the display name of records in the admin area.
-  # def self.display_name(record) = record.name
+  def self.display_name(record)
+    "#{record.name} v#{record.version}"
+  end
 
   # Customize the default sort column and direction.
-  # def self.default_sort_column = "created_at"
-  #
-  # def self.default_sort_direction = "desc"
+  def self.default_sort_column
+    "name"
+  end
+
+  def self.default_sort_direction
+    "asc"
+  end
 end

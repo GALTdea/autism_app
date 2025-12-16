@@ -1,6 +1,7 @@
 class QuestionOptionResource < Madmin::Resource
   # Attributes
   attribute :id, form: false
+  attribute :question_id, form: true, type: :select, collection: -> { Question.includes(:profile_domain).ordered.map { |q| ["#{q.code}: #{q.text.truncate(30)}", q.id] } }
   attribute :label
   attribute :value
   attribute :position
@@ -8,22 +9,22 @@ class QuestionOptionResource < Madmin::Resource
   attribute :updated_at, form: false
 
   # Associations
-  attribute :question
-  attribute :answers
+  attribute :question, form: false
+  attribute :answers, form: false
 
-  # Add scopes to easily filter records
-  # scope :published
-
-  # Add actions to the resource's show page
-  # member_action do |record|
-  #   link_to "Do Something", some_path
-  # end
+  # Note: Options are ordered by position via association
 
   # Customize the display name of records in the admin area.
-  # def self.display_name(record) = record.name
+  def self.display_name(record)
+    record.label.presence || record.value
+  end
 
   # Customize the default sort column and direction.
-  # def self.default_sort_column = "created_at"
-  #
-  # def self.default_sort_direction = "desc"
+  def self.default_sort_column
+    "position"
+  end
+
+  def self.default_sort_direction
+    "asc"
+  end
 end

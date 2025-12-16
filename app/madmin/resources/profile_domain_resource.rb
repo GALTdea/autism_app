@@ -8,26 +8,24 @@ class ProfileDomainResource < Madmin::Resource
   attribute :updated_at, form: false
 
   # Associations
-  attribute :questions
-  attribute :child_domain_profiles
-  attribute :child_profiles
-  attribute :child_goals
-  attribute :assessment_domains
-  attribute :assessments
-
-  # Add scopes to easily filter records
-  # scope :published
-
-  # Add actions to the resource's show page
-  # member_action do |record|
-  #   link_to "Do Something", some_path
-  # end
+  attribute :questions, form: false
+  attribute :child_domain_profiles, form: false
+  attribute :child_profiles, form: false
+  attribute :child_goals, form: false
+  attribute :assessment_domains, form: false
+  attribute :assessments, form: false
 
   # Customize the display name of records in the admin area.
-  # def self.display_name(record) = record.name
+  def self.display_name(record)
+    record.label
+  end
 
   # Customize the default sort column and direction.
-  # def self.default_sort_column = "created_at"
-  #
-  # def self.default_sort_direction = "desc"
+  def self.default_sort_column
+    "label"
+  end
+
+  def self.default_sort_direction
+    "asc"
+  end
 end
