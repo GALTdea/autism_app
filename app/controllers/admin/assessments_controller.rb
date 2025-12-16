@@ -7,9 +7,9 @@ module Admin
     after_action :verify_authorized
 
     def index
-      @assessments = policy_scope(Assessment).includes(:profile_domains, :onboarding_sessions)
-                                             .order(name: :asc, version: :desc)
       authorize [:admin, Assessment]
+      @assessments = policy_scope([:admin, Assessment]).includes(:profile_domains, :onboarding_sessions)
+                                                        .order(name: :asc, version: :desc)
     end
 
     def show
