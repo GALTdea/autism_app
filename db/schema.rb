@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_15_202219) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_16_213200) do
   create_table "activity_logs", force: :cascade do |t|
     t.integer "child_profile_id", null: false
     t.integer "activity_template_id", null: false
@@ -123,9 +123,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_202219) do
     t.boolean "is_default", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.json "scoring_config", default: {}
     t.index ["active"], name: "index_assessments_on_active"
     t.index ["is_default"], name: "index_assessments_on_is_default"
     t.index ["name", "version"], name: "index_assessments_on_name_and_version", unique: true
+    t.index ["scoring_config"], name: "index_assessments_on_scoring_config"
   end
 
   create_table "child_domain_profiles", force: :cascade do |t|
