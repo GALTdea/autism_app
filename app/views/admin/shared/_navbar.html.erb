@@ -26,9 +26,9 @@
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1 gap-2">
       <li><%= link_to "Dashboard", admin_root_path, class: "btn btn-ghost" %></li>
-      <li class="dropdown dropdown-hover">
-        <label tabindex="0" class="btn btn-ghost">Madmin Resources</label>
-        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50">
+      <li class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost">Madmin Resources</div>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[100] mt-1">
           <li><%= link_to "Users", madmin_users_path %></li>
           <li><%= link_to "Assessments", madmin_assessments_path %></li>
           <li><%= link_to "Profile Domains", madmin_profile_domains_path %></li>
@@ -37,9 +37,9 @@
           <li><%= link_to "Activity Templates", madmin_activity_templates_path %></li>
         </ul>
       </li>
-      <li class="dropdown dropdown-hover">
-        <label tabindex="0" class="btn btn-ghost">Custom Admin</label>
-        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50">
+      <li class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost">Custom Admin</div>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-[100] mt-1">
           <li><%= link_to "Child Profiles", admin_child_profiles_path %></li>
           <li><%= link_to "Onboarding Sessions", admin_onboarding_sessions_path %></li>
           <li><%= link_to "Activity Logs", admin_activity_logs_path %></li>

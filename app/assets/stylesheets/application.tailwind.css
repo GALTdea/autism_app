@@ -4,42 +4,5 @@
 @plugin "@tailwindcss/typography";
 
 /* Custom styles for Madmin admin interface */
-@layer components {
-  /* Wrap Madmin content for better styling control */
-  .madmin-wrapper {
-    @apply bg-base-100 rounded-lg shadow-lg p-6;
-  }
-
-  /* Table styling */
-  .madmin-wrapper table,
-  table.madmin-table {
-    @apply table table-zebra w-full;
-  }
-
-  .madmin-wrapper table thead {
-    @apply bg-base-200;
-  }
-
-  /* Form inputs */
-  .madmin-wrapper input[type="text"],
-  .madmin-wrapper input[type="email"],
-  .madmin-wrapper input[type="password"],
-  .madmin-wrapper input[type="number"],
-  .madmin-wrapper textarea,
-  .madmin-wrapper select {
-    @apply input input-bordered;
-  }
-
-  .madmin-wrapper textarea {
-    @apply textarea textarea-bordered;
-  }
-
-  .madmin-wrapper select {
-    @apply select select-bordered;
-  }
-
-  /* Links */
-  .madmin-wrapper a:not(.btn):not(.badge) {
-    @apply link link-primary;
-  }
-}
+/* Note: Using standard Tailwind utilities since @apply with DaisyUI classes 
+   doesn't work well in Tailwind v4. The styles will be applied via classes in the HTML. */
