@@ -1,0 +1,95 @@
+<% content_for :title, "Admin Dashboard" %>
+
+<div class="space-y-6">
+  <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Users</div>
+      <div class="stat-value text-primary"><%= @stats[:total_users] %></div>
+      <div class="stat-desc"><%= @stats[:admin_users] %> admins</div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Child Profiles</div>
+      <div class="stat-value text-secondary"><%= @stats[:total_children] %></div>
+      <div class="stat-desc">Active profiles</div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Onboardings</div>
+      <div class="stat-value text-accent"><%= @stats[:completed_onboardings] %></div>
+      <div class="stat-desc"><%= @stats[:active_onboardings] %> in progress</div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Activity Logs</div>
+      <div class="stat-value text-info"><%= @stats[:total_activity_logs] %></div>
+      <div class="stat-desc"><%= @stats[:recent_logs] %> in last 7 days</div>
+    </div>
+  </div>
+
+  <!-- Recent Activity -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Recent Users -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Recent Users</h2>
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_users.each do |user| %>
+                <tr>
+                  <td><%= user.email %></td>
+                  <td>
+                    <span class="badge <%= user.super_admin? ? 'badge-error' : (user.admin? ? 'badge-warning' : 'badge-primary') %>">
+                      <%= user.role %>
+                    </span>
+                  </td>
+                  <td><%= user.created_at.strftime("%b %d") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <%= link_to "View All Users", madmin_users_path, class: "btn btn-sm btn-ghost mt-4" %>
+      </div>
+    </div>
+
+    <!-- Recent Completions -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Recent Onboarding Completions</h2>
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>Child</th>
+                <th>Parent</th>
+                <th>Completed</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @recent_completions.each do |session| %>
+                <tr>
+                  <td><%= session.child_profile.name %></td>
+                  <td><%= session.user.email %></td>
+                  <td><%= session.updated_at.strftime("%b %d") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+        <%= link_to "View All Sessions", admin_onboarding_sessions_path, class: "btn btn-sm btn-ghost mt-4" %>
+      </div>
+    </div>
+  </div>
+</div>

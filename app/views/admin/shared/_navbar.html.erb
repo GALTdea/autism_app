@@ -1,0 +1,71 @@
+<div class="navbar bg-base-100 shadow-lg mb-6">
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+        <li><%= link_to "Dashboard", admin_root_path %></li>
+        <li class="menu-title">Madmin Resources</li>
+        <li><%= link_to "Users", madmin_users_path %></li>
+        <li><%= link_to "Assessments", madmin_assessments_path %></li>
+        <li><%= link_to "Profile Domains", madmin_profile_domains_path %></li>
+        <li><%= link_to "Questions", madmin_questions_path %></li>
+        <li><%= link_to "Question Options", madmin_question_options_path %></li>
+        <li><%= link_to "Activity Templates", madmin_activity_templates_path %></li>
+        <li class="menu-title">Custom Admin</li>
+        <li><%= link_to "Child Profiles", admin_child_profiles_path %></li>
+        <li><%= link_to "Onboarding Sessions", admin_onboarding_sessions_path %></li>
+        <li><%= link_to "Activity Logs", admin_activity_logs_path %></li>
+        <li><%= link_to "Analytics", admin_analytics_path %></li>
+      </ul>
+    </div>
+    <%= link_to "Admin Dashboard", admin_root_path, class: "btn btn-ghost text-xl" %>
+  </div>
+  
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-1 gap-2">
+      <li><%= link_to "Dashboard", admin_root_path, class: "btn btn-ghost" %></li>
+      <li class="dropdown dropdown-hover">
+        <label tabindex="0" class="btn btn-ghost">Madmin Resources</label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50">
+          <li><%= link_to "Users", madmin_users_path %></li>
+          <li><%= link_to "Assessments", madmin_assessments_path %></li>
+          <li><%= link_to "Profile Domains", madmin_profile_domains_path %></li>
+          <li><%= link_to "Questions", madmin_questions_path %></li>
+          <li><%= link_to "Question Options", madmin_question_options_path %></li>
+          <li><%= link_to "Activity Templates", madmin_activity_templates_path %></li>
+        </ul>
+      </li>
+      <li class="dropdown dropdown-hover">
+        <label tabindex="0" class="btn btn-ghost">Custom Admin</label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-50">
+          <li><%= link_to "Child Profiles", admin_child_profiles_path %></li>
+          <li><%= link_to "Onboarding Sessions", admin_onboarding_sessions_path %></li>
+          <li><%= link_to "Activity Logs", admin_activity_logs_path %></li>
+          <li><%= link_to "Analytics", admin_analytics_path %></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="navbar-end">
+    <%= link_to "Back to App", root_path, class: "btn btn-ghost" %>
+    <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <div class="bg-neutral text-neutral-content rounded-full w-10">
+          <span><%= current_user.email[0].upcase %></span>
+        </div>
+      </div>
+      <ul tabindex="0" class="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52">
+        <li class="menu-title"><%= current_user.email %></li>
+        <% if current_user.super_admin? %>
+          <li class="disabled"><span class="text-xs text-error uppercase">Super Admin</span></li>
+        <% else %>
+          <li class="disabled"><span class="text-xs text-warning uppercase">Admin</span></li>
+        <% end %>
+        <li><%= link_to "Log out", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-error" %></li>
+      </ul>
+    </div>
+  </div>
+</div>

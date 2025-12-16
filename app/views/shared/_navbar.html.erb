@@ -11,7 +11,7 @@
           <li><%= link_to "My Children", child_profiles_path %></li>
         <% end %>
         <% if user_signed_in? && (current_user.admin? || current_user.super_admin?) %>
-          <li><a class="text-warning">Admin Panel</a></li>
+          <li><%= link_to "Admin Panel", admin_root_path, class: "text-warning" %></li>
         <% end %>
         <% if user_signed_in? %>
           <li><span class="text-xs text-base-content/50"><%= current_user.email %></span></li>
@@ -33,7 +33,7 @@
         <li><%= link_to "My Children", child_profiles_path %></li>
       <% end %>
       <% if user_signed_in? && (current_user.admin? || current_user.super_admin?) %>
-         <li><a class="text-warning font-bold">Admin Panel</a></li>
+         <li><%= link_to "Admin Panel", admin_root_path, class: "text-warning font-bold" %></li>
       <% end %>
     </ul>
   </div>
