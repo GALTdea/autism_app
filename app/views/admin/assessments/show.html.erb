@@ -1,0 +1,204 @@
+<% content_for :title, @assessment.name %>
+
+<div class="space-y-6">
+  <!-- Header Section -->
+  <div class="flex justify-between items-start">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <h1 class="text-3xl font-bold"><%= @assessment.name %></h1>
+        <% if @assessment.is_default? %>
+          <span class="badge badge-info badge-lg">Default</span>
+        <% elsif @assessment.active? %>
+          <span class="badge badge-success badge-lg">Active</span>
+        <% else %>
+          <span class="badge badge-ghost badge-lg">Inactive</span>
+        <% end %>
+        <span class="badge badge-outline badge-lg">v<%= @assessment.version %></span>
+      </div>
+      <% if @assessment.description.present? %>
+        <p class="text-base-content/70 text-lg max-w-3xl"><%= @assessment.description %></p>
+      <% end %>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_admin_assessment_path(@assessment), class: "btn btn-primary" %>
+      <%= link_to "Clone", clone_admin_assessment_path(@assessment),
+          method: :post,
+          data: { turbo_method: :post },
+          class: "btn btn-info" %>
+      <% if current_user.super_admin? && @assessment.can_be_deleted? %>
+        <%= link_to "Delete", admin_assessment_path(@assessment),
+            method: :delete,
+            data: { 
+              turbo_method: :delete,
+              turbo_confirm: "Are you sure you want to delete this assessment? This action cannot be undone."
+            },
+            class: "btn btn-error" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Domains</div>
+      <div class="stat-value text-primary"><%= @assessment.domain_count %></div>
+      <div class="stat-desc">
+        <%= link_to "Manage Domains", select_domains_admin_assessment_path(@assessment), class: "link link-primary" %>
+      </div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Questions</div>
+      <div class="stat-value text-secondary"><%= number_with_delimiter(@stats[:total_questions]) %></div>
+      <div class="stat-desc">Across all domains</div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Sessions</div>
+      <div class="stat-value text-accent"><%= number_with_delimiter(@stats[:total_sessions]) %></div>
+      <div class="stat-desc">
+        <%= @stats[:active_sessions] %> active, 
+        <%= @stats[:completed_sessions] %> completed
+      </div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Created</div>
+      <div class="stat-value text-info text-2xl">
+        <%= @assessment.created_at.strftime("%b %d") %>
+      </div>
+      <div class="stat-desc"><%= @assessment.created_at.strftime("%Y") %></div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Assessment Builder Actions</h2>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to "Select Domains", select_domains_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' unless @domains.empty?}" %>
+        <%= link_to "Order Domains", order_domains_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
+        <%= link_to "Preview Assessment", preview_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
+        <%= link_to "Configure Scoring", "#", 
+            class: "btn btn-outline btn-disabled",
+            title: "Coming soon" %>
+      </div>
+      <p class="text-sm text-base-content/60 mt-2">
+        Use the Assessment Builder to manage domains, configure ordering, and set up scoring criteria.
+      </p>
+    </div>
+  </div>
+
+  <!-- Domains Section -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="card-title">Domains</h2>
+        <%= link_to "Manage Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-sm btn-ghost" %>
+      </div>
+
+      <% if @domains.any? %>
+        <div class="overflow-x-auto">
+          <table class="table table-zebra">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Domain</th>
+                <th>Description</th>
+                <th>Questions</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @domains.each_with_index do |domain, index| %>
+                <tr>
+                  <td>
+                    <span class="badge badge-outline"><%= index + 1 %></span>
+                  </td>
+                  <td>
+                    <div class="font-semibold"><%= domain.label %></div>
+                    <div class="text-xs text-base-content/60"><%= domain.key %></div>
+                  </td>
+                  <td>
+                    <span class="text-sm text-base-content/70">
+                      <%= domain.description.presence || "No description" %>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge badge-primary">
+                      <%= @assessment.questions_count_for_domain(domain) %>
+                    </span>
+                  </td>
+                  <td>
+                    <%= link_to "View Questions", madmin_questions_path(profile_domain_id: domain.id), 
+                        class: "btn btn-xs btn-ghost" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <p class="text-base-content/60 mb-4">No domains added to this assessment yet.</p>
+          <%= link_to "Add Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Sessions Section (if any) -->
+  <% if @stats[:total_sessions] > 0 %>
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Usage</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="stat bg-base-200 rounded-box py-4">
+            <div class="stat-title">Total Sessions</div>
+            <div class="stat-value text-lg"><%= @stats[:total_sessions] %></div>
+          </div>
+          <div class="stat bg-base-200 rounded-box py-4">
+            <div class="stat-title">Active</div>
+            <div class="stat-value text-lg text-warning"><%= @stats[:active_sessions] %></div>
+          </div>
+          <div class="stat bg-base-200 rounded-box py-4">
+            <div class="stat-title">Completed</div>
+            <div class="stat-value text-lg text-success"><%= @stats[:completed_sessions] %></div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <%= link_to "View All Sessions", admin_onboarding_sessions_path, class: "btn btn-sm btn-ghost" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Scoring Configuration Section (placeholder for future) -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Scoring Configuration</h2>
+      <div class="alert alert-info">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Scoring configuration interface coming soon. For now, default scoring is applied.</span>
+      </div>
+      <div class="text-sm text-base-content/60">
+        <p><strong>Current Method:</strong> <%= @assessment.scoring_method.humanize %></p>
+        <p><strong>Level Thresholds:</strong> Configured for 5 levels (0-4)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="flex justify-between items-center">
+    <%= link_to "← Back to Assessments", admin_assessments_path, class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "View in Madmin", madmin_assessment_path(@assessment), class: "btn btn-ghost" %>
+    </div>
+  </div>
+</div>
+
