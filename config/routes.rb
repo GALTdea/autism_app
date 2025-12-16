@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   # Admin routes (custom admin dashboard and features)
   namespace :admin do
     root to: "dashboard#index"
+    get "dashboard", to: "dashboard#index", as: :dashboard
 
     # Custom admin resources
     resources :child_profiles, only: [:index, :show] do
