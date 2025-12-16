@@ -1,32 +1,46 @@
 <% content_for :title, "Admin Dashboard" %>
 
 <div class="space-y-6">
-  <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold">Admin Dashboard</h1>
+    <div class="text-sm text-base-content/60">
+      Last updated: <%= Time.current.strftime("%B %d, %Y at %I:%M %p") %>
+    </div>
+  </div>
 
   <!-- Stats Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="stat bg-base-100 shadow rounded-box">
       <div class="stat-title">Total Users</div>
-      <div class="stat-value text-primary"><%= @stats[:total_users] %></div>
-      <div class="stat-desc"><%= @stats[:admin_users] %> admins</div>
+      <div class="stat-value text-primary"><%= number_with_delimiter(@stats[:total_users]) %></div>
+      <div class="stat-desc"><%= @stats[:admin_users] %> admin<%= 's' unless @stats[:admin_users] == 1 %></div>
     </div>
 
     <div class="stat bg-base-100 shadow rounded-box">
       <div class="stat-title">Child Profiles</div>
-      <div class="stat-value text-secondary"><%= @stats[:total_children] %></div>
+      <div class="stat-value text-secondary"><%= number_with_delimiter(@stats[:total_children]) %></div>
       <div class="stat-desc">Active profiles</div>
     </div>
 
     <div class="stat bg-base-100 shadow rounded-box">
       <div class="stat-title">Onboardings</div>
-      <div class="stat-value text-accent"><%= @stats[:completed_onboardings] %></div>
+      <div class="stat-value text-accent"><%= number_with_delimiter(@stats[:completed_onboardings]) %></div>
       <div class="stat-desc"><%= @stats[:active_onboardings] %> in progress</div>
     </div>
 
     <div class="stat bg-base-100 shadow rounded-box">
       <div class="stat-title">Activity Logs</div>
-      <div class="stat-value text-info"><%= @stats[:total_activity_logs] %></div>
+      <div class="stat-value text-info"><%= number_with_delimiter(@stats[:total_activity_logs]) %></div>
       <div class="stat-desc"><%= @stats[:recent_logs] %> in last 7 days</div>
+    </div>
+  </div>
+
+  <!-- Additional Stats Row -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Assessments</div>
+      <div class="stat-value text-success"><%= number_with_delimiter(@stats[:total_assessments]) %></div>
+      <div class="stat-desc"><%= @stats[:active_assessments] %> active</div>
     </div>
   </div>
 
@@ -46,15 +60,23 @@
               </tr>
             </thead>
             <tbody>
-              <% @recent_users.each do |user| %>
+              <% if @recent_users.any? %>
+                <% @recent_users.each do |user| %>
+                  <tr>
+                    <td>
+                      <%= link_to user.email, madmin_user_path(user), class: "link link-primary" %>
+                    </td>
+                    <td>
+                      <span class="badge <%= user.super_admin? ? 'badge-error' : (user.admin? ? 'badge-warning' : 'badge-primary') %>">
+                        <%= user.role %>
+                      </span>
+                    </td>
+                    <td><%= user.created_at.strftime("%b %d, %Y") %></td>
+                  </tr>
+                <% end %>
+              <% else %>
                 <tr>
-                  <td><%= user.email %></td>
-                  <td>
-                    <span class="badge <%= user.super_admin? ? 'badge-error' : (user.admin? ? 'badge-warning' : 'badge-primary') %>">
-                      <%= user.role %>
-                    </span>
-                  </td>
-                  <td><%= user.created_at.strftime("%b %d") %></td>
+                  <td colspan="3" class="text-center text-base-content/60 py-4">No users yet</td>
                 </tr>
               <% end %>
             </tbody>
@@ -78,11 +100,19 @@
               </tr>
             </thead>
             <tbody>
-              <% @recent_completions.each do |session| %>
+              <% if @recent_completions.any? %>
+                <% @recent_completions.each do |session| %>
+                  <tr>
+                    <td>
+                      <%= link_to session.child_profile.name, admin_child_profile_path(session.child_profile), class: "link link-primary" %>
+                    </td>
+                    <td><%= session.user.email %></td>
+                    <td><%= session.updated_at.strftime("%b %d, %Y") %></td>
+                  </tr>
+                <% end %>
+              <% else %>
                 <tr>
-                  <td><%= session.child_profile.name %></td>
-                  <td><%= session.user.email %></td>
-                  <td><%= session.updated_at.strftime("%b %d") %></td>
+                  <td colspan="3" class="text-center text-base-content/60 py-4">No completed onboardings yet</td>
                 </tr>
               <% end %>
             </tbody>
