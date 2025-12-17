@@ -101,23 +101,34 @@ module Admin
     def reorder_domains
       authorize [:admin, @assessment]
 
-      domain_positions = params[:domain_positions] || {}
+      domain_positions = reorder_domains_params
 
       begin
         AssessmentDomainService.reorder_domains(@assessment, domain_positions)
 
-        if request.format.json?
-          render json: { status: "success", message: "Domain order updated successfully." }
-        else
-          redirect_to order_domains_admin_assessment_path(@assessment),
-                      notice: "Domain order updated successfully."
+        # Reload to get updated positions
+        @assessment.reload
+        @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
+
+        respond_to do |format|
+          format.json { render json: { status: "success", message: "Domain order updated successfully." } }
+          format.turbo_stream { render :reorder_domains }
+          format.html {
+            redirect_to order_domains_admin_assessment_path(@assessment),
+                        notice: "Domain order updated successfully."
+          }
         end
       rescue AssessmentDomainService::Error => e
-        if request.format.json?
-          render json: { status: "error", message: e.message }, status: :unprocessable_entity
-        else
-          redirect_to order_domains_admin_assessment_path(@assessment),
-                      alert: "Failed to reorder domains: #{e.message}"
+        respond_to do |format|
+          format.json { render json: { status: "error", message: e.message }, status: :unprocessable_entity }
+          format.turbo_stream {
+            render turbo_stream: turbo_stream.append("flash-container", partial: "shared/flash",
+              locals: { flash: { alert: e.message } })
+          }
+          format.html {
+            redirect_to order_domains_admin_assessment_path(@assessment),
+                        alert: "Failed to reorder domains: #{e.message}"
+          }
         end
       end
     end
@@ -149,6 +160,10 @@ module Admin
 
     def assessment_params
       params.require(:assessment).permit(:name, :version, :description, :active, :is_default)
+    end
+
+    def reorder_domains_params
+      params.permit(domain_positions: {}).fetch(:domain_positions, {})
     end
   end
 end

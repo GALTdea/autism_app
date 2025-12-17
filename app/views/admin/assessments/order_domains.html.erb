@@ -61,7 +61,7 @@
       <h2 class="card-title mb-4">Domain Order</h2>
       
       <% if @assessment_domains.any? %>
-        <div data-sortable-domains-target="list" class="space-y-3">
+        <div id="domain-list" data-sortable-domains-target="list" class="space-y-3">
           <% @assessment_domains.each do |assessment_domain| %>
             <div data-sortable-domains-target="item" 
                  data-domain-id="<%= assessment_domain.profile_domain_id %>"

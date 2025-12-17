@@ -104,8 +104,21 @@ export default class extends Controller {
       })
 
       if (response.ok) {
-        // Show success feedback
-        this.showFeedback("Domain order saved successfully!", "success")
+        // Check if response is Turbo Stream
+        const contentType = response.headers.get("content-type")
+        if (contentType && contentType.includes("text/vnd.turbo-stream.html")) {
+          // Let Turbo handle the stream
+          return response.text().then((html) => {
+            Turbo.renderStreamMessage(html)
+          })
+        } else {
+          // JSON response fallback
+          const data = await response.json()
+          this.showFeedback(data.message || "Domain order saved successfully!", "success")
+          
+          // Update position numbers in the DOM
+          this.updatePositionNumbers()
+        }
       } else {
         throw new Error("Failed to save order")
       }
@@ -113,6 +126,16 @@ export default class extends Controller {
       console.error("Error saving domain order:", error)
       this.showFeedback("Failed to save domain order. Please try again.", "error")
     }
+  }
+
+  updatePositionNumbers() {
+    // Update position numbers after successful reorder
+    this.itemTargets.forEach((item, index) => {
+      const positionBadge = item.querySelector(".bg-primary")
+      if (positionBadge) {
+        positionBadge.textContent = index + 1
+      }
+    })
   }
 
   showFeedback(message, type) {

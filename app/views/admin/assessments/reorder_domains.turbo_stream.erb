@@ -1,0 +1,52 @@
+<%# Turbo Stream to update the domain list after reordering %>
+<%= turbo_stream.replace "domain-list" do %>
+  <div id="domain-list" data-sortable-domains-target="list" class="space-y-3">
+    <% @assessment_domains.each do |assessment_domain| %>
+      <div data-sortable-domains-target="item" 
+           data-domain-id="<%= assessment_domain.profile_domain_id %>"
+           class="flex items-center gap-4 p-4 border-2 border-base-300 rounded-box bg-base-200 cursor-move hover:border-primary hover:shadow-md transition-all">
+        <!-- Drag Handle -->
+        <div class="flex-shrink-0">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+          </svg>
+        </div>
+        
+        <!-- Position Number -->
+        <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
+          <%= assessment_domain.position + 1 %>
+        </div>
+        
+        <!-- Domain Info -->
+        <div class="flex-1">
+          <div class="font-semibold text-lg"><%= assessment_domain.profile_domain.label %></div>
+          <div class="text-sm text-base-content/60">
+            <%= assessment_domain.profile_domain.description.presence || assessment_domain.profile_domain.key %>
+          </div>
+          <div class="text-xs text-base-content/50 mt-1">
+            <%= assessment_domain.profile_domain.questions.count %> questions
+          </div>
+        </div>
+        
+        <!-- Visual Indicator -->
+        <div class="flex-shrink-0 text-base-content/30">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<%# Optional: Show success message %>
+<%= turbo_stream.append "flash-container" do %>
+  <div class="alert alert-success fixed top-4 right-4 z-50 max-w-md" data-controller="flash-dismiss">
+    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span>Domain order updated successfully!</span>
+    <button onclick="this.parentElement.remove()" class="btn btn-sm btn-circle btn-ghost">✕</button>
+  </div>
+<% end %>
+
