@@ -1,6 +1,10 @@
 <% content_for :title, "Select Domains: #{@assessment.name}" %>
 
-<div class="space-y-6">
+<div class="space-y-6"
+     data-controller="assessment-builder"
+     data-assessment-builder-current-step-value="2"
+     data-assessment-builder-total-steps-value="4"
+     data-assessment-builder-assessment-id-value="<%= @assessment.id %>">
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
@@ -15,7 +19,18 @@
   <!-- Progress Indicator -->
   <div class="card bg-base-200 shadow">
     <div class="card-body py-4">
-      <div class="steps steps-vertical lg:steps-horizontal">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-sm font-semibold">
+          Step <span data-assessment-builder-target="currentStep"><%= 2 %></span> of <span data-assessment-builder-target="totalSteps">4</span>
+        </div>
+        <div class="text-xs text-base-content/60">Select Domains</div>
+      </div>
+      <div class="w-full bg-base-300 rounded-full h-2">
+        <div class="bg-primary h-2 rounded-full transition-all duration-300" 
+             data-assessment-builder-target="progressBar" 
+             style="width: 50%"></div>
+      </div>
+      <div class="steps steps-vertical lg:steps-horizontal mt-4">
         <div class="step step-primary">
           <div class="step-content">
             <div class="font-semibold">Step 1: Basic Info</div>
@@ -36,8 +51,8 @@
         </div>
         <div class="step">
           <div class="step-content">
-            <div class="font-semibold">Step 4: Configure Scoring</div>
-            <div class="text-xs text-base-content/60">Later</div>
+            <div class="font-semibold">Step 4: Preview</div>
+            <div class="text-xs text-base-content/60">Final</div>
           </div>
         </div>
       </div>
@@ -120,11 +135,21 @@
 
     <!-- Form Actions -->
     <div class="flex justify-between items-center pt-4 border-t">
-      <%= link_to "Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+      <div>
+        <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost mr-2" %>
+        <button type="button" 
+                data-assessment-builder-target="backButton"
+                data-action="click->assessment-builder#goBack"
+                class="btn btn-ghost"
+                style="display: none;">
+          ← Previous Step
+        </button>
+      </div>
       <div class="flex gap-2">
-        <%= form.submit "Continue to Order Domains", 
+        <%= form.submit "Continue to Order Domains →", 
             class: "btn btn-primary",
             id: "submit-domains",
+            data-assessment-builder-target="nextButton",
             onclick: "const checked = document.querySelectorAll('input[type=checkbox]:checked').length; if (checked === 0) { alert('Please select at least one domain'); return false; } return true;" %>
       </div>
     </div>

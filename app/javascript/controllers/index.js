@@ -4,6 +4,9 @@
 
 import { application } from "./application"
 
+import AssessmentBuilderController from "./assessment_builder_controller"
+application.register("assessment-builder", AssessmentBuilderController)
+
 import OnboardingWizardController from "./onboarding_wizard_controller"
 application.register("onboarding-wizard", OnboardingWizardController)
 

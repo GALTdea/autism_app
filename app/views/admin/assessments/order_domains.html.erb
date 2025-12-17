@@ -1,6 +1,10 @@
 <% content_for :title, "Order Domains: #{@assessment.name}" %>
 
-<div class="space-y-6" data-controller="sortable-domains" 
+<div class="space-y-6" 
+     data-controller="assessment-builder sortable-domains"
+     data-assessment-builder-current-step-value="3"
+     data-assessment-builder-total-steps-value="4"
+     data-assessment-builder-assessment-id-value="<%= @assessment.id %>" 
      data-sortable-domains-update-url-value="<%= reorder_domains_admin_assessment_path(@assessment) %>"
      data-sortable-domains-assessment-id-value="<%= @assessment.id %>">
   
@@ -18,7 +22,18 @@
   <!-- Progress Indicator -->
   <div class="card bg-base-200 shadow">
     <div class="card-body py-4">
-      <div class="steps steps-vertical lg:steps-horizontal">
+      <div class="flex items-center justify-between mb-2">
+        <div class="text-sm font-semibold">
+          Step <span data-assessment-builder-target="currentStep">3</span> of <span data-assessment-builder-target="totalSteps">4</span>
+        </div>
+        <div class="text-xs text-base-content/60">Order Domains</div>
+      </div>
+      <div class="w-full bg-base-300 rounded-full h-2">
+        <div class="bg-primary h-2 rounded-full transition-all duration-300" 
+             data-assessment-builder-target="progressBar" 
+             style="width: 75%"></div>
+      </div>
+      <div class="steps steps-vertical lg:steps-horizontal mt-4">
         <div class="step step-primary">
           <div class="step-content">
             <div class="font-semibold">Step 1: Basic Info</div>
@@ -39,7 +54,7 @@
         </div>
         <div class="step">
           <div class="step-content">
-            <div class="font-semibold">Step 4: Configure Scoring</div>
+            <div class="font-semibold">Step 4: Preview</div>
             <div class="text-xs text-base-content/60">Next</div>
           </div>
         </div>
@@ -109,9 +124,16 @@
 
   <!-- Actions -->
   <div class="flex justify-between items-center pt-4 border-t">
-    <%= link_to "← Back to Select Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+    <div>
+      <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost mr-2" %>
+      <%= link_to "← Previous Step", select_domains_admin_assessment_path(@assessment), 
+          class: "btn btn-ghost",
+          data-assessment-builder-target="backButton" %>
+    </div>
     <div class="flex gap-2">
-      <%= link_to "Preview Assessment", preview_admin_assessment_path(@assessment), class: "btn btn-primary" %>
+      <%= link_to "Continue to Preview →", preview_admin_assessment_path(@assessment), 
+          class: "btn btn-primary",
+          data-assessment-builder-target="nextButton" %>
     </div>
   </div>
 </div>
