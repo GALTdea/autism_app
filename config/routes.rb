@@ -34,6 +34,7 @@ Rails.application.routes.draw do
         patch :reorder_domains
         get :preview
         post :clone
+        get :configure_scoring
       end
     end
   end

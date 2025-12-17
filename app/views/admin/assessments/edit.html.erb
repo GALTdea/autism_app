@@ -32,9 +32,8 @@
             class: "btn btn-outline #{'btn-disabled' if @assessment.domain_count.zero?}" %>
         <%= link_to "Preview Assessment", preview_admin_assessment_path(@assessment), 
             class: "btn btn-outline #{'btn-disabled' if @assessment.domain_count.zero?}" %>
-        <%= link_to "Configure Scoring", "#", 
-            class: "btn btn-outline btn-disabled",
-            title: "Coming soon" %>
+        <%= link_to "Configure Scoring", configure_scoring_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' if @assessment.domain_count.zero?}" %>
       </div>
     </div>
   </div>

@@ -1,9 +1,9 @@
 module Admin
   class AssessmentsController < Admin::ApplicationController
-    before_action :set_assessment, only: [:show, :edit, :update, :destroy,
-                                          :select_domains, :update_domains,
-                                          :order_domains, :reorder_domains,
-                                          :preview, :clone]
+        before_action :set_assessment, only: [:show, :edit, :update, :destroy,
+                                              :select_domains, :update_domains,
+                                              :order_domains, :reorder_domains,
+                                              :preview, :clone, :configure_scoring]
     after_action :verify_authorized
 
     def index
@@ -152,6 +152,11 @@ module Admin
         redirect_to admin_assessments_path,
                     alert: "Failed to clone assessment: #{e.message}"
       end
+    end
+
+    def configure_scoring
+      authorize [:admin, @assessment]
+      @domains = @assessment.ordered_domains.includes(:questions)
     end
 
     private

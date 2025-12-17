@@ -56,6 +56,10 @@ module Admin
       create?
     end
 
+    def configure_scoring?
+      update?
+    end
+
     class Scope < ApplicationPolicy::Scope
       def resolve
         if user.admin? || user.super_admin?

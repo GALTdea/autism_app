@@ -1,0 +1,109 @@
+<% content_for :title, "Configure Scoring: #{@assessment.name}" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Configure Scoring</h1>
+      <p class="text-base-content/70 mt-2">
+        Set up scoring criteria for <strong><%= @assessment.name %></strong> (v<%= @assessment.version %>).
+      </p>
+    </div>
+    <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+  </div>
+
+  <!-- Placeholder Card -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Scoring Configuration</h2>
+      <div class="alert alert-info">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Detailed scoring configuration interface coming soon. This section will allow you to configure scoring methods, level thresholds, and domain-specific overrides.</span>
+      </div>
+
+      <!-- Current Configuration Summary -->
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-4">Current Configuration Summary</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <div class="text-sm text-base-content/60 mb-1">Global Scoring Method</div>
+            <div class="font-semibold"><%= @assessment.scoring_method.humanize %></div>
+          </div>
+          <div>
+            <div class="text-sm text-base-content/60 mb-1">Level Thresholds</div>
+            <div class="font-semibold">5 levels (0-4)</div>
+          </div>
+          <div>
+            <div class="text-sm text-base-content/60 mb-1">Total Domains</div>
+            <div class="font-semibold"><%= @domains.count %></div>
+          </div>
+          <div>
+            <div class="text-sm text-base-content/60 mb-1">Total Questions</div>
+            <div class="font-semibold"><%= @assessment.total_questions_count %></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Level Thresholds Preview -->
+      <% if @assessment.level_thresholds.any? %>
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold mb-4">Level Thresholds</h3>
+          <div class="overflow-x-auto">
+            <table class="table table-zebra w-full">
+              <thead>
+                <tr>
+                  <th>Level</th>
+                  <th>Min Score</th>
+                  <th>Max Score</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @assessment.level_thresholds.each do |level, range| %>
+                  <tr>
+                    <td><span class="badge badge-primary">Level <%= level %></span></td>
+                    <td><%= range["min"] %></td>
+                    <td><%= range["max"] %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Domains List -->
+      <% if @domains.any? %>
+        <div class="mt-6">
+          <h3 class="text-lg font-semibold mb-4">Domains in Assessment</h3>
+          <div class="space-y-2">
+            <% @domains.each_with_index do |domain, index| %>
+              <div class="flex items-center justify-between p-3 bg-base-200 rounded-box">
+                <div class="flex items-center gap-3">
+                  <span class="badge badge-lg"><%= index + 1 %></span>
+                  <div>
+                    <div class="font-semibold"><%= domain.label %></div>
+                    <div class="text-xs text-base-content/60"><%= domain.questions.count %> questions</div>
+                  </div>
+                </div>
+                <div class="text-sm text-base-content/60">
+                  Using default scoring method
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex justify-between items-center pt-4 border-t">
+    <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "Save Configuration", admin_assessment_path(@assessment), class: "btn btn-primary btn-disabled", title: "Coming soon" %>
+    </div>
+  </div>
+</div>
+

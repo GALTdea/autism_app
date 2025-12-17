@@ -82,9 +82,8 @@
             class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
         <%= link_to "Preview Assessment", preview_admin_assessment_path(@assessment), 
             class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
-        <%= link_to "Configure Scoring", "#", 
-            class: "btn btn-outline btn-disabled",
-            title: "Coming soon" %>
+        <%= link_to "Configure Scoring", configure_scoring_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
       </div>
       <p class="text-sm text-base-content/60 mt-2">
         Use the Assessment Builder to manage domains, configure ordering, and set up scoring criteria.
