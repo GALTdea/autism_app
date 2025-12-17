@@ -1,0 +1,118 @@
+<% content_for :title, "Order Domains: #{@assessment.name}" %>
+
+<div class="space-y-6" data-controller="sortable-domains" 
+     data-sortable-domains-update-url-value="<%= reorder_domains_admin_assessment_path(@assessment) %>"
+     data-sortable-domains-assessment-id-value="<%= @assessment.id %>">
+  
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Order Domains</h1>
+      <p class="text-base-content/70 mt-2">
+        Drag and drop domains to reorder them in <strong><%= @assessment.name %></strong> (v<%= @assessment.version %>).
+      </p>
+    </div>
+    <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+  </div>
+
+  <!-- Progress Indicator -->
+  <div class="card bg-base-200 shadow">
+    <div class="card-body py-4">
+      <div class="steps steps-vertical lg:steps-horizontal">
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 1: Basic Info</div>
+            <div class="text-xs text-base-content/60">✓ Completed</div>
+          </div>
+        </div>
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 2: Select Domains</div>
+            <div class="text-xs text-base-content/60">✓ Completed</div>
+          </div>
+        </div>
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 3: Order Domains</div>
+            <div class="text-xs text-base-content/60">In Progress</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 4: Configure Scoring</div>
+            <div class="text-xs text-base-content/60">Next</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="alert alert-info">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <span>Drag domains up or down to reorder them. Changes are saved automatically.</span>
+  </div>
+
+  <!-- Sortable Domain List -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Domain Order</h2>
+      
+      <% if @assessment_domains.any? %>
+        <div data-sortable-domains-target="list" class="space-y-3">
+          <% @assessment_domains.each do |assessment_domain| %>
+            <div data-sortable-domains-target="item" 
+                 data-domain-id="<%= assessment_domain.profile_domain_id %>"
+                 class="flex items-center gap-4 p-4 border-2 border-base-300 rounded-box bg-base-200 cursor-move hover:border-primary hover:shadow-md transition-all">
+              <!-- Drag Handle -->
+              <div class="flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                </svg>
+              </div>
+              
+              <!-- Position Number -->
+              <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
+                <%= assessment_domain.position + 1 %>
+              </div>
+              
+              <!-- Domain Info -->
+              <div class="flex-1">
+                <div class="font-semibold text-lg"><%= assessment_domain.profile_domain.label %></div>
+                <div class="text-sm text-base-content/60">
+                  <%= assessment_domain.profile_domain.description.presence || assessment_domain.profile_domain.key %>
+                </div>
+                <div class="text-xs text-base-content/50 mt-1">
+                  <%= assessment_domain.profile_domain.questions.count %> questions
+                </div>
+              </div>
+              
+              <!-- Visual Indicator -->
+              <div class="flex-shrink-0 text-base-content/30">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <p class="text-base-content/60 mb-4">No domains selected yet.</p>
+          <%= link_to "Select Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex justify-between items-center pt-4 border-t">
+    <%= link_to "← Back to Select Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "Preview Assessment", preview_admin_assessment_path(@assessment), class: "btn btn-primary" %>
+    </div>
+  </div>
+</div>
+

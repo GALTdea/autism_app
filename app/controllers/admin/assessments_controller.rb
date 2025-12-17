@@ -105,11 +105,20 @@ module Admin
 
       begin
         AssessmentDomainService.reorder_domains(@assessment, domain_positions)
-        redirect_to order_domains_admin_assessment_path(@assessment),
-                    notice: "Domain order updated successfully."
+
+        if request.format.json?
+          render json: { status: "success", message: "Domain order updated successfully." }
+        else
+          redirect_to order_domains_admin_assessment_path(@assessment),
+                      notice: "Domain order updated successfully."
+        end
       rescue AssessmentDomainService::Error => e
-        redirect_to order_domains_admin_assessment_path(@assessment),
-                    alert: "Failed to reorder domains: #{e.message}"
+        if request.format.json?
+          render json: { status: "error", message: e.message }, status: :unprocessable_entity
+        else
+          redirect_to order_domains_admin_assessment_path(@assessment),
+                      alert: "Failed to reorder domains: #{e.message}"
+        end
       end
     end
 

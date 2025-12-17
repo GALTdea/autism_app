@@ -6,3 +6,6 @@ import { application } from "./application"
 
 import OnboardingWizardController from "./onboarding_wizard_controller"
 application.register("onboarding-wizard", OnboardingWizardController)
+
+import SortableDomainsController from "./sortable_domains_controller"
+application.register("sortable-domains", SortableDomainsController)
