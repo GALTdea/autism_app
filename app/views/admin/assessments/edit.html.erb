@@ -20,34 +20,118 @@
     </div>
   </div>
 
-  <!-- Assessment Info -->
+  <!-- Assessment Builder Quick Actions -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Assessment Builder</h2>
+      <p class="text-sm text-base-content/60 mb-4">Use the assessment builder to manage domains, ordering, and configuration.</p>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to "Select Domains", select_domains_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' if @assessment.domain_count.zero?}" %>
+        <%= link_to "Order Domains", order_domains_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' if @assessment.domain_count.zero?}" %>
+        <%= link_to "Preview Assessment", preview_admin_assessment_path(@assessment), 
+            class: "btn btn-outline #{'btn-disabled' if @assessment.domain_count.zero?}" %>
+        <%= link_to "Configure Scoring", "#", 
+            class: "btn btn-outline btn-disabled",
+            title: "Coming soon" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assessment Details -->
   <div class="card bg-base-200 shadow">
     <div class="card-body">
       <h2 class="card-title">Assessment Details</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div>
           <div class="text-sm text-base-content/60">Domains</div>
           <div class="font-semibold text-lg">
             <%= @assessment.domain_count %>
             <% if @assessment.domain_count > 0 %>
-              <%= link_to "Manage", select_domains_admin_assessment_path(@assessment), class: "btn btn-xs btn-ghost ml-2" %>
+              <%= link_to "View", admin_assessment_path(@assessment, anchor: "domains"), class: "btn btn-xs btn-ghost ml-2" %>
             <% end %>
+          </div>
+          <div class="text-xs text-base-content/50 mt-1">
+            <%= link_to "Manage Domains", select_domains_admin_assessment_path(@assessment), class: "link link-primary" %>
           </div>
         </div>
         <div>
           <div class="text-sm text-base-content/60">Total Questions</div>
           <div class="font-semibold text-lg"><%= @assessment.total_questions_count %></div>
+          <div class="text-xs text-base-content/50 mt-1">Across all domains</div>
         </div>
         <div>
           <div class="text-sm text-base-content/60">Created</div>
-          <div class="font-semibold text-lg"><%= @assessment.created_at.strftime("%B %d, %Y") %></div>
+          <div class="font-semibold text-lg"><%= @assessment.created_at.strftime("%b %d, %Y") %></div>
+          <div class="text-xs text-base-content/50 mt-1">
+            <%= time_ago_in_words(@assessment.created_at) %> ago
+          </div>
         </div>
         <div>
           <div class="text-sm text-base-content/60">Last Updated</div>
-          <div class="font-semibold text-lg"><%= @assessment.updated_at.strftime("%B %d, %Y") %></div>
+          <div class="font-semibold text-lg"><%= @assessment.updated_at.strftime("%b %d, %Y") %></div>
+          <div class="text-xs text-base-content/50 mt-1">
+            <%= time_ago_in_words(@assessment.updated_at) %> ago
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Domains List (if any) -->
+  <% if @assessment.domain_count > 0 %>
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title">Current Domains</h2>
+          <%= link_to "Manage Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-sm btn-ghost" %>
+        </div>
+        <div class="space-y-2">
+          <% @assessment.ordered_domains.each_with_index do |domain, index| %>
+            <div class="flex items-center gap-3 p-3 bg-base-200 rounded-box">
+              <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-sm">
+                <%= index + 1 %>
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold"><%= domain.label %></div>
+                <div class="text-xs text-base-content/60"><%= domain.description.presence || domain.key %></div>
+              </div>
+              <div class="text-sm">
+                <span class="badge badge-primary"><%= @assessment.questions_count_for_domain(domain) %> questions</span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="alert alert-warning">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">No domains selected</h3>
+        <div class="text-xs">Add domains to this assessment to make it usable.</div>
+      </div>
+      <%= link_to "Add Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-sm btn-primary" %>
+    </div>
+  <% end %>
+
+  <!-- Usage Warning (if assessment has sessions) -->
+  <% if @assessment.has_active_sessions? || @assessment.has_completed_sessions? %>
+    <div class="alert alert-info">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <div>
+        <h3 class="font-bold">Assessment in use</h3>
+        <div class="text-xs">
+          This assessment has <%= @assessment.onboarding_sessions.count %> session(s). 
+          Changes to domains may affect existing sessions.
+        </div>
+      </div>
+    </div>
+  <% end %>
 </div>
 

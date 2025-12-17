@@ -1,10 +1,6 @@
 <% content_for :title, "Select Domains: #{@assessment.name}" %>
 
-<div class="space-y-6"
-     data-controller="assessment-builder"
-     data-assessment-builder-current-step-value="2"
-     data-assessment-builder-total-steps-value="4"
-     data-assessment-builder-assessment-id-value="<%= @assessment.id %>">
+<div class="space-y-6" data-controller="assessment-builder" data-assessment-builder-current-step-value="2" data-assessment-builder-total-steps-value="4" data-assessment-builder-assessment-id-value="<%= @assessment.id %>">
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
@@ -26,9 +22,7 @@
         <div class="text-xs text-base-content/60">Select Domains</div>
       </div>
       <div class="w-full bg-base-300 rounded-full h-2">
-        <div class="bg-primary h-2 rounded-full transition-all duration-300" 
-             data-assessment-builder-target="progressBar" 
-             style="width: 50%"></div>
+        <div class="bg-primary h-2 rounded-full transition-all duration-300" data-assessment-builder-target="progressBar" style="width: 50%"></div>
       </div>
       <div class="steps steps-vertical lg:steps-horizontal mt-4">
         <div class="step step-primary">
@@ -135,21 +129,11 @@
 
     <!-- Form Actions -->
     <div class="flex justify-between items-center pt-4 border-t">
-      <div>
-        <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost mr-2" %>
-        <button type="button" 
-                data-assessment-builder-target="backButton"
-                data-action="click->assessment-builder#goBack"
-                class="btn btn-ghost"
-                style="display: none;">
-          ← Previous Step
-        </button>
-      </div>
+      <%= link_to "Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
       <div class="flex gap-2">
-        <%= form.submit "Continue to Order Domains →", 
+        <%= form.submit "Continue to Order Domains", 
             class: "btn btn-primary",
             id: "submit-domains",
-            data-assessment-builder-target="nextButton",
             onclick: "const checked = document.querySelectorAll('input[type=checkbox]:checked').length; if (checked === 0) { alert('Please select at least one domain'); return false; } return true;" %>
       </div>
     </div>

@@ -1,12 +1,6 @@
 <% content_for :title, "Order Domains: #{@assessment.name}" %>
 
-<div class="space-y-6" 
-     data-controller="assessment-builder sortable-domains"
-     data-assessment-builder-current-step-value="3"
-     data-assessment-builder-total-steps-value="4"
-     data-assessment-builder-assessment-id-value="<%= @assessment.id %>" 
-     data-sortable-domains-update-url-value="<%= reorder_domains_admin_assessment_path(@assessment) %>"
-     data-sortable-domains-assessment-id-value="<%= @assessment.id %>">
+<div class="space-y-6" data-controller="assessment-builder sortable-domains" data-assessment-builder-current-step-value="3" data-assessment-builder-total-steps-value="4" data-assessment-builder-assessment-id-value="<%= @assessment.id %>" data-sortable-domains-update-url-value="<%= reorder_domains_admin_assessment_path(@assessment) %>" data-sortable-domains-assessment-id-value="<%= @assessment.id %>">
   
   <!-- Header -->
   <div class="flex justify-between items-center">
@@ -78,9 +72,7 @@
       <% if @assessment_domains.any? %>
         <div id="domain-list" data-sortable-domains-target="list" class="space-y-3">
           <% @assessment_domains.each do |assessment_domain| %>
-            <div data-sortable-domains-target="item" 
-                 data-domain-id="<%= assessment_domain.profile_domain_id %>"
-                 class="flex items-center gap-4 p-4 border-2 border-base-300 rounded-box bg-base-200 cursor-move hover:border-primary hover:shadow-md transition-all">
+            <div data-sortable-domains-target="item" data-domain-id="<%= assessment_domain.profile_domain_id %>" class="flex items-center gap-4 p-4 border-2 border-base-300 rounded-box bg-base-200 cursor-move hover:border-primary hover:shadow-md transition-all">
               <!-- Drag Handle -->
               <div class="flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,14 +118,10 @@
   <div class="flex justify-between items-center pt-4 border-t">
     <div>
       <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost mr-2" %>
-      <%= link_to "← Previous Step", select_domains_admin_assessment_path(@assessment), 
-          class: "btn btn-ghost",
-          data-assessment-builder-target="backButton" %>
+      <%= link_to "← Previous Step", select_domains_admin_assessment_path(@assessment), class: "btn btn-ghost", data: { assessment_builder_target: "backButton" } %>
     </div>
     <div class="flex gap-2">
-      <%= link_to "Continue to Preview →", preview_admin_assessment_path(@assessment), 
-          class: "btn btn-primary",
-          data-assessment-builder-target="nextButton" %>
+      <%= link_to "Continue to Preview →", preview_admin_assessment_path(@assessment), class: "btn btn-primary", data: { assessment_builder_target: "nextButton" } %>
     </div>
   </div>
 </div>

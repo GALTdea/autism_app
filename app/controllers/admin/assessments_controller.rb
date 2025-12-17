@@ -42,6 +42,8 @@ module Admin
 
     def edit
       authorize [:admin, @assessment]
+      # Load domains for display in edit view
+      @domains = @assessment.ordered_domains.includes(:questions) if @assessment.domain_count > 0
     end
 
     def update

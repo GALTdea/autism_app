@@ -1,10 +1,6 @@
 <% content_for :title, "Preview: #{@assessment.name}" %>
 
-<div class="space-y-6"
-     data-controller="assessment-builder"
-     data-assessment-builder-current-step-value="4"
-     data-assessment-builder-total-steps-value="4"
-     data-assessment-builder-assessment-id-value="<%= @assessment.id %>">
+<div class="space-y-6" data-controller="assessment-builder" data-assessment-builder-current-step-value="4" data-assessment-builder-total-steps-value="4" data-assessment-builder-assessment-id-value="<%= @assessment.id %>">
   <!-- Header -->
   <div class="flex justify-between items-center">
     <div>
@@ -26,9 +22,7 @@
         <div class="text-xs text-base-content/60">Preview & Finish</div>
       </div>
       <div class="w-full bg-base-300 rounded-full h-2">
-        <div class="bg-primary h-2 rounded-full transition-all duration-300" 
-             data-assessment-builder-target="progressBar" 
-             style="width: 100%"></div>
+        <div class="bg-primary h-2 rounded-full transition-all duration-300" data-assessment-builder-target="progressBar" style="width: 100%"></div>
       </div>
       <div class="steps steps-vertical lg:steps-horizontal mt-4">
         <div class="step step-primary">
@@ -223,15 +217,11 @@
   <div class="flex justify-between items-center pt-4 border-t">
     <div>
       <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost mr-2" %>
-      <%= link_to "← Previous Step", order_domains_admin_assessment_path(@assessment), 
-          class: "btn btn-ghost",
-          data-assessment-builder-target="backButton" %>
+      <%= link_to "← Previous Step", order_domains_admin_assessment_path(@assessment), class: "btn btn-ghost", data: { assessment_builder_target: "backButton" } %>
     </div>
     <div class="flex gap-2">
       <%= link_to "Edit Assessment", edit_admin_assessment_path(@assessment), class: "btn btn-outline" %>
-      <%= link_to "Save & Finish", admin_assessment_path(@assessment), 
-          class: "btn btn-primary",
-          data-assessment-builder-target="nextButton" %>
+      <%= link_to "Save & Finish", admin_assessment_path(@assessment), class: "btn btn-primary", data: { assessment_builder_target: "nextButton" } %>
     </div>
   </div>
 </div>
