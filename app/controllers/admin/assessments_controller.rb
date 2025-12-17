@@ -78,9 +78,30 @@ module Admin
 
     def update_domains
       authorize [:admin, @assessment]
-      # TODO: Implement in next step with AssessmentDomainService
-      redirect_to order_domains_admin_assessment_path(@assessment),
-                  notice: "Domains updated successfully."
+
+      domain_ids = params[:domain_ids] || []
+
+      # Remove domains that are not in the selected list
+      @assessment.assessment_domains.each do |assessment_domain|
+        unless domain_ids.include?(assessment_domain.profile_domain_id.to_s)
+          assessment_domain.destroy
+        end
+      end
+
+      # Add new domains
+      domain_ids.each do |domain_id|
+        profile_domain = ProfileDomain.find_by(id: domain_id)
+        next unless profile_domain
+        @assessment.add_domain(profile_domain) unless @assessment.domain_included?(profile_domain)
+      end
+
+      if @assessment.save
+        redirect_to order_domains_admin_assessment_path(@assessment),
+                    notice: "Domains updated successfully."
+      else
+        redirect_to select_domains_admin_assessment_path(@assessment),
+                    alert: "Failed to update domains: #{@assessment.errors.full_messages.join(', ')}"
+      end
     end
 
     def order_domains

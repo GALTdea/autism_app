@@ -31,6 +31,31 @@ module Admin
       true
     end
 
+    # Wizard actions - all require update permissions
+    def select_domains?
+      update?
+    end
+
+    def update_domains?
+      update?
+    end
+
+    def order_domains?
+      update?
+    end
+
+    def reorder_domains?
+      update?
+    end
+
+    def preview?
+      update?
+    end
+
+    def clone?
+      create?
+    end
+
     class Scope < ApplicationPolicy::Scope
       def resolve
         if user.admin? || user.super_admin?

@@ -1,0 +1,133 @@
+<% content_for :title, "Select Domains: #{@assessment.name}" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Select Domains</h1>
+      <p class="text-base-content/70 mt-2">
+        Choose which profile domains to include in <strong><%= @assessment.name %></strong> (v<%= @assessment.version %>).
+      </p>
+    </div>
+    <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+  </div>
+
+  <!-- Progress Indicator -->
+  <div class="card bg-base-200 shadow">
+    <div class="card-body py-4">
+      <div class="steps steps-vertical lg:steps-horizontal">
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 1: Basic Info</div>
+            <div class="text-xs text-base-content/60">✓ Completed</div>
+          </div>
+        </div>
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 2: Select Domains</div>
+            <div class="text-xs text-base-content/60">In Progress</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 3: Order Domains</div>
+            <div class="text-xs text-base-content/60">Next</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 4: Configure Scoring</div>
+            <div class="text-xs text-base-content/60">Later</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%= form_with url: update_domains_admin_assessment_path(@assessment), method: :patch, local: true, class: "space-y-6" do |form| %>
+    <!-- Selected Domains -->
+    <% if @assessment_domains.any? %>
+      <div class="card bg-base-100 shadow-xl">
+        <div class="card-body">
+          <h2 class="card-title">Currently Selected (<%= @assessment_domains.count %>)</h2>
+          <p class="text-sm text-base-content/60 mb-4">Uncheck to remove from assessment</p>
+          <div class="space-y-2">
+            <% @assessment_domains.each do |assessment_domain| %>
+              <div class="flex items-center justify-between p-3 bg-base-200 rounded-box">
+                <div class="flex items-center gap-3">
+                  <%= check_box_tag "domain_ids[]", assessment_domain.profile_domain_id, true, class: "checkbox checkbox-primary" %>
+                  <div>
+                    <div class="font-semibold"><%= assessment_domain.profile_domain.label %></div>
+                    <div class="text-xs text-base-content/60">
+                      <%= assessment_domain.profile_domain.description.presence || assessment_domain.profile_domain.key %>
+                    </div>
+                    <div class="text-xs text-base-content/50 mt-1">
+                      <%= assessment_domain.profile_domain.questions.count %> questions
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Available Domains -->
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="card-title">Available Domains</h2>
+          <div class="flex gap-2">
+            <button type="button" onclick="document.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = true)" class="btn btn-xs btn-ghost">
+              Select All
+            </button>
+            <button type="button" onclick="document.querySelectorAll('input[type=checkbox]').forEach(c => c.checked = false)" class="btn btn-xs btn-ghost">
+              Deselect All
+            </button>
+          </div>
+        </div>
+
+        <% if @available_domains.any? %>
+          <div class="space-y-2">
+            <% @available_domains.each do |domain| %>
+              <div class="flex items-center justify-between p-3 border border-base-300 rounded-box hover:bg-base-200 transition">
+                <div class="flex items-center gap-3">
+                  <%= check_box_tag "domain_ids[]", domain.id, false, class: "checkbox checkbox-primary" %>
+                  <div>
+                    <div class="font-semibold"><%= domain.label %></div>
+                    <div class="text-xs text-base-content/60">
+                      <%= domain.description.presence || domain.key %>
+                    </div>
+                    <div class="text-xs text-base-content/50 mt-1">
+                      <%= domain.questions.count %> questions
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="alert alert-info">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <span>All available domains are already selected.</span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="flex justify-between items-center pt-4 border-t">
+      <%= link_to "Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+      <div class="flex gap-2">
+        <%= form.submit "Continue to Order Domains", 
+            class: "btn btn-primary",
+            id: "submit-domains",
+            onclick: "const checked = document.querySelectorAll('input[type=checkbox]:checked').length; if (checked === 0) { alert('Please select at least one domain'); return false; } return true;" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
