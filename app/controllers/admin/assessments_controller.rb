@@ -81,26 +81,13 @@ module Admin
 
       domain_ids = params[:domain_ids] || []
 
-      # Remove domains that are not in the selected list
-      @assessment.assessment_domains.each do |assessment_domain|
-        unless domain_ids.include?(assessment_domain.profile_domain_id.to_s)
-          assessment_domain.destroy
-        end
-      end
-
-      # Add new domains
-      domain_ids.each do |domain_id|
-        profile_domain = ProfileDomain.find_by(id: domain_id)
-        next unless profile_domain
-        @assessment.add_domain(profile_domain) unless @assessment.domain_included?(profile_domain)
-      end
-
-      if @assessment.save
+      begin
+        AssessmentDomainService.update_domains(@assessment, domain_ids)
         redirect_to order_domains_admin_assessment_path(@assessment),
                     notice: "Domains updated successfully."
-      else
+      rescue AssessmentDomainService::Error => e
         redirect_to select_domains_admin_assessment_path(@assessment),
-                    alert: "Failed to update domains: #{@assessment.errors.full_messages.join(', ')}"
+                    alert: "Failed to update domains: #{e.message}"
       end
     end
 
@@ -113,9 +100,17 @@ module Admin
 
     def reorder_domains
       authorize [:admin, @assessment]
-      # TODO: Implement in next step with drag-and-drop support
-      redirect_to order_domains_admin_assessment_path(@assessment),
-                  notice: "Domain order updated successfully."
+
+      domain_positions = params[:domain_positions] || {}
+
+      begin
+        AssessmentDomainService.reorder_domains(@assessment, domain_positions)
+        redirect_to order_domains_admin_assessment_path(@assessment),
+                    notice: "Domain order updated successfully."
+      rescue AssessmentDomainService::Error => e
+        redirect_to order_domains_admin_assessment_path(@assessment),
+                    alert: "Failed to reorder domains: #{e.message}"
+      end
     end
 
     def preview
