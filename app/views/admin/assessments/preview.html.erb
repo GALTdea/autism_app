@@ -1,0 +1,219 @@
+<% content_for :title, "Preview: #{@assessment.name}" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Assessment Preview</h1>
+      <p class="text-base-content/70 mt-2">
+        Review your assessment before finalizing: <strong><%= @assessment.name %></strong> (v<%= @assessment.version %>)
+      </p>
+    </div>
+    <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+  </div>
+
+  <!-- Progress Indicator -->
+  <div class="card bg-base-200 shadow">
+    <div class="card-body py-4">
+      <div class="steps steps-vertical lg:steps-horizontal">
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 1: Basic Info</div>
+            <div class="text-xs text-base-content/60">✓ Completed</div>
+          </div>
+        </div>
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 2: Select Domains</div>
+            <div class="text-xs text-base-content/60">✓ Completed</div>
+          </div>
+        </div>
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 3: Order Domains</div>
+            <div class="text-xs text-base-content/60">✓ Completed</div>
+          </div>
+        </div>
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 4: Preview</div>
+            <div class="text-xs text-base-content/60">Current Step</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assessment Summary Card -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Assessment Summary</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Name</div>
+          <div class="font-semibold text-lg"><%= @assessment.name %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Version</div>
+          <div class="font-semibold text-lg">v<%= @assessment.version %></div>
+        </div>
+        <% if @assessment.description.present? %>
+          <div class="md:col-span-2">
+            <div class="text-sm text-base-content/60 mb-1">Description</div>
+            <div class="text-base-content/80"><%= @assessment.description %></div>
+          </div>
+        <% end %>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Status</div>
+          <div>
+            <% if @assessment.active? %>
+              <span class="badge badge-success">Active</span>
+            <% else %>
+              <span class="badge badge-ghost">Inactive</span>
+            <% end %>
+            <% if @assessment.is_default? %>
+              <span class="badge badge-info ml-2">Default</span>
+            <% end %>
+          </div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Total Domains</div>
+          <div class="font-semibold text-lg"><%= @domains.count %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Domain Flow Visualization -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Assessment Flow</h2>
+      <p class="text-sm text-base-content/60 mb-4">The order domains will be presented during onboarding</p>
+      
+      <% if @domains.any? %>
+        <div class="space-y-4">
+          <% @domains.each_with_index do |domain, index| %>
+            <div class="relative">
+              <!-- Connector Line (except for last item) -->
+              <% unless index == @domains.length - 1 %>
+                <div class="absolute left-5 top-12 bottom-0 w-0.5 bg-primary opacity-30"></div>
+              <% end %>
+              
+              <div class="flex items-start gap-4 relative z-10">
+                <!-- Step Number -->
+                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
+                  <%= index + 1 %>
+                </div>
+                
+                <!-- Domain Card -->
+                <div class="flex-1 card bg-base-200 shadow">
+                  <div class="card-body p-4">
+                    <div class="flex justify-between items-start mb-2">
+                      <div>
+                        <h3 class="font-semibold text-lg"><%= domain.label %></h3>
+                        <div class="text-xs text-base-content/60 mt-1"><%= domain.key %></div>
+                      </div>
+                      <span class="badge badge-primary badge-lg">
+                        <%= @assessment.questions_count_for_domain(domain) %> questions
+                      </span>
+                    </div>
+                    
+                    <% if domain.description.present? %>
+                      <p class="text-sm text-base-content/70 mt-2"><%= domain.description %></p>
+                    <% end %>
+                    
+                    <!-- Questions Preview (collapsible) -->
+                    <% domain_questions = @assessment.questions_for_domain(domain) %>
+                    <% if domain_questions.any? %>
+                      <div class="collapse collapse-arrow bg-base-100 mt-3">
+                        <input type="checkbox" />
+                        <div class="collapse-title text-sm font-medium">
+                          View Questions (<%= domain_questions.count %>)
+                        </div>
+                        <div class="collapse-content">
+                          <div class="space-y-2 mt-2">
+                            <% domain_questions.each do |question| %>
+                              <div class="text-xs p-2 bg-base-200 rounded">
+                                <div class="font-mono text-base-content/60"><%= question.code %></div>
+                                <div class="text-base-content/80 mt-1"><%= question.text.truncate(100) %></div>
+                              </div>
+                            <% end %>
+                          </div>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="alert alert-warning">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <span>No domains selected. Please add domains to this assessment.</span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Statistics Card -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Domains</div>
+      <div class="stat-value text-primary"><%= @domains.count %></div>
+      <div class="stat-desc">In this assessment</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Questions</div>
+      <div class="stat-value text-secondary"><%= @assessment.total_questions_count %></div>
+      <div class="stat-desc">Across all domains</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Avg Questions/Domain</div>
+      <div class="stat-value text-accent">
+        <%= @domains.any? ? (@assessment.total_questions_count.to_f / @domains.count).round(1) : 0 %>
+      </div>
+      <div class="stat-desc">Per domain</div>
+    </div>
+  </div>
+
+  <!-- Scoring Configuration Summary -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Scoring Configuration</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Scoring Method</div>
+          <div class="font-semibold"><%= @assessment.scoring_method.humanize %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Level Thresholds</div>
+          <div class="font-semibold">5 levels (0-4)</div>
+        </div>
+      </div>
+      <div class="alert alert-info mt-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <span>Advanced scoring configuration will be available in a future update.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex justify-between items-center pt-4 border-t">
+    <div class="flex gap-2">
+      <%= link_to "← Edit Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+      <%= link_to "← Reorder Domains", order_domains_admin_assessment_path(@assessment), class: "btn btn-ghost" %>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "Edit Assessment", edit_admin_assessment_path(@assessment), class: "btn btn-outline" %>
+      <%= link_to "Save & Finish", admin_assessment_path(@assessment), class: "btn btn-primary" %>
+    </div>
+  </div>
+</div>
+
