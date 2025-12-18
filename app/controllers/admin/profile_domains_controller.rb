@@ -1,6 +1,10 @@
 module Admin
   class ProfileDomainsController < Admin::ApplicationController
-    before_action :set_profile_domain, only: [ :show, :edit, :update, :destroy ]
+    before_action :set_profile_domain, only: [ :show, :edit, :update, :destroy,
+                                                :manage_questions, :create_question,
+                                                :update_question, :destroy_question,
+                                                :reorder_questions, :preview ]
+    before_action :set_question, only: [ :update_question, :destroy_question ]
     after_action :verify_authorized
 
     def index
@@ -68,14 +72,177 @@ module Admin
       end
     end
 
+    # Question Management Actions
+
+    def manage_questions
+      authorize [ :admin, @profile_domain ]
+      @questions = @profile_domain.questions.includes(:question_options).ordered
+    end
+
+    def create_question
+      authorize [ :admin, @profile_domain ]
+
+      begin
+        @question = QuestionManagementService.create_question(@profile_domain, question_params)
+
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        notice: "Question created successfully."
+          }
+          format.json { render json: { status: "success", question: @question }, status: :created }
+          format.turbo_stream {
+            @questions = @profile_domain.questions.includes(:question_options).ordered
+            render :create_question
+          }
+        end
+      rescue QuestionManagementService::InvalidQuestionError => e
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        alert: "Failed to create question: #{e.message}"
+          }
+          format.json { render json: { status: "error", message: e.message }, status: :unprocessable_entity }
+          format.turbo_stream {
+            flash.now[:alert] = "Failed to create question: #{e.message}"
+            render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
+          }
+        end
+      end
+    end
+
+    def update_question
+      authorize [ :admin, @profile_domain ]
+
+      begin
+        QuestionManagementService.update_question(@question, question_params)
+
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        notice: "Question updated successfully."
+          }
+          format.json { render json: { status: "success", question: @question.reload } }
+          format.turbo_stream {
+            @questions = @profile_domain.questions.includes(:question_options).ordered
+            render :update_question
+          }
+        end
+      rescue QuestionManagementService::UpdateError => e
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        alert: "Failed to update question: #{e.message}"
+          }
+          format.json { render json: { status: "error", message: e.message }, status: :unprocessable_entity }
+          format.turbo_stream {
+            flash.now[:alert] = "Failed to update question: #{e.message}"
+            render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
+          }
+        end
+      end
+    end
+
+    def destroy_question
+      authorize [ :admin, @profile_domain ]
+
+      begin
+        QuestionManagementService.delete_question(@question)
+
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        notice: "Question deleted successfully."
+          }
+          format.json { render json: { status: "success", message: "Question deleted successfully." } }
+          format.turbo_stream {
+            @questions = @profile_domain.questions.includes(:question_options).ordered
+            render :destroy_question
+          }
+        end
+      rescue QuestionManagementService::DeleteError => e
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        alert: "Failed to delete question: #{e.message}"
+          }
+          format.json { render json: { status: "error", message: e.message }, status: :unprocessable_entity }
+          format.turbo_stream {
+            flash.now[:alert] = "Failed to delete question: #{e.message}"
+            render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
+          }
+        end
+      end
+    end
+
+    def reorder_questions
+      authorize [ :admin, @profile_domain ]
+
+      question_positions = reorder_questions_params
+
+      begin
+        QuestionManagementService.reorder_questions(@profile_domain, question_positions)
+
+        # Reload to get updated positions
+        @profile_domain.reload
+        @questions = @profile_domain.questions.includes(:question_options).ordered
+
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        notice: "Question order updated successfully."
+          }
+          format.json { render json: { status: "success", message: "Question order updated successfully." } }
+          format.turbo_stream {
+            render :reorder_questions
+          }
+        end
+      rescue QuestionManagementService::UpdateError => e
+        respond_to do |format|
+          format.html {
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        alert: "Failed to reorder questions: #{e.message}"
+          }
+          format.json { render json: { status: "error", message: e.message }, status: :unprocessable_entity }
+          format.turbo_stream {
+            flash.now[:alert] = "Failed to reorder questions: #{e.message}"
+            render turbo_stream: turbo_stream.update("flash", partial: "shared/flash")
+          }
+        end
+      end
+    end
+
+    def preview
+      authorize [ :admin, @profile_domain ]
+      @questions = @profile_domain.questions.includes(:question_options).ordered
+      redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                  alert: "Please add at least one question first." if @questions.empty?
+    end
+
     private
 
     def set_profile_domain
       @profile_domain = ProfileDomain.find(params[:id])
     end
 
+    def set_question
+      @question = Question.find(params[:question_id])
+      # Ensure question belongs to the profile domain
+      unless @question.profile_domain_id == @profile_domain.id
+        raise ActiveRecord::RecordNotFound, "Question not found in this profile domain"
+      end
+    end
+
     def profile_domain_params
       params.require(:profile_domain).permit(:key, :label, :description)
+    end
+
+    def question_params
+      params.require(:question).permit(:code, :text, :response_type, :position)
+    end
+
+    def reorder_questions_params
+      params.require(:question_positions).permit! # Permit all for now, will refine if needed
     end
 
     def can_be_deleted?

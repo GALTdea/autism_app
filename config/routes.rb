@@ -42,6 +42,9 @@ Rails.application.routes.draw do
       # Domain Builder wizard routes
       member do
         get :manage_questions
+        post :create_question
+        patch :update_question
+        delete :destroy_question
         patch :reorder_questions
         get :preview
       end
