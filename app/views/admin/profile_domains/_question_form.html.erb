@@ -1,13 +1,13 @@
-<%= form_with model: [ :admin, @profile_domain, (@question || Question.new) ], 
-    url: (@question ? update_question_admin_profile_domain_path(@profile_domain, question_id: @question.id) : create_question_admin_profile_domain_path(@profile_domain)),
+<%= form_with url: (@question ? update_question_admin_profile_domain_path(@profile_domain, question_id: @question.id) : create_question_admin_profile_domain_path(@profile_domain)),
     method: (@question ? :patch : :post),
-    local: !@question, # Use Turbo for new questions, regular for updates
+    local: true,
     data: { 
       controller: "question-form",
       question_form_response_type_value: (@question&.response_type || 'scale'),
       action: "turbo:submit-end->question-form#handleSubmit"
     },
     class: "space-y-6" do |form| %>
+  
   
   <% if (@question || form.object).errors.any? %>
     <div class="alert alert-error">
