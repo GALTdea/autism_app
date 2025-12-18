@@ -147,10 +147,16 @@
             </tbody>
           </table>
         </div>
+        <div class="card-actions justify-end mt-4">
+          <%= link_to "Manage All Profile Domains", admin_profile_domains_path, class: "btn btn-sm btn-ghost" %>
+        </div>
       <% else %>
         <div class="text-center py-8">
           <p class="text-base-content/60 mb-4">No domains added to this assessment yet.</p>
-          <%= link_to "Add Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-primary" %>
+          <div class="flex gap-2 justify-center">
+            <%= link_to "Add Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-primary" %>
+            <%= link_to "Manage All Domains", admin_profile_domains_path, class: "btn btn-ghost" %>
+          </div>
         </div>
       <% end %>
     </div>
