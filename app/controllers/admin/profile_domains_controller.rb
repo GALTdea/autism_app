@@ -1,16 +1,17 @@
 module Admin
   class ProfileDomainsController < Admin::ApplicationController
-    before_action :set_profile_domain, only: [:show, :edit, :update, :destroy]
+    before_action :set_profile_domain, only: [ :show, :edit, :update, :destroy,
+                                              :manage_questions, :reorder_questions, :preview ]
     after_action :verify_authorized
 
     def index
-      authorize [:admin, ProfileDomain]
-      @profile_domains = policy_scope([:admin, ProfileDomain]).includes(:questions, :assessments)
+      authorize [ :admin, ProfileDomain ]
+      @profile_domains = policy_scope([ :admin, ProfileDomain ]).includes(:questions, :assessments)
                                                                  .order(:label)
     end
 
     def show
-      authorize [:admin, @profile_domain]
+      authorize [ :admin, @profile_domain ]
       @questions = @profile_domain.questions.includes(:question_options).ordered
       # Count onboarding sessions that use assessments containing this domain
       assessment_ids = @profile_domain.assessments.pluck(:id)
@@ -24,12 +25,12 @@ module Admin
 
     def new
       @profile_domain = ProfileDomain.new
-      authorize [:admin, @profile_domain]
+      authorize [ :admin, @profile_domain ]
     end
 
     def create
       @profile_domain = ProfileDomain.new(profile_domain_params)
-      authorize [:admin, @profile_domain]
+      authorize [ :admin, @profile_domain ]
 
       if @profile_domain.save
         redirect_to admin_profile_domain_path(@profile_domain),
@@ -40,12 +41,12 @@ module Admin
     end
 
     def edit
-      authorize [:admin, @profile_domain]
+      authorize [ :admin, @profile_domain ]
       @questions = @profile_domain.questions.ordered if @profile_domain.questions.any?
     end
 
     def update
-      authorize [:admin, @profile_domain]
+      authorize [ :admin, @profile_domain ]
 
       if @profile_domain.update(profile_domain_params)
         redirect_to admin_profile_domain_path(@profile_domain),
@@ -56,7 +57,7 @@ module Admin
     end
 
     def destroy
-      authorize [:admin, @profile_domain]
+      authorize [ :admin, @profile_domain ]
 
       if can_be_deleted?
         @profile_domain.destroy

@@ -37,6 +37,15 @@ Rails.application.routes.draw do
         get :configure_scoring
       end
     end
+
+    resources :profile_domains do
+      # Domain Builder wizard routes
+      member do
+        get :manage_questions
+        patch :reorder_questions
+        get :preview
+      end
+    end
   end
 
   # Child Profiles
