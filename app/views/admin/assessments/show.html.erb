@@ -88,6 +88,9 @@
       <p class="text-sm text-base-content/60 mt-2">
         Use the Assessment Builder to manage domains, configure ordering, and set up scoring criteria.
       </p>
+      <div class="mt-4 pt-4 border-t border-base-300">
+        <%= link_to "Manage All Profile Domains", admin_profile_domains_path, class: "btn btn-sm btn-ghost" %>
+      </div>
     </div>
   </div>
 
@@ -132,8 +135,12 @@
                     </span>
                   </td>
                   <td>
-                    <%= link_to "View Questions", madmin_questions_path(profile_domain_id: domain.id), 
-                        class: "btn btn-xs btn-ghost" %>
+                    <div class="flex gap-1">
+                      <%= link_to "Manage", admin_profile_domain_path(domain), 
+                          class: "btn btn-xs btn-primary" %>
+                      <%= link_to "Questions", madmin_questions_path(profile_domain_id: domain.id), 
+                          class: "btn btn-xs btn-ghost" %>
+                    </div>
                   </td>
                 </tr>
               <% end %>
