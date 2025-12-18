@@ -88,3 +88,4 @@ class AssessmentDomainService
     end
   end
 end
+

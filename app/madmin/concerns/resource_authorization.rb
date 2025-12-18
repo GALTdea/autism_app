@@ -62,3 +62,4 @@ module Madmin
     end
   end
 end
+

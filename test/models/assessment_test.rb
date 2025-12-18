@@ -121,3 +121,4 @@ class AssessmentTest < ActiveSupport::TestCase
     assert_includes Assessment.active, @assessment
   end
 end
+

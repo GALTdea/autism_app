@@ -10,3 +10,4 @@ class AssessmentDomain < ApplicationRecord
   # Scopes
   scope :ordered, -> { order(:position) }
 end
+

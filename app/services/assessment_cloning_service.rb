@@ -93,3 +93,4 @@ class AssessmentCloningService
     new_version
   end
 end
+

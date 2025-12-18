@@ -87,3 +87,4 @@ class AssessmentDomainTest < ActiveSupport::TestCase
     assert_equal @domain.id, @assessment_domain.profile_domain.id
   end
 end
+
