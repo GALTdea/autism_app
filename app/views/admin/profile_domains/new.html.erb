@@ -1,0 +1,53 @@
+<% content_for :title, "New Profile Domain" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Create New Profile Domain</h1>
+      <p class="text-base-content/70 mt-2">
+        Define a new profile domain. After creation, you'll be able to add questions to it.
+      </p>
+    </div>
+    <%= link_to "← Back to Domains", admin_profile_domains_path, class: "btn btn-ghost" %>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <%= render "form" %>
+    </div>
+  </div>
+
+  <!-- Help Section -->
+  <div class="card bg-base-200 shadow">
+    <div class="card-body">
+      <h2 class="card-title text-lg">Domain Builder Steps</h2>
+      <div class="steps steps-vertical lg:steps-horizontal">
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 1: Basic Info</div>
+            <div class="text-sm text-base-content/60">Key, label, description</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 2: Add Questions</div>
+            <div class="text-sm text-base-content/60">Create questions for this domain</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 3: Configure Options</div>
+            <div class="text-sm text-base-content/60">Set up question options</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 4: Preview</div>
+            <div class="text-sm text-base-content/60">Review complete domain</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
