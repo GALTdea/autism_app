@@ -1,0 +1,226 @@
+<%= form_with model: [ :admin, @profile_domain, (@question || Question.new) ], 
+    url: (@question ? update_question_admin_profile_domain_path(@profile_domain, question_id: @question.id) : create_question_admin_profile_domain_path(@profile_domain)),
+    method: (@question ? :patch : :post),
+    local: !@question, # Use Turbo for new questions, regular for updates
+    data: { 
+      controller: "question-form",
+      question_form_response_type_value: (@question&.response_type || 'scale'),
+      action: "turbo:submit-end->question-form#handleSubmit"
+    },
+    class: "space-y-6" do |form| %>
+  
+  <% if (@question || form.object).errors.any? %>
+    <div class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">Please fix the following errors:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% (@question || form.object).errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :profile_domain_id, value: @profile_domain.id %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <!-- Code Field -->
+    <div class="form-control w-full">
+      <%= form.label :code, class: "label" do %>
+        <span class="label-text">Question Code <span class="text-error">*</span></span>
+      <% end %>
+      <%= form.text_field :code, 
+          class: "input input-bordered w-full #{'input-error' if (@question || form.object).errors[:code].any?}", 
+          placeholder: "e.g., COMM_1, SOCIAL_2",
+          required: true,
+          pattern: "^[A-Z0-9_]+$",
+          title: "Code must be uppercase letters, numbers, and underscores only",
+          data: { 
+            question_form_target: "codeInput",
+            action: "blur->question-form#validateCode"
+          } %>
+      <label class="label">
+        <span class="label-text-alt">
+          <% if @question&.persisted? %>
+            <span class="text-warning">⚠️ Code cannot be changed after creation</span>
+          <% else %>
+            Unique identifier (auto-generated if left blank). Format: UPPERCASE_LETTERS_AND_NUMBERS
+          <% end %>
+        </span>
+      </label>
+      <div data-question-form-target="codeError" class="hidden text-error text-sm mt-1"></div>
+    </div>
+
+    <!-- Position Field -->
+    <div class="form-control w-full">
+      <%= form.label :position, class: "label" do %>
+        <span class="label-text">Position</span>
+      <% end %>
+      <%= form.number_field :position, 
+          class: "input input-bordered w-full #{'input-error' if (@question || form.object).errors[:position].any?}", 
+          placeholder: "Auto-assigned if blank",
+          min: 0,
+          step: 1,
+          data: { question_form_target: "positionInput" } %>
+      <label class="label">
+        <span class="label-text-alt">Order in domain (0-based). Leave blank to auto-assign at end.</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Question Text Field -->
+  <div class="form-control w-full">
+    <%= form.label :text, class: "label" do %>
+      <span class="label-text">Question Text <span class="text-error">*</span></span>
+    <% end %>
+    <%= form.text_area :text, 
+        rows: 3,
+        class: "textarea textarea-bordered w-full #{'textarea-error' if (@question || form.object).errors[:text].any?}", 
+        placeholder: "Enter the question text here...",
+        required: true,
+        minlength: 10,
+        maxlength: 500,
+        data: { 
+          question_form_target: "textInput",
+          action: "input->question-form#validateText"
+        } %>
+    <label class="label">
+      <span class="label-text-alt">
+        <span data-question-form-target="textCount" class="text-base-content/60">0 / 500 characters</span>
+      </span>
+    </label>
+    <div data-question-form-target="textError" class="hidden text-error text-sm mt-1"></div>
+  </div>
+
+  <!-- Response Type Field -->
+  <div class="form-control w-full">
+    <%= form.label :response_type, class: "label" do %>
+      <span class="label-text">Response Type <span class="text-error">*</span></span>
+    <% end %>
+    <%= form.select :response_type, 
+        options_for_select(
+          Question.response_types.keys.map { |type| [type.humanize, type] },
+          @question&.response_type || 'scale'
+        ),
+        { prompt: "Select response type..." },
+        { 
+          class: "select select-bordered w-full #{'select-error' if (@question || form.object).errors[:response_type].any?}",
+          required: true,
+          data: { 
+            question_form_target: "responseTypeSelect",
+            action: "change->question-form#handleResponseTypeChange"
+          }
+        } %>
+    <label class="label">
+      <span class="label-text-alt">
+        <strong>Scale:</strong> Ordered options (e.g., Always, Often, Sometimes, Rarely, Never) <br>
+        <strong>Multi-choice:</strong> Multiple unordered options <br>
+        <strong>Text:</strong> Free text response (no options needed)
+      </span>
+    </label>
+  </div>
+
+  <!-- Question Options Section (Conditional) -->
+  <div data-question-form-target="optionsSection" class="<%= 'hidden' if @question&.response_type == 'text' %>">
+    <div class="card bg-base-200 shadow-sm">
+      <div class="card-body">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="card-title text-lg">Question Options</h3>
+          <button type="button" 
+                  class="btn btn-sm btn-primary"
+                  data-question-form-target="addOptionButton"
+                  data-action="click->question-form#addOption">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Option
+          </button>
+        </div>
+
+        <div class="alert alert-info mb-4" data-question-form-target="optionsInfo">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          <div>
+            <p class="font-semibold">Options are required for Scale and Multi-choice questions</p>
+            <p class="text-sm mt-1">
+              <span data-question-form-target="optionsInstructions">
+                For <strong>Scale</strong> questions, order options from highest to lowest value.
+                For <strong>Multi-choice</strong> questions, add all available choices.
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Existing Options -->
+        <% if @question&.question_options&.any? %>
+          <div data-question-form-target="optionsList" class="space-y-3">
+            <% @question.question_options.ordered.each_with_index do |option, index| %>
+              <div class="flex items-center gap-3 p-3 bg-base-100 rounded-box border border-base-300" data-question-form-target="optionRow">
+                <div class="flex items-center gap-2 flex-1">
+                  <span class="badge badge-neutral badge-lg min-w-[3rem] justify-center"><%= index + 1 %></span>
+                  <input type="text" 
+                         value="<%= option.label %>" 
+                         placeholder="Option label"
+                         class="input input-bordered flex-1"
+                         data-question-form-target="optionLabel"
+                         data-option-id="<%= option.id %>"
+                         name="question[question_options_attributes][<%= option.id %>][label]"
+                         required>
+                  <input type="number" 
+                         value="<%= option.value %>" 
+                         placeholder="Value"
+                         class="input input-bordered w-24"
+                         data-question-form-target="optionValue"
+                         data-option-id="<%= option.id %>"
+                         name="question[question_options_attributes][<%= option.id %>][value]"
+                         min="0"
+                         step="1"
+                         required>
+                </div>
+                <button type="button" 
+                        class="btn btn-sm btn-error btn-ghost"
+                        data-action="click->question-form#removeOption"
+                        data-option-id="<%= option.id %>">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div data-question-form-target="optionsList" class="space-y-3">
+            <div class="text-center py-4 text-base-content/60">
+              <p>No options added yet. Click "Add Option" to add response choices.</p>
+            </div>
+          </div>
+        <% end %>
+
+        <div data-question-form-target="optionsError" class="hidden alert alert-error mt-4">
+          <span>At least one option is required for Scale and Multi-choice questions.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Actions -->
+  <div class="flex justify-end gap-3 pt-4 border-t border-base-300">
+    <button type="button" 
+            class="btn btn-ghost"
+            data-action="click->question-form#cancelForm">
+      Cancel
+    </button>
+    <%= form.submit (@question&.persisted? ? "Update Question" : "Create Question"), 
+        class: "btn btn-primary",
+        data: { 
+          question_form_target: "submitButton",
+          action: "click->question-form#validateBeforeSubmit"
+        } %>
+  </div>
+<% end %>
+
