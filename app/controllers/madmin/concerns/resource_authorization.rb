@@ -1,5 +1,6 @@
 module Madmin
-  module ResourceAuthorization
+  module Concerns
+    module ResourceAuthorization
     extend ActiveSupport::Concern
 
     included do
@@ -58,5 +59,6 @@ module Madmin
     rescue NameError
       nil
     end
+  end
   end
 end

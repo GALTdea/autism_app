@@ -1,7 +1,7 @@
 module Madmin
   class ApplicationController < Madmin::BaseController
     include Pundit::Authorization
-    include Madmin::ResourceAuthorization
+    include Madmin::Concerns::ResourceAuthorization
 
     layout "admin"
 
