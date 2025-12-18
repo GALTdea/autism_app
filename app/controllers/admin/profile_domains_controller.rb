@@ -1,7 +1,6 @@
 module Admin
   class ProfileDomainsController < Admin::ApplicationController
-    before_action :set_profile_domain, only: [ :show, :edit, :update, :destroy,
-                                              :manage_questions, :reorder_questions, :preview ]
+    before_action :set_profile_domain, only: [ :show, :edit, :update, :destroy ]
     after_action :verify_authorized
 
     def index
