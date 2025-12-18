@@ -30,6 +30,31 @@ module Admin
       user.super_admin?
     end
 
+    # Builder actions
+    def manage_questions?
+      update?
+    end
+
+    def create_question?
+      update?
+    end
+
+    def update_question?
+      update?
+    end
+
+    def destroy_question?
+      update?
+    end
+
+    def reorder_questions?
+      update?
+    end
+
+    def preview?
+      update?
+    end
+
     class Scope < ApplicationPolicy::Scope
       def resolve
         if user.admin? || user.super_admin?
