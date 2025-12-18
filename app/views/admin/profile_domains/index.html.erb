@@ -1,0 +1,165 @@
+<% content_for :title, "Profile Domains" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold">Profile Domains</h1>
+    <%= link_to "New Domain", new_admin_profile_domain_path, class: "btn btn-primary" %>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Domains</div>
+      <div class="stat-value text-primary"><%= number_with_delimiter(@profile_domains.count) %></div>
+      <div class="stat-desc">All domains</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">With Questions</div>
+      <div class="stat-value text-success"><%= number_with_delimiter(@profile_domains.select { |d| d.questions.any? }.count) %></div>
+      <div class="stat-desc">Has questions</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">In Use</div>
+      <div class="stat-value text-info"><%= number_with_delimiter(@profile_domains.select { |d| d.assessments.any? }.count) %></div>
+      <div class="stat-desc">Used in assessments</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Questions</div>
+      <div class="stat-value text-secondary"><%= number_with_delimiter(@profile_domains.sum { |d| d.questions.count }) %></div>
+      <div class="stat-desc">Across all domains</div>
+    </div>
+  </div>
+
+  <!-- Domains Table -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-4">All Profile Domains</h2>
+      <div class="overflow-x-auto">
+        <% if @profile_domains.any? %>
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th>Domain</th>
+                <th>Key</th>
+                <th>Description</th>
+                <th>Questions</th>
+                <th>Usage</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @profile_domains.each do |domain| %>
+                <tr>
+                  <td>
+                    <div class="font-semibold">
+                      <%= link_to domain.label, admin_profile_domain_path(domain), class: "link link-primary" %>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge badge-outline font-mono text-xs"><%= domain.key %></span>
+                  </td>
+                  <td>
+                    <div class="text-sm text-base-content/70 max-w-xs">
+                      <%= domain.description.present? ? truncate(domain.description, length: 60) : "—" %>
+                    </div>
+                  </td>
+                  <td>
+                    <% question_count = domain.questions.count %>
+                    <% if question_count > 0 %>
+                      <span class="badge badge-primary badge-lg"><%= question_count %></span>
+                    <% else %>
+                      <span class="badge badge-ghost">0</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% assessment_count = domain.assessments.count %>
+                    <% child_profile_count = domain.child_profiles.count %>
+                    <div class="flex flex-col gap-1 text-sm">
+                      <% if assessment_count > 0 %>
+                        <span>
+                          <span class="badge badge-info badge-sm"><%= assessment_count %></span>
+                          <span class="text-base-content/60">assessment<%= 's' unless assessment_count == 1 %></span>
+                        </span>
+                      <% end %>
+                      <% if child_profile_count > 0 %>
+                        <span>
+                          <span class="badge badge-success badge-sm"><%= child_profile_count %></span>
+                          <span class="text-base-content/60">profile<%= 's' unless child_profile_count == 1 %></span>
+                        </span>
+                      <% end %>
+                      <% if assessment_count == 0 && child_profile_count == 0 %>
+                        <span class="text-base-content/60">Not in use</span>
+                      <% end %>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex flex-col gap-1">
+                      <% if domain.questions.any? %>
+                        <span class="badge badge-success badge-sm">Has Questions</span>
+                      <% else %>
+                        <span class="badge badge-warning badge-sm">No Questions</span>
+                      <% end %>
+                      <% if domain.assessments.any? %>
+                        <span class="badge badge-info badge-sm">In Use</span>
+                      <% else %>
+                        <span class="badge badge-ghost badge-sm">Available</span>
+                      <% end %>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-sm text-base-content/60">
+                      <%= domain.created_at.strftime("%b %d, %Y") %>
+                    </div>
+                  </td>
+                  <td class="text-right">
+                    <div class="flex justify-end gap-2">
+                      <%= link_to "View", admin_profile_domain_path(domain), class: "btn btn-sm btn-ghost" %>
+                      <%= link_to "Edit", edit_admin_profile_domain_path(domain), class: "btn btn-sm btn-ghost" %>
+                      <% if domain.questions.any? %>
+                        <%= link_to "Questions", manage_questions_admin_profile_domain_path(domain), class: "btn btn-sm btn-primary" %>
+                      <% else %>
+                        <%= link_to "Add Questions", manage_questions_admin_profile_domain_path(domain), class: "btn btn-sm btn-info" %>
+                      <% end %>
+                      <% if current_user.super_admin? && !domain.assessments.any? && !domain.child_profiles.any? && !domain.questions.any? %>
+                        <%= link_to "Delete", admin_profile_domain_path(domain),
+                            method: :delete,
+                            data: {
+                              turbo_method: :delete,
+                              turbo_confirm: "Are you sure you want to delete this domain? This action cannot be undone."
+                            },
+                            class: "btn btn-sm btn-error btn-ghost" %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="text-center py-12 text-base-content/60">
+            <div class="flex flex-col items-center gap-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p class="text-lg font-semibold">No profile domains found</p>
+              <p class="text-sm">Create your first profile domain to get started</p>
+              <%= link_to "Create Your First Domain", new_admin_profile_domain_path, class: "btn btn-primary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="flex justify-between items-center pt-4 border-t border-base-300">
+    <%= link_to "← Back to Dashboard", admin_root_path, class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "View in Madmin", madmin_profile_domains_path, class: "btn btn-ghost btn-sm" %>
+      <%= link_to "Manage Assessments", admin_assessments_path, class: "btn btn-ghost btn-sm" %>
+    </div>
+  </div>
+</div>
+
