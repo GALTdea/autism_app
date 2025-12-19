@@ -48,6 +48,15 @@ Rails.application.routes.draw do
         patch :reorder_questions
         get :preview
       end
+
+      # Nested question resources for question options
+      resources :questions, only: [] do
+        resources :question_options, only: [:create, :update, :destroy], param: :option_id do
+          collection do
+            patch :reorder
+          end
+        end
+      end
     end
   end
 

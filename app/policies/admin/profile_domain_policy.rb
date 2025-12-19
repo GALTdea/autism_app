@@ -55,6 +55,23 @@ module Admin
       update?
     end
 
+    # Question Option actions (managed through profile domain)
+    def create_option?
+      update?
+    end
+
+    def update_option?
+      update?
+    end
+
+    def destroy_option?
+      update?
+    end
+
+    def reorder_options?
+      update?
+    end
+
     class Scope < ApplicationPolicy::Scope
       def resolve
         if user.admin? || user.super_admin?
