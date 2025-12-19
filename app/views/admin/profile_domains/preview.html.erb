@@ -1,0 +1,204 @@
+<% content_for :title, "Preview: #{@profile_domain.label}" %>
+
+<div class="container mx-auto px-4 py-8 space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Domain Preview</h1>
+      <p class="text-base-content/70 mt-2">
+        Complete view of <strong><%= @profile_domain.label %></strong> domain structure
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "← Back to Domain", admin_profile_domain_path(@profile_domain), class: "btn btn-ghost" %>
+      <%= link_to "Manage Questions", manage_questions_admin_profile_domain_path(@profile_domain), class: "btn btn-primary" %>
+    </div>
+  </div>
+
+  <!-- Domain Information Card -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-2xl mb-4">Domain Information</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Domain Key</div>
+          <div class="font-mono text-lg font-semibold badge badge-lg badge-ghost"><%= @profile_domain.key %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Domain Label</div>
+          <div class="text-lg font-semibold"><%= @profile_domain.label %></div>
+        </div>
+        <% if @profile_domain.description.present? %>
+          <div class="md:col-span-2">
+            <div class="text-sm text-base-content/60 mb-1">Description</div>
+            <div class="text-base"><%= @profile_domain.description %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Card -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Questions</div>
+      <div class="stat-value text-primary"><%= @stats[:total_questions] %></div>
+      <div class="stat-desc">In this domain</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Options</div>
+      <div class="stat-value text-secondary"><%= @stats[:total_options] %></div>
+      <div class="stat-desc">Across all questions</div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Questions with Options</div>
+      <div class="stat-value text-accent"><%= @stats[:questions_with_options] %></div>
+      <div class="stat-desc"><%= @stats[:questions_with_options] == @stats[:total_questions] ? 'All questions' : 'Some questions' %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Avg Options/Question</div>
+      <div class="stat-value text-info">
+        <%= @stats[:questions_with_options] > 0 ? (@stats[:total_options].to_f / @stats[:questions_with_options]).round(1) : 0 %>
+      </div>
+      <div class="stat-desc">For questions with options</div>
+    </div>
+  </div>
+
+  <!-- Question Type Breakdown -->
+  <% if @stats[:questions_by_type].any? %>
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body">
+        <h2 class="card-title">Question Types</h2>
+        <div class="flex flex-wrap gap-4 mt-4">
+          <% @stats[:questions_by_type].each do |type, count| %>
+            <div class="flex items-center gap-2">
+              <span class="badge <%= type == 'scale' ? 'badge-primary' : (type == 'multi_choice' ? 'badge-secondary' : 'badge-accent') %> badge-lg">
+                <%= type.humanize %>
+              </span>
+              <span class="text-lg font-semibold"><%= count %></span>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Questions Flow Visualization -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-2xl mb-4">Questions Flow</h2>
+      <p class="text-sm text-base-content/60 mb-6">
+        The order questions will be presented during onboarding
+      </p>
+      
+      <div class="space-y-6">
+        <% @questions.each_with_index do |question, index| %>
+          <div class="relative">
+            <!-- Connector Line (except for last item) -->
+            <% unless index == @questions.length - 1 %>
+              <div class="absolute left-6 top-16 bottom-0 w-1 bg-primary opacity-20"></div>
+            <% end %>
+            
+            <div class="flex items-start gap-4 relative z-10">
+              <!-- Question Number Badge -->
+              <div class="flex-shrink-0 w-12 h-12 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-lg shadow-lg">
+                <%= question.position + 1 %>
+              </div>
+              
+              <!-- Question Card -->
+              <div class="flex-1 card bg-base-200 shadow-lg border-l-4 <%= question.scale? ? 'border-primary' : (question.multi_choice? ? 'border-secondary' : 'border-accent') %>">
+                <div class="card-body">
+                  <div class="flex justify-between items-start mb-3">
+                    <div class="flex-1">
+                      <div class="flex items-center gap-3 mb-2 flex-wrap">
+                        <span class="badge badge-ghost font-mono text-xs"><%= question.code %></span>
+                        <span class="badge <%= question_type_badge_class(question) %> badge-lg flex items-center gap-1.5">
+                          <%= question_type_icon(question) %>
+                          <span><%= question.response_type.humanize %></span>
+                        </span>
+                        <% if question.scale? || question.multi_choice? %>
+                          <span class="badge badge-info">
+                            <%= question.question_options.count %> option<%= 's' unless question.question_options.count == 1 %>
+                          </span>
+                        <% end %>
+                      </div>
+                      <h3 class="text-lg font-semibold text-base-content"><%= question.text %></h3>
+                    </div>
+                  </div>
+                  
+                  <!-- Question Options -->
+                  <% if question.question_options.any? %>
+                    <div class="mt-4 pt-4 border-t border-base-300">
+                      <div class="text-sm font-semibold text-base-content/70 mb-3">Response Options:</div>
+                      <div class="space-y-2">
+                        <% question.question_options.ordered.each_with_index do |option, opt_index| %>
+                          <div class="flex items-center gap-3 p-3 bg-base-100 rounded-lg border border-base-300">
+                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-semibold text-sm">
+                              <%= opt_index + 1 %>
+                            </div>
+                            <div class="flex-1">
+                              <div class="font-medium"><%= option.label %></div>
+                              <% if question.scale? %>
+                                <div class="text-xs text-base-content/60 mt-0.5">Value: <%= option.value %></div>
+                              <% end %>
+                            </div>
+                            <div class="flex-shrink-0">
+                              <span class="badge badge-neutral badge-lg">
+                                Value: <%= option.value %>
+                              </span>
+                            </div>
+                          </div>
+                        <% end %>
+                      </div>
+                      
+                      <!-- Option Range Info for Scale Questions -->
+                      <% if question.scale? %>
+                        <% values = question.question_options.ordered.pluck(:value) %>
+                        <% if values.any? %>
+                          <div class="mt-3 text-xs text-base-content/60">
+                            Range: <%= values.min %> to <%= values.max %>
+                            <% if values.max > 4 %>
+                              <span class="text-warning ml-2">⚠️ Typically 0-4 or 0-5 for scales</span>
+                            <% end %>
+                          </div>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  <% elsif question.scale? || question.multi_choice? %>
+                    <div class="mt-4 pt-4 border-t border-base-300">
+                      <div class="alert alert-warning">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <span>This <%= question.response_type %> question requires options but none have been added yet.</span>
+                      </div>
+                    </div>
+                  <% else %>
+                    <div class="mt-4 pt-4 border-t border-base-300">
+                      <div class="alert alert-info">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Text questions allow free-form responses (no options needed).</span>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex justify-between items-center pt-4 border-t">
+    <div class="flex gap-2">
+      <%= link_to "Edit Domain", edit_admin_profile_domain_path(@profile_domain), class: "btn btn-outline" %>
+      <%= link_to "Manage Questions", manage_questions_admin_profile_domain_path(@profile_domain), class: "btn btn-primary" %>
+    </div>
+    <%= link_to "← Back to Domain", admin_profile_domain_path(@profile_domain), class: "btn btn-ghost" %>
+  </div>
+</div>
+

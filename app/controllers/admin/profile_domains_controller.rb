@@ -215,8 +215,20 @@ module Admin
     def preview
       authorize [ :admin, @profile_domain ]
       @questions = @profile_domain.questions.includes(:question_options).ordered
-      redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
-                  alert: "Please add at least one question first." if @questions.empty?
+
+      if @questions.empty?
+        redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                    alert: "Please add at least one question first."
+        return
+      end
+
+      # Calculate statistics
+      @stats = {
+        total_questions: @questions.count,
+        total_options: @questions.sum { |q| q.question_options.count },
+        questions_with_options: @questions.count { |q| q.question_options.any? },
+        questions_by_type: @questions.group_by(&:response_type).transform_values(&:count)
+      }
     end
 
     private
