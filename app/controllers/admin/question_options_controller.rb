@@ -20,7 +20,7 @@ module Admin
           format.json { render json: { status: "success", option: @question_option }, status: :created }
           format.turbo_stream {
             @question.reload
-            @questions = @profile_domain.questions.includes(:question_options).ordered
+            @profile_domain.reload
             render :create
           }
         end
@@ -54,7 +54,7 @@ module Admin
           format.json { render json: { status: "success", option: @question_option.reload } }
           format.turbo_stream {
             @question.reload
-            @questions = @profile_domain.questions.includes(:question_options).ordered
+            @profile_domain.reload
             render :update
           }
         end
@@ -88,7 +88,7 @@ module Admin
           format.json { render json: { status: "success", message: "Option deleted successfully." } }
           format.turbo_stream {
             @question.reload
-            @questions = @profile_domain.questions.includes(:question_options).ordered
+            @profile_domain.reload
             render :destroy
           }
         end
@@ -126,7 +126,8 @@ module Admin
           }
           format.json { render json: { status: "success", message: "Option order updated successfully." } }
           format.turbo_stream {
-            @questions = @profile_domain.questions.includes(:question_options).ordered
+            @question.reload
+            @profile_domain.reload
             render :reorder
           }
         end

@@ -1,0 +1,61 @@
+<% content_for :title, "Manage Questions: #{@profile_domain.label}" %>
+
+<div class="container mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold">Manage Questions</h1>
+      <p class="text-base-content/60 mt-1">
+        <%= @profile_domain.label %> - <%= @profile_domain.key %>
+      </p>
+    </div>
+    <div class="flex gap-3">
+      <%= link_to "← Back to Domain", admin_profile_domain_path(@profile_domain), class: "btn btn-ghost" %>
+      <%= button_to "Add Question", create_question_admin_profile_domain_path(@profile_domain),
+          method: :post,
+          params: { question: { response_type: 'scale', text: 'New Question' } },
+          class: "btn btn-primary",
+          data: { turbo: false } %>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  <% if notice %>
+    <div class="alert alert-success mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span><%= notice %></span>
+    </div>
+  <% end %>
+
+  <% if alert %>
+    <div class="alert alert-error mb-6">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <span><%= alert %></span>
+    </div>
+  <% end %>
+
+  <!-- Questions List -->
+  <% if @questions.any? %>
+    <div class="space-y-6">
+      <% @questions.each do |question| %>
+        <%= render partial: "question_card", locals: { question: question, profile_domain: @profile_domain } %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="card bg-base-100 shadow-xl">
+      <div class="card-body text-center py-12">
+        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-base-content/30 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <h3 class="text-xl font-semibold mb-2">No Questions Yet</h3>
+        <p class="text-base-content/60 mb-4">Get started by adding your first question to this domain.</p>
+        <%= link_to "Add First Question", new_admin_profile_domain_path, class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+

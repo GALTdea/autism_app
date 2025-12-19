@@ -10,6 +10,9 @@ application.register("assessment-builder", AssessmentBuilderController)
 import QuestionFormController from "./question_form_controller"
 application.register("question-form", QuestionFormController)
 
+import QuestionOptionsManagerController from "./question_options_manager_controller"
+application.register("question-options-manager", QuestionOptionsManagerController)
+
 import OnboardingWizardController from "./onboarding_wizard_controller"
 application.register("onboarding-wizard", OnboardingWizardController)
 
