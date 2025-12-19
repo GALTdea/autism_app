@@ -50,7 +50,10 @@ Rails.application.routes.draw do
       end
 
       # Nested question resources for question options
-      resources :questions, only: [] do
+      resources :questions, only: [], controller: "profile_domains/questions" do
+        member do
+          get :edit_form
+        end
         resources :question_options, only: [:create, :update, :destroy], param: :option_id do
           collection do
             patch :reorder

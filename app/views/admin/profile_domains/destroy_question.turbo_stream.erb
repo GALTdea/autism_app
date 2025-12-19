@@ -1,0 +1,14 @@
+<%= turbo_stream.remove "question-#{@question.id}" %>
+
+<% if flash[:notice] %>
+  <%= turbo_stream.append "flash-container" do %>
+    <%= render partial: "shared/flash" %>
+  <% end %>
+<% end %>
+
+<% if flash[:alert] %>
+  <%= turbo_stream.append "flash-container" do %>
+    <%= render partial: "shared/flash" %>
+  <% end %>
+<% end %>
+

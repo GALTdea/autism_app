@@ -1,0 +1,16 @@
+<%= turbo_stream.replace "question-#{@question.id}" do %>
+  <%= render partial: "question_card_enhanced", locals: { question: @question.reload, profile_domain: @profile_domain } %>
+<% end %>
+
+<% if flash[:notice] %>
+  <%= turbo_stream.append "flash-container" do %>
+    <%= render partial: "shared/flash" %>
+  <% end %>
+<% end %>
+
+<% if flash[:alert] %>
+  <%= turbo_stream.append "flash-container" do %>
+    <%= render partial: "shared/flash" %>
+  <% end %>
+<% end %>
+

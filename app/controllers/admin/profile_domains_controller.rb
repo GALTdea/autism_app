@@ -226,7 +226,8 @@ module Admin
     end
 
     def set_question
-      @question = Question.find(params[:question_id])
+      question_id = params[:question_id] || params[:id]
+      @question = Question.find(question_id)
       # Ensure question belongs to the profile domain
       unless @question.profile_domain_id == @profile_domain.id
         raise ActiveRecord::RecordNotFound, "Question not found in this profile domain"

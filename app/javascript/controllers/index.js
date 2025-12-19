@@ -30,3 +30,9 @@ application.register("onboarding-wizard", OnboardingWizardController)
 
 import SortableDomainsController from "./sortable_domains_controller"
 application.register("sortable-domains", SortableDomainsController)
+
+import QuestionCardController from "./question_card_controller"
+application.register("question-card", QuestionCardController)
+
+import QuestionModalController from "./question_modal_controller"
+application.register("question-modal", QuestionModalController)
