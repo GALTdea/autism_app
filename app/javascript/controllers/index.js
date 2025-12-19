@@ -16,6 +16,15 @@ application.register("question-options-manager", QuestionOptionsManagerControlle
 import QuestionOptionFormController from "./question_option_form_controller"
 application.register("question-option-form", QuestionOptionFormController)
 
+import DomainBuilderController from "./domain_builder_controller"
+application.register("domain-builder", DomainBuilderController)
+
+import SortableQuestionsController from "./sortable_questions_controller"
+application.register("sortable-questions", SortableQuestionsController)
+
+import SortableOptionsController from "./sortable_options_controller"
+application.register("sortable-options", SortableOptionsController)
+
 import OnboardingWizardController from "./onboarding_wizard_controller"
 application.register("onboarding-wizard", OnboardingWizardController)
 
