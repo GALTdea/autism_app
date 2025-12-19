@@ -213,3 +213,4 @@ class ActivityRecommendationService
 end
 
 
+

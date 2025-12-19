@@ -117,3 +117,4 @@ class ActivityTemplate < ApplicationRecord
 end
 
 
+
