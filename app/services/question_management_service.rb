@@ -121,26 +121,55 @@ class QuestionManagementService
     # Generate code based on domain key and next number
     # Format: {DOMAIN_KEY}_{NUMBER}
     # Example: COMM_1, COMM_2, SOCIAL_1, etc.
-    domain_prefix = @profile_domain.key.upcase
 
-    # Get the highest number for this domain
+    # Normalize domain key to valid code format (uppercase, only alphanumeric and underscores)
+    domain_prefix = normalize_domain_key(@profile_domain.key)
+    raise InvalidQuestionError, "Invalid domain key for code generation" if domain_prefix.blank?
+
+    # Get the highest number for questions with this domain prefix
     existing_codes = @profile_domain.questions.pluck(:code)
     max_number = existing_codes
-                  .select { |code| code&.match?(/^#{domain_prefix}_\d+$/) }
+                  .select { |code| code&.match?(/^#{Regexp.escape(domain_prefix)}_\d+$/) }
                   .map { |code| code.split('_').last.to_i }
                   .max || 0
 
+    # Generate new code with next sequential number
     new_number = max_number + 1
     new_code = "#{domain_prefix}_#{new_number}"
 
-    # Ensure uniqueness (in case there are questions with non-standard codes)
+    # Ensure uniqueness across the entire Question table (not just domain)
+    # This handles edge cases where codes might conflict
     counter = new_number
+    max_attempts = 1000 # Safety limit to prevent infinite loops
+    attempts = 0
+
     while Question.exists?(code: new_code)
       counter += 1
       new_code = "#{domain_prefix}_#{counter}"
+      attempts += 1
+
+      if attempts >= max_attempts
+        raise InvalidQuestionError, "Unable to generate unique question code after #{max_attempts} attempts"
+      end
     end
 
     new_code
+  end
+
+  def normalize_domain_key(key)
+    # Convert domain key to valid code format:
+    # - Uppercase
+    # - Replace spaces and hyphens with underscores
+    # - Remove invalid characters (keep only alphanumeric and underscores)
+    return nil if key.blank?
+
+    normalized = key.to_s.upcase
+                   .gsub(/[^A-Z0-9_]+/, '_')  # Replace invalid chars with underscore
+                   .gsub(/_+/, '_')           # Collapse multiple underscores
+                   .gsub(/^_|_$/, '')         # Remove leading/trailing underscores
+
+    # Ensure it's not empty and starts with a letter or number
+    normalized.present? && normalized.match?(/^[A-Z0-9]/) ? normalized : nil
   end
 
   def next_position
@@ -156,5 +185,3 @@ class QuestionManagementService
     end
   end
 end
-
-
