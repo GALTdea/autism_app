@@ -32,17 +32,26 @@
       <% else %>
         <%= link_to "Add Questions", manage_questions_admin_profile_domain_path(@profile_domain), class: "btn btn-success" %>
       <% end %>
-      <% if current_user.super_admin? && !@profile_domain.assessments.any? && !@profile_domain.child_profiles.any? && !@profile_domain.questions.any? %>
-        <%= link_to "Delete", admin_profile_domain_path(@profile_domain),
-            method: :delete,
-            data: {
-              turbo_method: :delete,
-              turbo_confirm: "Are you sure you want to delete this domain? This action cannot be undone."
-            },
-            class: "btn btn-error" %>
+      <% if current_user.super_admin? %>
+        <% if @profile_domain.can_be_deleted? %>
+          <%= link_to "Delete", admin_profile_domain_path(@profile_domain),
+              method: :delete,
+              data: {
+                turbo_method: :delete,
+                turbo_confirm: "Are you sure you want to delete this domain? This action cannot be undone."
+              },
+              class: "btn btn-error" %>
+        <% else %>
+          <button class="btn btn-error btn-disabled" title="<%= @profile_domain.deletion_blockers.join('; ') %>">
+            Delete
+          </button>
+        <% end %>
       <% end %>
     </div>
   </div>
+
+  <!-- Validation Status -->
+  <%= render partial: "validation_status", locals: { profile_domain: @profile_domain } %>
 
   <!-- Stats Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

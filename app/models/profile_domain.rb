@@ -13,4 +13,80 @@ class ProfileDomain < ApplicationRecord
 
   # Scopes
   scope :ordered, -> { order(:label) }
+
+  # Validation Helpers
+
+  # Check if domain has any questions
+  def has_questions?
+    questions.any?
+  end
+
+  # Check if domain can be safely deleted
+  # Returns false if domain is being used in:
+  # - Assessments
+  # - Child profiles (through child_domain_profiles)
+  # - Onboarding sessions (through assessments)
+  def can_be_deleted?
+    return false if assessments.any?
+    return false if child_profiles.any?
+
+    # Check for onboarding sessions that use assessments containing this domain
+    assessment_ids = assessments.pluck(:id)
+    if assessment_ids.any?
+      return false if OnboardingSession.where(assessment_id: assessment_ids).exists?
+    end
+
+    true
+  end
+
+  # Get reasons why domain cannot be deleted
+  def deletion_blockers
+    blockers = []
+
+    blockers << "Domain is used in #{assessments.count} assessment(s)" if assessments.any?
+    blockers << "Domain is associated with #{child_profiles.count} child profile(s)" if child_profiles.any?
+
+    assessment_ids = assessments.pluck(:id)
+    if assessment_ids.any?
+      onboarding_count = OnboardingSession.where(assessment_id: assessment_ids).count
+      blockers << "Domain is used in #{onboarding_count} onboarding session(s)" if onboarding_count > 0
+    end
+
+    blockers
+  end
+
+  # Check if all questions have required options
+  # Scale and multi_choice questions must have at least one option
+  # Text questions don't require options
+  def is_complete?
+    return false unless has_questions?
+
+    questions.each do |question|
+      # Scale and multi_choice questions require options
+      if question.scale? || question.multi_choice?
+        return false if question.question_options.empty?
+      end
+      # Text questions don't require options, so they're always "complete"
+    end
+
+    true
+  end
+
+  # Get list of incomplete questions (questions missing required options)
+  def incomplete_questions
+    questions.select do |question|
+      (question.scale? || question.multi_choice?) && question.question_options.empty?
+    end
+  end
+
+  # Get validation status with details
+  def validation_status
+    {
+      has_questions: has_questions?,
+      is_complete: is_complete?,
+      can_be_deleted: can_be_deleted?,
+      incomplete_questions_count: incomplete_questions.count,
+      deletion_blockers: deletion_blockers
+    }
+  end
 end

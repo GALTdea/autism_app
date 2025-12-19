@@ -62,13 +62,14 @@ module Admin
     def destroy
       authorize [ :admin, @profile_domain ]
 
-      if can_be_deleted?
+      if @profile_domain.can_be_deleted?
         @profile_domain.destroy
         redirect_to admin_profile_domains_path,
                     notice: "Profile domain deleted successfully."
       else
+        blockers = @profile_domain.deletion_blockers.join(", ")
         redirect_to admin_profile_domains_path,
-                    alert: "Cannot delete profile domain. It is being used in assessments, child profiles, or has questions."
+                    alert: "Cannot delete profile domain. #{blockers}"
       end
     end
 
@@ -256,14 +257,6 @@ module Admin
 
     def reorder_questions_params
       params.require(:question_positions).permit! # Permit all for now, will refine if needed
-    end
-
-    def can_be_deleted?
-      # Check if domain is in use
-      return false if @profile_domain.assessments.any?
-      return false if @profile_domain.child_profiles.any?
-      return false if @profile_domain.questions.any?
-      true
     end
   end
 end

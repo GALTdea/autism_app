@@ -1,0 +1,109 @@
+<% status = profile_domain.validation_status %>
+
+<!-- Validation Status Card -->
+<div class="card bg-base-100 shadow-xl">
+  <div class="card-body">
+    <h3 class="card-title">Validation Status</h3>
+    
+    <div class="space-y-4 mt-4">
+      <!-- Has Questions Status -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <% if status[:has_questions] %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Domain has questions</span>
+          <% else %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>No questions added yet</span>
+          <% end %>
+        </div>
+        <% unless status[:has_questions] %>
+          <%= link_to "Add Questions", manage_questions_admin_profile_domain_path(profile_domain), class: "btn btn-sm btn-primary" %>
+        <% end %>
+      </div>
+
+      <!-- Completion Status -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <% if status[:is_complete] %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Domain is complete</span>
+          <% else %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span>
+              <% if status[:incomplete_questions_count] > 0 %>
+                <%= pluralize(status[:incomplete_questions_count], 'question') %> missing required options
+              <% else %>
+                Domain is incomplete
+              <% end %>
+            </span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Incomplete Questions List -->
+      <% if status[:incomplete_questions_count] > 0 %>
+        <div class="alert alert-warning">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <div class="font-semibold">Questions Missing Options:</div>
+            <ul class="list-disc list-inside mt-2 text-sm">
+              <% profile_domain.incomplete_questions.each do |question| %>
+                <li>
+                  <%= question.code %>: <%= question.text.truncate(50) %>
+                  <span class="badge badge-xs badge-warning ml-2">Missing <%= question.response_type.humanize %> options</span>
+                </li>
+              <% end %>
+            </ul>
+            <%= link_to "Fix Questions", manage_questions_admin_profile_domain_path(profile_domain), class: "btn btn-sm btn-warning mt-2" %>
+          </div>
+        </div>
+      <% end %>
+
+      <!-- Deletion Status -->
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <% if status[:can_be_deleted] %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            <span class="text-base-content/60">Can be deleted</span>
+          <% else %>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-error" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+            </svg>
+            <span class="text-error">Cannot be deleted</span>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Deletion Blockers -->
+      <% if status[:deletion_blockers].any? %>
+        <div class="alert alert-error">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+          </svg>
+          <div>
+            <div class="font-semibold">Deletion Blocked:</div>
+            <ul class="list-disc list-inside mt-2 text-sm">
+              <% status[:deletion_blockers].each do |blocker| %>
+                <li><%= blocker %></li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
