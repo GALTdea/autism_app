@@ -36,64 +36,13 @@
   <div class="hidden mb-4" data-question-options-manager-target="addForm">
     <div class="card bg-base-200">
       <div class="card-body">
-        <%= form_with url: admin_profile_domain_question_question_options_path(profile_domain, question),
-            method: :post,
-            local: false,
-            data: { 
-              turbo_frame: "question-options-#{question.id}",
-              action: "turbo:submit-end->question-options-manager#handleSubmit"
-            },
-            class: "space-y-4" do |form| %>
-          
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="form-control flex-1">
-              <%= form.label :label, class: "label" do %>
-                <span class="label-text">Label <span class="text-error">*</span></span>
-              <% end %>
-              <%= form.text_field :label,
-                  class: "input input-bordered w-full",
-                  placeholder: "e.g., Always, Often, Sometimes",
-                  required: true,
-                  data: { question_options_manager_target: "labelInput" } %>
-            </div>
-
-            <div class="form-control">
-              <%= form.label :value, class: "label" do %>
-                <span class="label-text">Value <span class="text-error">*</span></span>
-              <% end %>
-              <%= form.number_field :value,
-                  class: "input input-bordered w-full",
-                  placeholder: question.scale? ? "0-4 or 0-5" : "Any number",
-                  min: 0,
-                  step: 1,
-                  required: true,
-                  data: { 
-                    question_options_manager_target: "valueInput",
-                    question_options_manager_response_type_param: question.response_type
-                  } %>
-              <label class="label">
-                <span class="label-text-alt">
-                  <% if question.scale? %>
-                    Numeric value (0-4 or 0-5 typical)
-                  <% else %>
-                    Numeric significance value
-                  <% end %>
-                </span>
-              </label>
-            </div>
-
-            <div class="form-control flex items-end">
-              <div class="flex gap-2">
-                <%= form.submit "Add Option", class: "btn btn-primary btn-sm" %>
-                <button type="button" 
-                        class="btn btn-ghost btn-sm"
-                        data-action="click->question-options-manager#hideAddForm">
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        <% end %>
+        <%= render partial: "question_option_form", 
+            locals: { 
+              question: question, 
+              profile_domain: profile_domain,
+              option: nil,
+              inline: false
+            } %>
       </div>
     </div>
   </div>

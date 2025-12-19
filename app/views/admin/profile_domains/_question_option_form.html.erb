@@ -1,0 +1,159 @@
+<%# 
+  Partial for creating/editing a question option
+  
+  Local variables:
+  - question: The Question object
+  - profile_domain: The ProfileDomain object
+  - option: (optional) The QuestionOption object for editing, nil for new option
+  - inline: (optional) Boolean, true for inline editing, false for form modal
+-%>
+
+<% option ||= QuestionOption.new %>
+<% inline = local_assigns.fetch(:inline, false) %>
+<% is_new = option.new_record? %>
+<% suggested_value = is_new ? suggested_option_value(question) : option.value %>
+<% suggested_label = is_new && question.scale? ? suggested_scale_label(suggested_value) : option.label %>
+<% value_range = value_range_for_type(question.response_type) %>
+
+<%= form_with model: [ :admin, profile_domain, question, option ],
+    url: is_new ? admin_profile_domain_question_question_options_path(profile_domain, question) : admin_profile_domain_question_question_option_path(profile_domain, question, option),
+    method: is_new ? :post : :patch,
+    local: !inline,
+    data: {
+      controller: "question-option-form",
+      question_option_form_response_type_value: question.response_type,
+      question_option_form_question_id_value: question.id,
+      question_option_form_profile_domain_id_value: profile_domain.id,
+      question_option_form_inline_value: inline,
+      action: "turbo:submit-end->question-option-form#handleSubmit"
+    },
+    class: "space-y-4" do |form| %>
+
+  <% if option.errors.any? %>
+    <div class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">Please fix the following errors:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% option.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 <%= inline ? 'md:grid-cols-2' : 'md:grid-cols-3' %> gap-4">
+    <!-- Label Field -->
+    <div class="form-control <%= 'flex-1' if inline %>">
+      <%= form.label :label, class: "label" do %>
+        <span class="label-text">Label <span class="text-error">*</span></span>
+      <% end %>
+      <%= form.text_field :label,
+          value: suggested_label,
+          class: "input input-bordered w-full #{'input-error' if option.errors[:label].any?}",
+          placeholder: question.scale? ? "e.g., Always, Often, Sometimes" : "e.g., Yes, No, Maybe",
+          required: true,
+          minlength: 1,
+          maxlength: 100,
+          data: {
+            question_option_form_target: "labelInput",
+            action: "input->question-option-form#validateLabel"
+          } %>
+      <label class="label">
+        <span class="label-text-alt">
+          <% if question.scale? %>
+            Common labels: Always, Often, Sometimes, Rarely, Never
+          <% else %>
+            The text that users will see for this option
+          <% end %>
+        </span>
+      </label>
+      <div data-question-option-form-target="labelError" class="hidden text-error text-sm mt-1"></div>
+    </div>
+
+    <!-- Value Field -->
+    <div class="form-control">
+      <%= form.label :value, class: "label" do %>
+        <span class="label-text">Value <span class="text-error">*</span></span>
+      <% end %>
+      <%= form.number_field :value,
+          value: suggested_value,
+          class: "input input-bordered w-full #{'input-error' if option.errors[:value].any?}",
+          placeholder: value_range[:description],
+          min: value_range[:min],
+          max: value_range[:max],
+          step: 1,
+          required: true,
+          data: {
+            question_option_form_target: "valueInput",
+            question_option_form_min_value: value_range[:min],
+            question_option_form_max_value: value_range[:max] || 999,
+            question_option_form_typical_max_value: value_range[:typical_max],
+            action: "input->question-option-form#validateValue change->question-option-form#updateScaleLabel"
+          } %>
+      <label class="label">
+        <span class="label-text-alt">
+          <% if question.scale? %>
+            Numeric value (<%= value_range[:description] %> typical)
+            <% if value_range[:typical_max] && suggested_value > value_range[:typical_max] %>
+              <span class="text-warning">⚠️ Values > <%= value_range[:typical_max] %> are uncommon</span>
+            <% end %>
+          <% else %>
+            Numeric significance value (any positive number)
+          <% end %>
+        </span>
+      </label>
+      <div data-question-option-form-target="valueError" class="hidden text-error text-sm mt-1"></div>
+      <% if question.scale? && !is_new && option.value > 4 %>
+        <div class="text-warning text-xs mt-1">
+          ⚠️ Value exceeds typical range (0-4). Consider using 0-4 for standard scales.
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Actions (only show if not inline) -->
+    <% unless inline %>
+      <div class="form-control flex items-end">
+        <div class="flex gap-2">
+          <%= form.submit is_new ? "Add Option" : "Update Option", 
+              class: "btn btn-primary btn-sm",
+              data: {
+                question_option_form_target: "submitButton",
+                action: "click->question-option-form#validateBeforeSubmit"
+              } %>
+          <button type="button" 
+                  class="btn btn-ghost btn-sm"
+                  data-action="click->question-option-form#cancelForm">
+            Cancel
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Scale Quick Fill (only for new scale options) -->
+  <% if is_new && question.scale? && question.question_options.empty? %>
+    <div class="card bg-base-200">
+      <div class="card-body p-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h4 class="font-semibold text-sm mb-1">Quick Fill Common Scale</h4>
+            <p class="text-xs text-base-content/60">
+              Click to quickly add the 5 most common scale options
+            </p>
+          </div>
+          <button type="button"
+                  class="btn btn-sm btn-ghost"
+                  data-action="click->question-option-form#quickFillScale">
+            Quick Fill
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+<% end %>
+
