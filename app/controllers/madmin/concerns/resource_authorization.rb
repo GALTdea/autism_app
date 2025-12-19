@@ -4,8 +4,8 @@ module Madmin
     extend ActiveSupport::Concern
 
     included do
-      before_action :authorize_resource_action, except: [:index]
-      before_action :authorize_index_action, only: [:index]
+      before_action :authorize_resource_action, except: [ :index ]
+      before_action :authorize_index_action, only: [ :index ]
     end
 
     private
@@ -18,7 +18,7 @@ module Madmin
 
       # Try to authorize with specific policy, fallback to ApplicationPolicy
       begin
-        authorize [:madmin, resource]
+        authorize [ :madmin, resource ]
       rescue Pundit::NotDefinedError
         # No specific policy found, use ApplicationPolicy
         policy = Madmin::ApplicationPolicy.new(pundit_user, resource)
@@ -33,7 +33,7 @@ module Madmin
 
       # Try to authorize with specific policy, fallback to ApplicationPolicy
       begin
-        authorize [:madmin, model_class]
+        authorize [ :madmin, model_class ]
       rescue Pundit::NotDefinedError
         # No specific policy found, use ApplicationPolicy
         policy = Madmin::ApplicationPolicy.new(pundit_user, model_class)
@@ -59,6 +59,6 @@ module Madmin
     rescue NameError
       nil
     end
-  end
+    end
   end
 end
