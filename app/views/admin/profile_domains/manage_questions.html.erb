@@ -11,11 +11,34 @@
     </div>
     <div class="flex gap-3">
       <%= link_to "← Back to Domain", admin_profile_domain_path(@profile_domain), class: "btn btn-ghost" %>
-      <%= button_to "Add Question", create_question_admin_profile_domain_path(@profile_domain),
-          method: :post,
-          params: { question: { response_type: 'scale', text: 'New Question' } },
-          class: "btn btn-primary",
-          data: { turbo: false } %>
+      
+      <!-- Add Question Dropdown -->
+      <div class="dropdown dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Add Question
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 z-[1]">
+          <li>
+            <%= button_to "Blank Question", create_question_admin_profile_domain_path(@profile_domain),
+                method: :post,
+                params: { question: { response_type: 'scale', text: 'New Question' } },
+                class: "btn-ghost",
+                data: { turbo: false } %>
+          </li>
+          <li>
+            <a href="#" data-action="click->question-templates#showTemplates">From Template</a>
+          </li>
+          <li>
+            <a href="#" data-action="click->question-templates#showCopyFromDomain">Copy from Another Domain</a>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -89,6 +112,50 @@
       </div>
     </div>
   <% end %>
+
+  <!-- Question Templates & Copy Modals -->
+  <div data-controller="question-templates" 
+       data-question-templates-profile-domain-id-value="<%= @profile_domain.id %>">
+    <div data-question-templates-target="templatesModal" class="modal hidden">
+      <div class="modal-box max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-2xl">Question Templates</h3>
+          <button type="button"
+                  class="btn btn-sm btn-circle btn-ghost"
+                  data-action="click->question-templates#hideTemplates">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div data-question-templates-target="templatesContainer">
+          <!-- Templates will be loaded here -->
+        </div>
+      </div>
+      <div class="modal-backdrop" data-action="click->question-templates#hideTemplates"></div>
+    </div>
+
+    <div data-question-templates-target="copyModal" class="modal hidden">
+      <div class="modal-box max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-2xl">Copy Question from Another Domain</h3>
+          <button type="button"
+                  class="btn btn-sm btn-circle btn-ghost"
+                  data-action="click->question-templates#hideCopyFromDomain">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div data-question-templates-target="copyContainer">
+          <!-- Copy form will be loaded here -->
+        </div>
+      </div>
+      <div class="modal-backdrop" data-action="click->question-templates#hideCopyFromDomain"></div>
+    </div>
+  </div>
 
   <!-- Question Edit Modal -->
   <div data-controller="question-modal" 

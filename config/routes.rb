@@ -53,6 +53,13 @@ Rails.application.routes.draw do
       resources :questions, only: [], controller: "profile_domains/questions" do
         member do
           get :edit_form
+          post :clone
+        end
+        collection do
+          post :create_from_template
+          get :templates
+          get :copy_from_domain_form
+          post :copy_from_domain
         end
         resources :question_options, only: [:create, :update, :destroy], param: :option_id do
           collection do

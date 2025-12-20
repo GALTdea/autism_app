@@ -36,3 +36,6 @@ application.register("question-card", QuestionCardController)
 
 import QuestionModalController from "./question_modal_controller"
 application.register("question-modal", QuestionModalController)
+
+import QuestionTemplatesController from "./question_templates_controller"
+application.register("question-templates", QuestionTemplatesController)

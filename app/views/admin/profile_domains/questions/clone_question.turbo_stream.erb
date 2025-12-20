@@ -1,0 +1,10 @@
+<%= turbo_stream.append "sortable-questions-list" do %>
+  <%= render partial: "admin/profile_domains/question_card_enhanced", locals: { question: @question, profile_domain: @profile_domain } %>
+<% end %>
+
+<% if flash[:notice] %>
+  <%= turbo_stream.append "flash-container" do %>
+    <%= render partial: "shared/flash" %>
+  <% end %>
+<% end %>
+
