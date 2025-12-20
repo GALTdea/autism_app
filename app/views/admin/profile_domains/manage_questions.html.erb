@@ -19,6 +19,29 @@
     </div>
   </div>
 
+  <!-- Integration Checks & Impact Warning -->
+  <% if @impact_summary && @impact_summary[:has_active_usage] %>
+    <div class="alert alert-warning">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+      <div>
+        <div class="font-bold">⚠️ Domain is Currently in Use</div>
+        <div class="text-sm mt-1">
+          This domain is used in <strong><%= @impact_summary[:total_assessments] %></strong> assessment<%= 's' unless @impact_summary[:total_assessments] == 1 %>
+          with <strong><%= @impact_summary[:total_sessions] %></strong> total session<%= 's' unless @impact_summary[:total_sessions] == 1 %>.
+          <% if @impact_summary[:active_sessions] > 0 %>
+            <strong class="text-error"><%= @impact_summary[:active_sessions] %></strong> session<%= 's' unless @impact_summary[:active_sessions] == 1 %> are currently active.
+          <% end %>
+          Adding, removing, or modifying questions may affect these sessions.
+        </div>
+        <div class="mt-2">
+          <%= link_to "View Impact Details", "#{admin_profile_domain_path(@profile_domain)}#integration-checks", class: "btn btn-sm btn-warning" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
   <!-- Flash Messages -->
   <% if notice %>
     <div class="alert alert-success mb-6">

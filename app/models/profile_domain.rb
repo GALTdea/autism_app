@@ -89,4 +89,60 @@ class ProfileDomain < ApplicationRecord
       deletion_blockers: deletion_blockers
     }
   end
+
+  # Integration & Impact Analysis Methods
+
+  # Get assessments that use this domain with their session counts
+  def assessments_with_impact
+    assessments.includes(:onboarding_sessions).map do |assessment|
+      {
+        assessment: assessment,
+        session_count: assessment.onboarding_sessions.count,
+        active_sessions: assessment.onboarding_sessions.in_progress.count,
+        completed_sessions: assessment.onboarding_sessions.completed.count,
+        question_count: assessment.questions_count_for_domain(self)
+      }
+    end
+  end
+
+  # Get total onboarding sessions affected by this domain
+  def total_affected_sessions
+    assessment_ids = assessments.pluck(:id)
+    return 0 if assessment_ids.empty?
+
+    OnboardingSession.where(assessment_id: assessment_ids).count
+  end
+
+  # Get active onboarding sessions affected
+  def active_affected_sessions
+    assessment_ids = assessments.pluck(:id)
+    return 0 if assessment_ids.empty?
+
+    OnboardingSession.where(assessment_id: assessment_ids).in_progress.count
+  end
+
+  # Get completed onboarding sessions affected
+  def completed_affected_sessions
+    assessment_ids = assessments.pluck(:id)
+    return 0 if assessment_ids.empty?
+
+    OnboardingSession.where(assessment_id: assessment_ids).completed.count
+  end
+
+  # Check if domain modifications would affect any sessions
+  def has_active_usage?
+    total_affected_sessions > 0
+  end
+
+  # Get impact summary
+  def impact_summary
+    {
+      total_assessments: assessments.count,
+      total_sessions: total_affected_sessions,
+      active_sessions: active_affected_sessions,
+      completed_sessions: completed_affected_sessions,
+      child_profiles_count: child_profiles.count,
+      has_active_usage: has_active_usage?
+    }
+  end
 end

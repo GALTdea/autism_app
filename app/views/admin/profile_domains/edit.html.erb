@@ -17,6 +17,9 @@
   <!-- Validation Status -->
   <%= render partial: "validation_status", locals: { profile_domain: @profile_domain } %>
 
+  <!-- Integration Checks & Impact Analysis -->
+  <%= render partial: "integration_checks", locals: { profile_domain: @profile_domain } %>
+
   <!-- Warning if domain is in use -->
   <% if @profile_domain.assessments.any? || @profile_domain.child_profiles.any? %>
     <div class="alert alert-warning">

@@ -16,13 +16,18 @@ module Admin
     def show
       authorize [ :admin, @profile_domain ]
       @questions = @profile_domain.questions.includes(:question_options).ordered
-      # Count onboarding sessions that use assessments containing this domain
-      assessment_ids = @profile_domain.assessments.pluck(:id)
+
+      # Enhanced stats with impact analysis
+      @impact_summary = @profile_domain.impact_summary
+      @assessments_with_impact = @profile_domain.assessments_with_impact
+
       @stats = {
         total_questions: @profile_domain.questions.count,
         total_assessments: @profile_domain.assessments.count,
         total_child_profiles: @profile_domain.child_profiles.count,
-        total_onboarding_sessions: assessment_ids.any? ? OnboardingSession.where(assessment_id: assessment_ids).distinct.count : 0
+        total_onboarding_sessions: @impact_summary[:total_sessions],
+        active_sessions: @impact_summary[:active_sessions],
+        completed_sessions: @impact_summary[:completed_sessions]
       }
     end
 
@@ -46,6 +51,7 @@ module Admin
     def edit
       authorize [ :admin, @profile_domain ]
       @questions = @profile_domain.questions.ordered if @profile_domain.questions.any?
+      @impact_summary = @profile_domain.impact_summary
     end
 
     def update
@@ -78,6 +84,7 @@ module Admin
     def manage_questions
       authorize [ :admin, @profile_domain ]
       @questions = @profile_domain.questions.includes(:question_options).ordered
+      @impact_summary = @profile_domain.impact_summary
     end
 
     def create_question

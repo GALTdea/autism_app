@@ -1,0 +1,225 @@
+<% impact = profile_domain.impact_summary %>
+<% assessments_with_impact = profile_domain.assessments_with_impact %>
+
+<!-- Integration Checks & Impact Analysis -->
+<div id="integration-checks"></div>
+<% if impact[:has_active_usage] %>
+  <div class="card bg-warning/10 border-2 border-warning shadow-xl">
+    <div class="card-body">
+      <div class="flex items-start gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 text-warning" fill="none" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <div class="flex-1">
+          <h3 class="card-title text-warning">Domain is Currently in Use</h3>
+          <p class="text-sm text-base-content/80 mt-2">
+            This domain is actively being used. Changes to questions or options may affect existing onboarding sessions and child profiles.
+          </p>
+        </div>
+      </div>
+
+      <!-- Impact Summary -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+        <div class="stat bg-base-100 rounded-box py-4 shadow">
+          <div class="stat-title text-xs">Assessments</div>
+          <div class="stat-value text-lg text-secondary"><%= impact[:total_assessments] %></div>
+          <div class="stat-desc text-xs">Using this domain</div>
+        </div>
+        <div class="stat bg-base-100 rounded-box py-4 shadow">
+          <div class="stat-title text-xs">Total Sessions</div>
+          <div class="stat-value text-lg text-warning"><%= impact[:total_sessions] %></div>
+          <div class="stat-desc text-xs">Potentially affected</div>
+        </div>
+        <div class="stat bg-base-100 rounded-box py-4 shadow">
+          <div class="stat-title text-xs">Active Sessions</div>
+          <div class="stat-value text-lg text-error"><%= impact[:active_sessions] %></div>
+          <div class="stat-desc text-xs">Currently in progress</div>
+        </div>
+        <div class="stat bg-base-100 rounded-box py-4 shadow">
+          <div class="stat-title text-xs">Completed</div>
+          <div class="stat-value text-lg text-success"><%= impact[:completed_sessions] %></div>
+          <div class="stat-desc text-xs">Historical data</div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div class="alert alert-info mt-4">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <div class="font-semibold">Recommendations:</div>
+          <ul class="list-disc list-inside mt-2 text-sm">
+            <li>Review all assessments using this domain before making changes</li>
+            <li>Consider creating a new domain version if breaking changes are needed</li>
+            <li>Coordinate with active sessions before modifying questions or options</li>
+            <li>Test changes in a development environment first</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Assessments Using This Domain -->
+<% if assessments_with_impact.any? %>
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Assessments Using This Domain</h2>
+      <p class="text-sm text-base-content/60 mb-4">
+        The following assessments include this domain and their current usage:
+      </p>
+      
+      <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+          <thead>
+            <tr>
+              <th>Assessment</th>
+              <th>Status</th>
+              <th>Questions from Domain</th>
+              <th>Total Sessions</th>
+              <th>Active</th>
+              <th>Completed</th>
+              <th>Impact</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% assessments_with_impact.each do |data| %>
+              <% assessment = data[:assessment] %>
+              <% assessment_domain = assessment.assessment_domains.find_by(profile_domain: profile_domain) %>
+              <tr>
+                <td>
+                  <div class="font-semibold">
+                    <%= link_to assessment.name, admin_assessment_path(assessment), class: "link link-primary" %>
+                  </div>
+                  <div class="text-xs text-base-content/60 mt-1">
+                    <%= truncate(assessment.description || "No description", length: 50) %>
+                  </div>
+                  <div class="text-xs text-base-content/50 mt-1">
+                    Version <%= assessment.version %>
+                    <% if assessment_domain %>
+                      • Order: <%= assessment_domain.position + 1 %>/<%= assessment.domain_count %>
+                    <% end %>
+                  </div>
+                </td>
+                <td>
+                  <% if assessment.is_default? %>
+                    <span class="badge badge-info">Default</span>
+                  <% elsif assessment.active? %>
+                    <span class="badge badge-success">Active</span>
+                  <% else %>
+                    <span class="badge badge-ghost">Inactive</span>
+                  <% end %>
+                </td>
+                <td>
+                  <span class="badge badge-primary badge-lg">
+                    <%= data[:question_count] %>
+                  </span>
+                </td>
+                <td>
+                  <span class="font-semibold <%= data[:session_count] > 0 ? 'text-warning' : 'text-base-content/60' %>">
+                    <%= data[:session_count] %>
+                  </span>
+                </td>
+                <td>
+                  <% if data[:active_sessions] > 0 %>
+                    <span class="badge badge-error">
+                      <%= data[:active_sessions] %> active
+                    </span>
+                  <% else %>
+                    <span class="text-base-content/60 text-sm">0</span>
+                  <% end %>
+                </td>
+                <td>
+                  <span class="text-base-content/70 text-sm">
+                    <%= data[:completed_sessions] %>
+                  </span>
+                </td>
+                <td>
+                  <% if data[:active_sessions] > 0 %>
+                    <span class="badge badge-warning badge-sm" title="Active sessions will be affected by changes">
+                      High Impact
+                    </span>
+                  <% elsif data[:session_count] > 0 %>
+                    <span class="badge badge-info badge-sm" title="Completed sessions contain historical data">
+                      Historical Data
+                    </span>
+                  <% else %>
+                    <span class="badge badge-ghost badge-sm">No Usage</span>
+                  <% end %>
+                </td>
+                <td>
+                  <div class="flex gap-1">
+                    <%= link_to "View", admin_assessment_path(assessment), class: "btn btn-xs btn-ghost" %>
+                    <%= link_to "Edit", edit_admin_assessment_path(assessment), class: "btn btn-xs btn-ghost" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Impact Warning -->
+      <% if impact[:active_sessions] > 0 %>
+        <div class="alert alert-error mt-4">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <div class="font-bold">⚠️ Active Sessions Warning</div>
+            <div class="text-sm mt-1">
+              There are currently <strong><%= impact[:active_sessions] %></strong> active onboarding session<%= 's' unless impact[:active_sessions] == 1 %> using assessments that include this domain.
+              Modifying questions or options while sessions are in progress may cause data inconsistencies or errors.
+            </div>
+            <div class="mt-2">
+              <%= link_to "View Active Sessions", admin_onboarding_sessions_path(status: 'in_progress'), class: "btn btn-sm btn-error" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% else %>
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="flex items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <div>
+          <h3 class="card-title text-success">Domain is Not in Use</h3>
+          <p class="text-sm text-base-content/60">
+            This domain is not currently used in any assessments. You can safely make changes without affecting existing sessions.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Child Profiles Impact -->
+<% if impact[:child_profiles_count] > 0 %>
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Child Profiles Impact</h2>
+      <div class="alert alert-info">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <div class="font-semibold">Child Profiles Using This Domain</div>
+          <div class="text-sm mt-1">
+            This domain is associated with <strong><%= pluralize(impact[:child_profiles_count], 'child profile') %></strong>.
+            Changes to domain questions may affect how future assessments are scored for these profiles.
+          </div>
+          <div class="mt-2">
+            <%= link_to "View Child Profiles", admin_child_profiles_path, class: "btn btn-sm btn-info" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+

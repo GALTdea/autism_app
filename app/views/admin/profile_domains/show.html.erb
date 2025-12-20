@@ -53,6 +53,9 @@
   <!-- Validation Status -->
   <%= render partial: "validation_status", locals: { profile_domain: @profile_domain } %>
 
+  <!-- Integration Checks & Impact Analysis -->
+  <%= render partial: "integration_checks", locals: { profile_domain: @profile_domain } %>
+
   <!-- Stats Cards -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     <div class="stat bg-base-100 shadow rounded-box">
@@ -189,73 +192,6 @@
     </div>
   </div>
 
-  <!-- Usage Section - Assessments -->
-  <% if @profile_domain.assessments.any? %>
-    <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title">Assessments Using This Domain</h2>
-        <p class="text-sm text-base-content/60 mb-4">
-          The following assessments include this domain:
-        </p>
-        <div class="overflow-x-auto">
-          <table class="table table-zebra w-full">
-            <thead>
-              <tr>
-                <th>Assessment</th>
-                <th>Version</th>
-                <th>Status</th>
-                <th>Questions from Domain</th>
-                <th>Domain Order</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @profile_domain.assessments.includes(:assessment_domains).each do |assessment| %>
-                <% assessment_domain = assessment.assessment_domains.find_by(profile_domain: @profile_domain) %>
-                <tr>
-                  <td>
-                    <div class="font-semibold">
-                      <%= link_to assessment.name, admin_assessment_path(assessment), class: "link link-primary" %>
-                    </div>
-                    <% if assessment.description.present? %>
-                      <div class="text-xs text-base-content/60 mt-1">
-                        <%= truncate(assessment.description, length: 50) %>
-                      </div>
-                    <% end %>
-                  </td>
-                  <td>
-                    <span class="badge badge-outline">v<%= assessment.version %></span>
-                  </td>
-                  <td>
-                    <% if assessment.is_default? %>
-                      <span class="badge badge-info">Default</span>
-                    <% elsif assessment.active? %>
-                      <span class="badge badge-success">Active</span>
-                    <% else %>
-                      <span class="badge badge-ghost">Inactive</span>
-                    <% end %>
-                  </td>
-                  <td>
-                    <span class="badge badge-primary">
-                      <%= assessment.questions_count_for_domain(@profile_domain) %>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge badge-lg">
-                      <%= assessment_domain&.position.to_i + 1 %> / <%= assessment.domain_count %>
-                    </span>
-                  </td>
-                  <td>
-                    <%= link_to "View", admin_assessment_path(assessment), class: "btn btn-xs btn-ghost" %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  <% end %>
 
   <!-- Usage Section - Child Profiles (if any) -->
   <% if @stats[:total_child_profiles] > 0 %>
