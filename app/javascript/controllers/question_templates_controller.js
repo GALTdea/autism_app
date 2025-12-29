@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["templatesModal", "templatesContainer", "copyModal", "copyContainer"]
+  static targets = ["templatesModal", "templatesContainer", "copyModal", "copyContainer", "importCsvModal", "importCsvContainer"]
   static values = { 
     profileDomainId: Number
   }
@@ -131,6 +131,67 @@ export default class extends Controller {
       this.copyContainerTarget.innerHTML = `
         <div class="alert alert-error">
           <span>Error loading domains. Please check your connection.</span>
+        </div>
+      `
+    }
+  }
+
+  async showImportCSV(event) {
+    event.preventDefault()
+    
+    if (this.hasImportCsvModalTarget) {
+      this.importCsvModalTarget.classList.remove("hidden")
+      this.importCsvModalTarget.classList.add("modal-open")
+      document.body.style.overflow = "hidden"
+      
+      // Load import form
+      await this.loadImportCSVForm()
+    }
+  }
+
+  hideImportCSV(event) {
+    if (event) event.preventDefault()
+    
+    if (this.hasImportCsvModalTarget) {
+      this.importCsvModalTarget.classList.add("hidden")
+      this.importCsvModalTarget.classList.remove("modal-open")
+      document.body.style.overflow = ""
+    }
+  }
+
+  async loadImportCSVForm() {
+    if (!this.hasImportCsvContainerTarget || !this.profileDomainIdValue) {
+      return
+    }
+
+    const url = `/admin/profile_domains/${this.profileDomainIdValue}/questions/import_csv_form`
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
+
+    try {
+      this.importCsvContainerTarget.innerHTML = '<div class="flex justify-center items-center py-12"><span class="loading loading-spinner loading-lg"></span></div>'
+      
+      const response = await fetch(url, {
+        headers: {
+          "X-CSRF-Token": csrfToken,
+          "Accept": "text/html"
+        }
+      })
+
+      if (response.ok) {
+        const html = await response.text()
+        this.importCsvContainerTarget.innerHTML = html
+      } else {
+        this.importCsvContainerTarget.innerHTML = `
+          <div class="alert alert-error">
+            <span>Failed to load import form. Please try again.</span>
+          </div>
+        `
+      }
+    } catch (error) {
+      console.error("Error loading import form:", error)
+      this.importCsvContainerTarget.innerHTML = `
+        <div class="alert alert-error">
+          <span>Error loading import form. Please check your connection.</span>
         </div>
       `
     }

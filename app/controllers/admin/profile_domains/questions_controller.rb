@@ -131,6 +131,85 @@ module Admin
         end
       end
 
+      def import_csv_form
+        authorize [ :admin, @profile_domain ]
+        render partial: "admin/profile_domains/import_csv_form",
+               locals: { profile_domain: @profile_domain }
+      end
+
+      def import_csv
+        authorize [ :admin, @profile_domain ]
+
+        csv_file = params[:csv_file]
+
+        if csv_file.nil?
+          redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                      alert: "Please select a CSV file to import."
+          return
+        end
+
+        begin
+          results = QuestionImportService.import_from_csv(@profile_domain, csv_file)
+
+          imported_count = results[:imported].count
+          error_count = results[:errors].count
+          skipped_count = results[:skipped].count
+
+          if error_count > 0 && imported_count == 0
+            error_messages = results[:errors].map { |e| "Row #{e[:row]}: #{e[:error]}" }.join("; ")
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        alert: "Import failed: #{error_messages}"
+          else
+            notice_parts = []
+            notice_parts << "#{imported_count} question#{'s' unless imported_count == 1} imported" if imported_count > 0
+            notice_parts << "#{skipped_count} skipped" if skipped_count > 0
+            notice_parts << "#{error_count} error#{'s' unless error_count == 1}" if error_count > 0
+
+            redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                        notice: notice_parts.join(", ")
+          end
+        rescue QuestionImportService::InvalidFormatError => e
+          redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                      alert: "Invalid CSV format: #{e.message}"
+        rescue QuestionImportService::ImportError => e
+          redirect_to manage_questions_admin_profile_domain_path(@profile_domain),
+                      alert: "Import error: #{e.message}"
+        end
+      end
+
+      def csv_template
+        authorize [ :admin, @profile_domain ]
+
+        respond_to do |format|
+          format.csv do
+            send_data generate_csv_template,
+                      filename: "question_import_template_#{@profile_domain.key}_#{Date.current.strftime('%Y%m%d')}.csv",
+                      type: 'text/csv',
+                      disposition: 'attachment'
+          end
+        end
+      end
+
+      private
+
+      def generate_csv_template
+        CSV.generate(headers: true) do |csv|
+          # Header row
+          headers = ['code', 'text', 'response_type', 'position']
+          # Add option columns (example with 5 options)
+          5.times do |i|
+            headers << "option_#{i + 1}_label"
+            headers << "option_#{i + 1}_value"
+          end
+          csv << headers
+
+          # Example rows
+          csv << ['COMM_1', 'How often does the child initiate communication?', 'scale', '0', 'Always', '4', 'Often', '3', 'Sometimes', '2', 'Rarely', '1', 'Never', '0', '', '']
+          csv << ['COMM_2', 'Describe the child\'s communication style', 'text', '1', '', '', '', '', '', '', '', '', '', '', '', '']
+          csv << ['SOCIAL_1', 'Does the child engage in social interactions?', 'multi_choice', '2', 'Yes', '1', 'No', '0', '', '', '', '', '', '', '', '']
+        end
+      end
+
       private
 
       def set_profile_domain

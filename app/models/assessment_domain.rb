@@ -12,3 +12,4 @@ class AssessmentDomain < ApplicationRecord
 end
 
 
+

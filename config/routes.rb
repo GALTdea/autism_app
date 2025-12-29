@@ -60,6 +60,9 @@ Rails.application.routes.draw do
           get :templates
           get :copy_from_domain_form
           post :copy_from_domain
+          get :import_csv_form
+          post :import_csv
+          get :csv_template
         end
         resources :question_options, only: [:create, :update, :destroy], param: :option_id do
           collection do

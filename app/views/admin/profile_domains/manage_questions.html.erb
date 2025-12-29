@@ -37,6 +37,9 @@
           <li>
             <a href="#" data-action="click->question-templates#showCopyFromDomain">Copy from Another Domain</a>
           </li>
+          <li>
+            <a href="#" data-action="click->question-templates#showImportCSV">Import from CSV</a>
+          </li>
         </ul>
       </div>
     </div>
@@ -154,6 +157,26 @@
         </div>
       </div>
       <div class="modal-backdrop" data-action="click->question-templates#hideCopyFromDomain"></div>
+    </div>
+
+    <div data-question-templates-target="importCsvModal" class="modal hidden">
+      <div class="modal-box max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-2xl">Import Questions from CSV</h3>
+          <button type="button"
+                  class="btn btn-sm btn-circle btn-ghost"
+                  data-action="click->question-templates#hideImportCSV">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div data-question-templates-target="importCsvContainer">
+          <!-- Import form will be loaded here -->
+        </div>
+      </div>
+      <div class="modal-backdrop" data-action="click->question-templates#hideImportCSV"></div>
     </div>
   </div>
 
