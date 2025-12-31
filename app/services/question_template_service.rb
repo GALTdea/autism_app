@@ -96,10 +96,7 @@ class QuestionTemplateService
 
     # Now add options if template has them
     if template[:options].any?
-
-    ActiveRecord::Base.transaction do
-      # Create options if template has them
-      if template[:options].any?
+      ActiveRecord::Base.transaction do
         template[:options].each_with_index do |option_data, index|
           question.question_options.create!(
             label: option_data[:label],
@@ -107,12 +104,14 @@ class QuestionTemplateService
             position: index
           )
         end
-      end
 
-      question.reload
-    rescue ActiveRecord::RecordInvalid => e
-      raise Error, "Failed to add options to question: #{e.message}"
+        question.reload
+      rescue ActiveRecord::RecordInvalid => e
+        raise Error, "Failed to add options to question: #{e.message}"
+      end
     end
+
+    question
   end
 
   class Error < StandardError; end
