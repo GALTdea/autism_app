@@ -21,6 +21,9 @@ module Admin
                                                .order(updated_at: :desc)
                                                .limit(5)
                                                .includes(:child_profile, :user)
+      @recent_assessments = Assessment.order(created_at: :desc)
+                                       .limit(5)
+                                       .includes(:profile_domains, :onboarding_sessions)
     end
   end
 end

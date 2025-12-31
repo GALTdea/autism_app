@@ -122,4 +122,82 @@
       </div>
     </div>
   </div>
+
+  <!-- Recent Assessments -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Recent Assessments</h2>
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Version</th>
+              <th>Status</th>
+              <th>Domains</th>
+              <th>Questions</th>
+              <th>Sessions</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @recent_assessments.any? %>
+              <% @recent_assessments.each do |assessment| %>
+                <tr>
+                  <td>
+                    <%= link_to assessment.name, admin_assessment_path(assessment), class: "link link-primary" %>
+                  </td>
+                  <td>
+                    <span class="badge badge-outline"><%= assessment.version %></span>
+                  </td>
+                  <td>
+                    <% if assessment.is_default? %>
+                      <span class="badge badge-info">Default</span>
+                    <% elsif assessment.active? %>
+                      <span class="badge badge-success">Active</span>
+                    <% else %>
+                      <span class="badge badge-ghost">Inactive</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <span class="badge badge-primary badge-lg">
+                      <%= assessment.domain_count %>
+                    </span>
+                  </td>
+                  <td>
+                    <span class="text-base-content/80">
+                      <%= assessment.total_questions_count %>
+                    </span>
+                  </td>
+                  <td>
+                    <% session_count = assessment.onboarding_sessions.count %>
+                    <% if session_count > 0 %>
+                      <div class="flex flex-col gap-1">
+                        <span class="text-sm"><%= session_count %> total</span>
+                        <span class="text-xs text-base-content/60">
+                          <%= assessment.onboarding_sessions.in_progress.count %> active
+                        </span>
+                      </div>
+                    <% else %>
+                      <span class="text-base-content/60">0</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <div class="text-sm">
+                      <%= assessment.created_at.strftime("%b %d, %Y") %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="7" class="text-center text-base-content/60 py-4">No assessments yet</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      <%= link_to "View All Assessments", admin_assessments_path, class: "btn btn-sm btn-ghost mt-4" %>
+    </div>
+  </div>
 </div>
