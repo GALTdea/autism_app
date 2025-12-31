@@ -1,0 +1,2539 @@
+{
+    "domains": [
+        {
+            "domain": {
+                "key": "context_setup",
+                "label": "Context & Setup",
+                "description": "Anchors for interpretation and personalization (not scored as symptoms)."
+            },
+            "questions": [
+                {
+                    "code": "CTX_1",
+                    "text": "Child's age (in years)?",
+                    "response_type": "text",
+                    "position": 0,
+                    "options": []
+                },
+                {
+                    "code": "CTX_2",
+                    "text": "Child's grade / program (e.g., preschool, K, 2nd grade, SPED classroom, homeschool)?",
+                    "response_type": "text",
+                    "position": 1,
+                    "options": []
+                },
+                {
+                    "code": "CTX_3",
+                    "text": "Primary language spoken at home (or most used language)?",
+                    "response_type": "text",
+                    "position": 2,
+                    "options": []
+                },
+                {
+                    "code": "CTX_4",
+                    "text": "Does your child currently receive ABA therapy?",
+                    "response_type": "multi_choice",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "CTX_5",
+                    "text": "Does your child currently receive speech therapy?",
+                    "response_type": "multi_choice",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "CTX_6",
+                    "text": "Does your child currently receive occupational therapy (OT)?",
+                    "response_type": "multi_choice",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "CTX_7",
+                    "text": "Does your child have an IEP/504 or receive school-based services?",
+                    "response_type": "multi_choice",
+                    "position": 6,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "CTX_8",
+                    "text": "Which description best matches your child's CURRENT spoken communication level?",
+                    "response_type": "multi_choice",
+                    "position": 7,
+                    "options": [
+                        {
+                            "label": "Minimally speaking / rarely uses words",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Single words / labels mostly",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Short phrases",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Full sentences and conversational",
+                            "value": 3,
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "code": "CTX_9",
+                    "text": "Which description best matches your child's CURRENT understanding of spoken language?",
+                    "response_type": "multi_choice",
+                    "position": 8,
+                    "options": [
+                        {
+                            "label": "Often seems not to understand spoken language",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Needs gestures/visuals to understand consistently",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Understands simple instructions but misses nuance",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Understands most everyday instructions",
+                            "value": 3,
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "code": "CTX_10",
+                    "text": "Top 3 goals for the next 3 months (free text).",
+                    "response_type": "text",
+                    "position": 9,
+                    "options": []
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "safety_red_flags",
+                "label": "Safety & Red Flags",
+                "description": "Identify urgent risks that may require immediate planning or clinical follow-up."
+            },
+            "questions": [
+                {
+                    "code": "SAFE_1",
+                    "text": "Has your child run off / eloped (bolted away from supervision) in the last 3 months?",
+                    "response_type": "multi_choice",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_2",
+                    "text": "Has your child shown unsafe bolting into streets/parking lots in the last 3 months?",
+                    "response_type": "multi_choice",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_3",
+                    "text": "Has your child left home or a safe area unsupervised (even briefly) in the last 3 months?",
+                    "response_type": "multi_choice",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_4",
+                    "text": "In the last month, has your child been aggressive in a way that could cause injury (hitting, biting, kicking, throwing objects)?",
+                    "response_type": "multi_choice",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_5",
+                    "text": "In the last month, has your child injured themself (head banging, biting self, scratching) leaving marks/bruises?",
+                    "response_type": "multi_choice",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_6",
+                    "text": "Any possible skill regression in the last 6 months (loss of language, toileting, social interest, daily skills)?",
+                    "response_type": "multi_choice",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_7",
+                    "text": "Any seizures or episodes of staring/unresponsiveness that concern you?",
+                    "response_type": "multi_choice",
+                    "position": 6,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_8",
+                    "text": "Significant feeding/weight/hydration concern (not gaining weight, significant loss, dehydration risk)?",
+                    "response_type": "multi_choice",
+                    "position": 7,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "code": "SAFE_9",
+                    "text": "Severe sleep deprivation most nights (very little sleep or frequent long night wakings) impacting daytime function?",
+                    "response_type": "multi_choice",
+                    "position": 8,
+                    "options": [
+                        {
+                            "label": "No",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Yes",
+                            "value": 1,
+                            "position": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "social_communication",
+                "label": "Social Communication",
+                "description": "Social attention, reciprocity, shared enjoyment, and peer engagement."
+            },
+            "questions": [
+                {
+                    "code": "SOC_1",
+                    "text": "Responds to name when not fully absorbed in an activity.",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_2",
+                    "text": "Makes eye contact to connect (not only to request items/help).",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_3",
+                    "text": "Shares enjoyment (shows/points to interesting things, invites you to look).",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_4",
+                    "text": "Seeks others out just to be with them (not only for items/needs).",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_5",
+                    "text": "Back-and-forth interaction (2+ turns) during play or conversation.",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_6",
+                    "text": "Uses gestures naturally (pointing, nodding, waving, shrugging).",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_7",
+                    "text": "Understands and uses turn-taking in games/interaction.",
+                    "response_type": "scale",
+                    "position": 6,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_8",
+                    "text": "Notices others’ feelings and responds (comforts, asks, adjusts behavior).",
+                    "response_type": "scale",
+                    "position": 7,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_9",
+                    "text": "Plays with peers cooperatively (not only side-by-side).",
+                    "response_type": "scale",
+                    "position": 8,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SOC_10",
+                    "text": "Manages social “repair” (can recover after small misunderstandings or conflict).",
+                    "response_type": "scale",
+                    "position": 9,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "flexibility_rrb",
+                "label": "Flexibility & Repetitive Behaviors",
+                "description": "Cognitive rigidity, repetitive/sensory behaviors, intense interests."
+            },
+            "questions": [
+                {
+                    "code": "FLEX_1",
+                    "text": "Becomes very distressed with changes in routine/plans.",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "FLEX_2",
+                    "text": "Needs things “just so” (order, sameness, exactness).",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "FLEX_3",
+                    "text": "Repeats phrases or scripts (from shows/past conversations) outside of context.",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "FLEX_4",
+                    "text": "Repetitive movements (flapping, rocking, pacing, spinning).",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "FLEX_5",
+                    "text": "Intense special interests that crowd out other activities.",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "FLEX_6",
+                    "text": "Difficulty shifting from a preferred activity to a new demand (transitions).",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "FLEX_7",
+                    "text": "Repeats questions even after being answered (reassurance loops).",
+                    "response_type": "scale",
+                    "position": 6,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "FLEX_8",
+                    "text": "Gets “stuck” on an idea/topic and can’t let it go easily.",
+                    "response_type": "scale",
+                    "position": 7,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "sensory_profile",
+                "label": "Sensory Profile",
+                "description": "Sensory sensitivity and sensory-seeking patterns that affect regulation and participation."
+            },
+            "questions": [
+                {
+                    "code": "SENS_1",
+                    "text": "Overreacts to loud or unexpected noises (covers ears, flees, panics).",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SENS_2",
+                    "text": "Overreacts to clothing textures/tags/seams or grooming (haircuts, brushing).",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SENS_3",
+                    "text": "Avoids messy play (paint, sand, glue) or getting hands/face dirty.",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SENS_4",
+                    "text": "Gets overwhelmed by bright lights, visual clutter, or busy environments (stores, parties).",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SENS_5",
+                    "text": "Strongly seeks movement (jumping, spinning, crashing, running indoors).",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SENS_6",
+                    "text": "Seeks deep pressure (tight hugs, weighted blanket, squeezing into small spaces).",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SENS_7",
+                    "text": "Mouths/chews non-food items (clothes, pencils, toys).",
+                    "response_type": "scale",
+                    "position": 6,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SENS_8",
+                    "text": "Sensory overload leads to shutdown or meltdown.",
+                    "response_type": "scale",
+                    "position": 7,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "emotional_regulation_anxiety",
+                "label": "Emotional Regulation & Anxiety",
+                "description": "Stress reactivity, worry, frustration tolerance, and recovery."
+            },
+            "questions": [
+                {
+                    "code": "EMO_1",
+                    "text": "Worries before upcoming events or changes.",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EMO_2",
+                    "text": "Seeks reassurance repeatedly (“Are you sure?”, “What if…?”) even after answered.",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EMO_3",
+                    "text": "Has strong distress when corrected or told they made a mistake.",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EMO_4",
+                    "text": "Big reactions to small problems (low frustration tolerance).",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EMO_5",
+                    "text": "Has difficulty calming once upset (takes longer than 15 minutes).",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EMO_6",
+                    "text": "Avoids tasks due to fear of failure or being wrong.",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "language_communication",
+                "label": "Language & Pragmatics",
+                "description": "Understanding/using language, conversation skills, and breakdown patterns."
+            },
+            "questions": [
+                {
+                    "code": "LANG_1",
+                    "text": "Understands 2–3 step directions (e.g., “Get shoes, put them by the door, then come here”).",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "LANG_2",
+                    "text": "Answers WH-questions (who/what/where/when/why/how) appropriately for their level.",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "LANG_3",
+                    "text": "Can tell about their day in a simple sequence (beginning, middle, end).",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "LANG_4",
+                    "text": "Uses language to negotiate/compromise (not only protest/request).",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "LANG_5",
+                    "text": "Maintains topic and responds to questions (doesn’t frequently derail or ignore).",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "LANG_6",
+                    "text": "Misunderstandings in communication often lead to frustration/meltdowns.",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "executive_function",
+                "label": "Executive Function",
+                "description": "Attention, starting tasks, transitions, working memory, and impulse control."
+            },
+            "questions": [
+                {
+                    "code": "EXEC_1",
+                    "text": "Starts tasks without long delays when asked (with reasonable supports).",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EXEC_2",
+                    "text": "Stays with a non-preferred task for a reasonable amount of time for their level.",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EXEC_3",
+                    "text": "Transitions successfully with warnings/timers/visual supports.",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EXEC_4",
+                    "text": "Gets overwhelmed by multi-step tasks unless broken down.",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EXEC_5",
+                    "text": "Impulsivity creates problems (interrupting, grabbing, bolting, unsafe choices).",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "EXEC_6",
+                    "text": "Accepts “not now” or waiting (delayed gratification) without major escalation.",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "adaptive_skills",
+                "label": "Adaptive Skills (Daily Living)",
+                "description": "Current independence in self-care and routines."
+            },
+            "questions": [
+                {
+                    "code": "ADAPT_1",
+                    "text": "Toileting independence.",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Cannot / fully assisted",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Mostly assisted",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Needs prompting / partial help",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Mostly independent",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Fully independent",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "ADAPT_2",
+                    "text": "Handwashing / basic hygiene routine.",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Cannot / fully assisted",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Mostly assisted",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Needs prompting / partial help",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Mostly independent",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Fully independent",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "ADAPT_3",
+                    "text": "Dressing (including shoes, basic clothing).",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Cannot / fully assisted",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Mostly assisted",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Needs prompting / partial help",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Mostly independent",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Fully independent",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "ADAPT_4",
+                    "text": "Toothbrushing routine.",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Cannot / fully assisted",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Mostly assisted",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Needs prompting / partial help",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Mostly independent",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Fully independent",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "ADAPT_5",
+                    "text": "Sleep routine independence (follows bedtime steps with reasonable support).",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Cannot / fully assisted",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Mostly assisted",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Needs prompting / partial help",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Mostly independent",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Fully independent",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "ADAPT_6",
+                    "text": "Safety awareness (basic danger understanding for age/level).",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Cannot / fully assisted",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Mostly assisted",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Needs prompting / partial help",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Mostly independent",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Fully independent",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "school_learning",
+                "label": "School & Learning",
+                "description": "Participation, comprehension demands, and common school barriers."
+            },
+            "questions": [
+                {
+                    "code": "SCHOOL_1",
+                    "text": "Understands teacher directions in a group setting (classroom).",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SCHOOL_2",
+                    "text": "Participates in class without distress (most days).",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SCHOOL_3",
+                    "text": "Homework demands are manageable with reasonable support.",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SCHOOL_4",
+                    "text": "Language comprehension (not math skill) is a major barrier in word problems.",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SCHOOL_5",
+                    "text": "Sensory factors (noise, lights, crowds) affect school success.",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "SCHOOL_6",
+                    "text": "Peer interactions at recess/lunch generally go well.",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "feeding_sleep_body",
+                "label": "Feeding, Sleep & Body",
+                "description": "Quality-of-life factors that strongly influence regulation and behavior."
+            },
+            "questions": [
+                {
+                    "code": "BODY_1",
+                    "text": "Has a very limited food repertoire (few 'safe foods').",
+                    "response_type": "scale",
+                    "position": 0,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "BODY_2",
+                    "text": "Gags/refuses foods due to texture/smell (beyond typical pickiness).",
+                    "response_type": "scale",
+                    "position": 1,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "BODY_3",
+                    "text": "GI issues (constipation/diarrhea/reflux) appear to affect mood/behavior.",
+                    "response_type": "scale",
+                    "position": 2,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "BODY_4",
+                    "text": "Takes longer than 30 minutes to fall asleep on most nights.",
+                    "response_type": "scale",
+                    "position": 3,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "BODY_5",
+                    "text": "Wakes up at night frequently (more than 2 nights/week).",
+                    "response_type": "scale",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                },
+                {
+                    "code": "BODY_6",
+                    "text": "Screen time transitions are especially hard (stopping screens causes big distress).",
+                    "response_type": "scale",
+                    "position": 5,
+                    "options": [
+                        {
+                            "label": "Never",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Rarely",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "Sometimes",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Often",
+                            "value": 3,
+                            "position": 3
+                        },
+                        {
+                            "label": "Always",
+                            "value": 4,
+                            "position": 4
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": {
+                "key": "strengths_preferences",
+                "label": "Strengths & Preferences",
+                "description": "What motivates your child and what helps them regulate; crucial for tailoring activities."
+            },
+            "questions": [
+                {
+                    "code": "STR_1",
+                    "text": "List your child's top interests (comma-separated).",
+                    "response_type": "text",
+                    "position": 0,
+                    "options": []
+                },
+                {
+                    "code": "STR_2",
+                    "text": "List your child's biggest strengths (comma-separated).",
+                    "response_type": "text",
+                    "position": 1,
+                    "options": []
+                },
+                {
+                    "code": "STR_3",
+                    "text": "What most reliably motivates your child right now?",
+                    "response_type": "text",
+                    "position": 2,
+                    "options": []
+                },
+                {
+                    "code": "STR_4",
+                    "text": "What calms your child fastest when upset?",
+                    "response_type": "text",
+                    "position": 3,
+                    "options": []
+                },
+                {
+                    "code": "STR_5",
+                    "text": "Which time of day is usually BEST for learning/practice?",
+                    "response_type": "multi_choice",
+                    "position": 4,
+                    "options": [
+                        {
+                            "label": "Morning",
+                            "value": 0,
+                            "position": 0
+                        },
+                        {
+                            "label": "Midday",
+                            "value": 1,
+                            "position": 1
+                        },
+                        {
+                            "label": "After school",
+                            "value": 2,
+                            "position": 2
+                        },
+                        {
+                            "label": "Evening",
+                            "value": 3,
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "code": "STR_6",
+                    "text": "Common triggers (free text).",
+                    "response_type": "text",
+                    "position": 5,
+                    "options": []
+                }
+            ]
+        }
+    ]
+}
