@@ -1,19 +1,19 @@
 module Admin
   class AssessmentsController < Admin::ApplicationController
-        before_action :set_assessment, only: [:show, :edit, :update, :destroy,
+        before_action :set_assessment, only: [ :show, :edit, :update, :destroy,
                                               :select_domains, :update_domains,
                                               :order_domains, :reorder_domains,
-                                              :preview, :clone, :configure_scoring]
+                                              :preview, :clone, :configure_scoring ]
     after_action :verify_authorized
 
     def index
-      authorize [:admin, Assessment]
-      @assessments = policy_scope([:admin, Assessment]).includes(:profile_domains, :onboarding_sessions)
+      authorize [ :admin, Assessment ]
+      @assessments = policy_scope([ :admin, Assessment ]).includes(:profile_domains, :onboarding_sessions)
                                                         .order(name: :asc, version: :desc)
     end
 
     def show
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
       @domains = @assessment.ordered_domains.includes(:questions)
       @stats = {
         total_questions: @assessment.total_questions_count,
@@ -25,12 +25,12 @@ module Admin
 
     def new
       @assessment = Assessment.new
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
     end
 
     def create
       @assessment = Assessment.new(assessment_params)
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
 
       if @assessment.save
         redirect_to select_domains_admin_assessment_path(@assessment),
@@ -41,24 +41,34 @@ module Admin
     end
 
     def edit
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
       # Load domains for display in edit view
       @domains = @assessment.ordered_domains.includes(:questions) if @assessment.domain_count > 0
     end
 
     def update
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
 
       if @assessment.update(assessment_params)
-        redirect_to admin_assessment_path(@assessment),
-                    notice: "Assessment updated successfully."
+        # If coming from index or dashboard page, redirect back there
+        referer = request.referer.to_s
+        if referer.include?(admin_assessments_path)
+          redirect_to admin_assessments_path,
+                      notice: "Assessment updated successfully."
+        elsif referer.include?(admin_root_path)
+          redirect_to admin_root_path,
+                      notice: "Assessment updated successfully."
+        else
+          redirect_to admin_assessment_path(@assessment),
+                      notice: "Assessment updated successfully."
+        end
       else
         render :edit, status: :unprocessable_entity
       end
     end
 
     def destroy
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
 
       if @assessment.can_be_deleted?
         @assessment.destroy
@@ -73,13 +83,13 @@ module Admin
     # Assessment Builder Wizard Actions
 
     def select_domains
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
       @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
       @available_domains = ProfileDomain.ordered - @assessment.profile_domains
     end
 
     def update_domains
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
 
       domain_ids = params[:domain_ids] || []
 
@@ -94,14 +104,14 @@ module Admin
     end
 
     def order_domains
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
       @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
       redirect_to select_domains_admin_assessment_path(@assessment),
                   alert: "Please select at least one domain first." if @assessment_domains.empty?
     end
 
     def reorder_domains
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
 
       domain_positions = reorder_domains_params
 
@@ -136,14 +146,14 @@ module Admin
     end
 
     def preview
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
       @domains = @assessment.ordered_domains.includes(:questions)
       redirect_to select_domains_admin_assessment_path(@assessment),
                   alert: "Please select at least one domain first." if @domains.empty?
     end
 
     def clone
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
       begin
         cloned_assessment = @assessment.clone
         redirect_to edit_admin_assessment_path(cloned_assessment),
@@ -155,7 +165,7 @@ module Admin
     end
 
     def configure_scoring
-      authorize [:admin, @assessment]
+      authorize [ :admin, @assessment ]
       @domains = @assessment.ordered_domains.includes(:questions)
     end
 

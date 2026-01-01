@@ -36,6 +36,7 @@
               <th>Name</th>
               <th>Version</th>
               <th>Status</th>
+              <th>Default</th>
               <th>Domains</th>
               <th>Questions</th>
               <th>Sessions</th>
@@ -67,6 +68,23 @@
                       <span class="badge badge-success">Active</span>
                     <% else %>
                       <span class="badge badge-ghost">Inactive</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <% if current_user.super_admin? %>
+                      <%= form_with model: [:admin, assessment], method: :patch, local: false, 
+                          data: { turbo_frame: "_top" }, 
+                          class: "inline-block" do |f| %>
+                        <%= f.check_box :is_default, 
+                            { onchange: "this.form.requestSubmit()",
+                              class: "checkbox checkbox-info" } %>
+                      <% end %>
+                    <% else %>
+                      <% if assessment.is_default? %>
+                        <span class="text-success">✓</span>
+                      <% else %>
+                        <span class="text-base-content/40">-</span>
+                      <% end %>
                     <% end %>
                   </td>
                   <td>
@@ -120,7 +138,7 @@
               <% end %>
             <% else %>
               <tr>
-                <td colspan="8" class="text-center text-base-content/60 py-8">
+                <td colspan="9" class="text-center text-base-content/60 py-8">
                   <div class="flex flex-col items-center gap-4">
                     <p class="text-lg">No assessments found</p>
                     <%= link_to "Create Your First Assessment", new_admin_assessment_path, class: "btn btn-primary" %>
