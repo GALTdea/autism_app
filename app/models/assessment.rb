@@ -9,6 +9,9 @@ class Assessment < ApplicationRecord
   validates :version, presence: true
   validates :name, uniqueness: { scope: :version }
 
+  # Callbacks
+  before_save :ensure_single_default, if: -> { is_default? && (is_default_changed? || new_record?) }
+
   # Scopes
   scope :active, -> { where(active: true) }
   scope :default, -> { where(is_default: true) }
@@ -157,6 +160,16 @@ class Assessment < ApplicationRecord
   end
 
   private
+
+  def ensure_single_default
+    # If this assessment is being set as default, unset all others
+    if persisted?
+      Assessment.where.not(id: id).update_all(is_default: false)
+    else
+      # For new records, update all existing assessments
+      Assessment.update_all(is_default: false)
+    end
+  end
 
   def default_level_thresholds
     {
