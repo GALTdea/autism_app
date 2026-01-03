@@ -1,0 +1,124 @@
+<% content_for :title, "Questions" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold">All Questions</h1>
+    <div class="text-sm text-base-content/60">
+      Total: <%= number_with_delimiter(@questions.count) %>
+    </div>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Questions</div>
+      <div class="stat-value text-primary"><%= number_with_delimiter(@questions.count) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Profile Domains</div>
+      <div class="stat-value text-secondary"><%= number_with_delimiter(@questions.select('DISTINCT questions.profile_domain_id').count) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Scale Questions</div>
+      <div class="stat-value text-success"><%= number_with_delimiter(@questions.scale.count) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Multi-Choice</div>
+      <div class="stat-value text-info"><%= number_with_delimiter(@questions.multi_choice.count) %></div>
+    </div>
+  </div>
+
+  <!-- Questions Table -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Question Text</th>
+              <th>Profile Domain</th>
+              <th>Response Type</th>
+              <th>Options</th>
+              <th>Position</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if @questions.any? %>
+              <% @questions.group_by(&:profile_domain).each do |domain, domain_questions| %>
+                <% domain_questions.each do |question| %>
+                  <tr>
+                    <td>
+                      <span class="badge badge-outline font-mono"><%= question.code %></span>
+                    </td>
+                    <td>
+                      <div class="max-w-md">
+                        <div class="font-medium"><%= truncate(question.text, length: 80) %></div>
+                      </div>
+                    </td>
+                    <td>
+                      <%= link_to domain.label, admin_profile_domain_path(domain), class: "link link-primary" %>
+                      <div class="text-xs text-base-content/60 font-mono"><%= domain.key %></div>
+                    </td>
+                    <td>
+                      <span class="badge <%= question.scale? ? 'badge-success' : (question.multi_choice? ? 'badge-info' : 'badge-ghost') %>">
+                        <%= question.response_type.humanize %>
+                      </span>
+                    </td>
+                    <td>
+                      <% option_count = question.question_options.count %>
+                      <% if option_count > 0 %>
+                        <span class="badge badge-primary badge-sm"><%= option_count %></span>
+                      <% else %>
+                        <span class="text-base-content/40">—</span>
+                      <% end %>
+                    </td>
+                    <td>
+                      <span class="text-base-content/60"><%= question.position %></span>
+                    </td>
+                    <td>
+                      <div class="text-sm text-base-content/60">
+                        <%= question.created_at.strftime("%b %d, %Y") %>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="flex gap-2">
+                        <%= link_to "Domain", admin_profile_domain_path(question.profile_domain), class: "btn btn-sm btn-ghost" %>
+                        <%= link_to "Manage", manage_questions_admin_profile_domain_path(question.profile_domain), class: "btn btn-sm btn-primary" %>
+                      </div>
+                    </td>
+                  </tr>
+                <% end %>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="8" class="text-center text-base-content/60 py-8">
+                  <div class="flex flex-col items-center gap-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-lg font-semibold">No questions found</p>
+                    <p class="text-sm">Questions are managed within their profile domains</p>
+                    <%= link_to "View Profile Domains", admin_profile_domains_path, class: "btn btn-primary" %>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="flex justify-between items-center pt-4 border-t border-base-300">
+    <%= link_to "← Back to Dashboard", admin_root_path, class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "View in Madmin", madmin_questions_path, class: "btn btn-ghost btn-sm" %>
+      <%= link_to "Profile Domains", admin_profile_domains_path, class: "btn btn-ghost btn-sm" %>
+    </div>
+  </div>
+</div>
+

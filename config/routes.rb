@@ -25,6 +25,7 @@ Rails.application.routes.draw do
 
     resources :activity_logs, only: [:index]
     resources :analytics, only: [:index]
+    resources :questions, only: [:index]
     resources :assessments do
       # Assessment Builder wizard routes
       member do
