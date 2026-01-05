@@ -1,6 +1,6 @@
 class Assessment < ApplicationRecord
   # Associations
-  has_many :assessment_domains, dependent: :destroy
+  has_many :assessment_domains, dependent: :destroy # or assessment_sections
   has_many :profile_domains, through: :assessment_domains
   has_many :questions, through: :assessment_domains  # Questions now belong to assessment_domains
   has_many :onboarding_sessions, dependent: :restrict_with_error
