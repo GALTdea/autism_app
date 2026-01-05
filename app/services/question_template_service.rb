@@ -72,16 +72,16 @@ class QuestionTemplateService
     TEMPLATES[key.to_sym]
   end
 
-  def self.create_from_template(profile_domain, template_key, question_text: nil)
+  def self.create_from_template(assessment_domain, template_key, question_text: nil)
     template = TEMPLATES[template_key.to_sym]
     raise Error, "Template '#{template_key}' not found" unless template
 
-    new(profile_domain).create_from_template(template, question_text)
+    new(assessment_domain).create_from_template(template, question_text)
   end
 
-  def initialize(profile_domain)
-    @profile_domain = profile_domain
-    raise Error, "Profile domain is required" if @profile_domain.nil?
+  def initialize(assessment_domain)
+    @assessment_domain = assessment_domain
+    raise Error, "Assessment domain is required" if @assessment_domain.nil?
   end
 
   def create_from_template(template, question_text = nil)
@@ -92,7 +92,7 @@ class QuestionTemplateService
       response_type: template[:response_type]
     }
 
-    question = QuestionManagementService.create_question(@profile_domain, params)
+    question = QuestionManagementService.create_question(@assessment_domain, params)
 
     # Now add options if template has them
     if template[:options].any?

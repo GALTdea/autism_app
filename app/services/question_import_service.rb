@@ -17,13 +17,13 @@ class QuestionImportService
     position: 'position'
   }.freeze
 
-  def self.import_from_csv(profile_domain, csv_file)
-    new(profile_domain).import_from_csv(csv_file)
+  def self.import_from_csv(assessment_domain, csv_file)
+    new(assessment_domain).import_from_csv(csv_file)
   end
 
-  def initialize(profile_domain)
-    @profile_domain = profile_domain
-    raise Error, "Profile domain is required" if @profile_domain.nil?
+  def initialize(assessment_domain)
+    @assessment_domain = assessment_domain
+    raise Error, "Assessment domain is required" if @assessment_domain.nil?
     @errors = []
     @imported_count = 0
     @skipped_count = 0
@@ -116,9 +116,9 @@ class QuestionImportService
       raise ImportError, "Invalid response_type: #{response_type}. Must be one of: #{Question.response_types.keys.join(', ')}"
     end
 
-    # Check if question already exists
-    if Question.exists?(code: code)
-      raise ImportError, "Question with code '#{code}' already exists"
+    # Check if question already exists in this assessment_domain
+    if @assessment_domain.questions.exists?(code: code)
+      raise ImportError, "Question with code '#{code}' already exists in this section"
     end
 
     # Parse position (optional, will auto-assign if blank)
@@ -140,7 +140,7 @@ class QuestionImportService
       position: position
     }
 
-    question = QuestionManagementService.create_question(@profile_domain, question_params)
+    question = QuestionManagementService.create_question(@assessment_domain, question_params)
 
     # Create options if they exist
     if options.any?

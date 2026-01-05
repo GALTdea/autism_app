@@ -3,7 +3,7 @@ class QuestionCloningService
   class CloningError < Error; end
 
   def self.clone_question(question, target_domain: nil, code: nil)
-    target_domain ||= question.profile_domain
+    target_domain ||= question.assessment_domain
     new(question, target_domain).clone_question(code: code)
   end
 
@@ -27,14 +27,17 @@ class QuestionCloningService
       max_position = @target_domain.questions.maximum(:position)
       new_position = (max_position || -1) + 1
 
+      # Determine domain key (works with both AssessmentDomain and ProfileDomain for backward compatibility)
+      domain_key = @target_domain.respond_to?(:profile_domain) ? @target_domain.profile_domain.key : @target_domain.key
+
       # Create cloned question
       cloned_question = Question.create!(
         code: new_code,
         text: @question.text,
         response_type: @question.response_type,
         position: new_position,
-        profile_domain_id: @target_domain.id,
-        domain: @target_domain.key
+        assessment_domain_id: @target_domain.id,
+        domain: domain_key
       )
 
       # Clone question options if they exist
@@ -59,8 +62,9 @@ class QuestionCloningService
   private
 
   def generate_clone_code
-    # Normalize domain key
-    domain_prefix = normalize_domain_key(@target_domain.key)
+    # Normalize domain key (works with both AssessmentDomain and ProfileDomain)
+    domain_key = @target_domain.respond_to?(:profile_domain) ? @target_domain.profile_domain.key : @target_domain.key
+    domain_prefix = normalize_domain_key(domain_key)
     raise CloningError, "Invalid domain key for code generation" if domain_prefix.blank?
 
     # Extract number from original code
@@ -69,12 +73,12 @@ class QuestionCloningService
     # Try appending _COPY
     new_code = "#{domain_prefix}_#{original_number}_COPY"
 
-    # If code already exists, add a number
-    if Question.exists?(code: new_code)
+    # If code already exists in this assessment_domain, add a number
+    if @target_domain.questions.exists?(code: new_code)
       counter = 2
       loop do
         new_code = "#{domain_prefix}_#{original_number}_COPY#{counter}"
-        break unless Question.exists?(code: new_code)
+        break unless @target_domain.questions.exists?(code: new_code)
         counter += 1
         raise CloningError, "Too many clones with same code pattern" if counter > 100
       end
