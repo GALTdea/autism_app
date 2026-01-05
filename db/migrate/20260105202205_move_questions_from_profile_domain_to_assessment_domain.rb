@@ -1,8 +1,8 @@
 class MoveQuestionsFromProfileDomainToAssessmentDomain < ActiveRecord::Migration[8.0]
   def up
     # Step 1: Add assessment_domain_id column (nullable initially)
+    # Note: add_reference automatically creates an index, so we don't need a separate add_index
     add_reference :questions, :assessment_domain, null: true, foreign_key: true
-    add_index :questions, :assessment_domain_id
 
     # Step 2: Temporarily remove unique constraint on code to allow duplicates during migration
     remove_index :questions, :code
@@ -116,7 +116,8 @@ class MoveQuestionsFromProfileDomainToAssessmentDomain < ActiveRecord::Migration
     remove_index :questions, [:profile_domain_id, :position] if index_exists?(:questions, [:profile_domain_id, :position])
     remove_index :questions, :profile_domain_id if index_exists?(:questions, :profile_domain_id)
     remove_foreign_key :questions, :profile_domains if foreign_key_exists?(:questions, :profile_domains)
-    remove_reference :questions, :profile_domain, foreign_key: true
+    # Remove the column (foreign key already removed above)
+    remove_column :questions, :profile_domain_id
 
     # Step 9: Add new unique constraint on code scoped to assessment_domain_id
     add_index :questions, [:code, :assessment_domain_id], unique: true, name: 'index_questions_on_code_and_assessment_domain_id'

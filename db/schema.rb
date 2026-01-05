@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_16_213200) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_05_202205) do
   create_table "activity_logs", force: :cascade do |t|
     t.integer "child_profile_id", null: false
     t.integer "activity_template_id", null: false
@@ -253,13 +253,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_16_213200) do
     t.string "domain"
     t.string "response_type", null: false
     t.integer "position"
-    t.integer "profile_domain_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["code"], name: "index_questions_on_code", unique: true
+    t.integer "assessment_domain_id", null: false
+    t.index ["assessment_domain_id", "position"], name: "index_questions_on_assessment_domain_id_and_position"
+    t.index ["assessment_domain_id"], name: "index_questions_on_assessment_domain_id"
+    t.index ["code", "assessment_domain_id"], name: "index_questions_on_code_and_assessment_domain_id", unique: true
     t.index ["domain"], name: "index_questions_on_domain"
-    t.index ["profile_domain_id", "position"], name: "index_questions_on_profile_domain_id_and_position"
-    t.index ["profile_domain_id"], name: "index_questions_on_profile_domain_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -298,5 +298,5 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_16_213200) do
   add_foreign_key "onboarding_sessions", "child_profiles"
   add_foreign_key "onboarding_sessions", "users"
   add_foreign_key "question_options", "questions"
-  add_foreign_key "questions", "profile_domains"
+  add_foreign_key "questions", "assessment_domains"
 end
