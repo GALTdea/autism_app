@@ -2,6 +2,7 @@ class Assessment < ApplicationRecord
   # Associations
   has_many :assessment_domains, dependent: :destroy
   has_many :profile_domains, through: :assessment_domains
+  has_many :questions, through: :assessment_domains  # Questions now belong to assessment_domains
   has_many :onboarding_sessions, dependent: :restrict_with_error
 
   # Validations
@@ -75,9 +76,12 @@ class Assessment < ApplicationRecord
   end
 
   # Query methods for questions
+  # Questions now belong to assessment_domains, not profile_domains
   def questions_for_domain(profile_domain)
     return Question.none unless domain_included?(profile_domain)
-    profile_domain.questions.ordered
+    assessment_domain = assessment_domains.find_by(profile_domain: profile_domain)
+    return Question.none unless assessment_domain
+    assessment_domain.questions.ordered
   end
 
   def questions_for_domain_by_key(domain_key)
@@ -87,17 +91,19 @@ class Assessment < ApplicationRecord
   end
 
   def total_questions_count
-    profile_domains.joins(:questions).count("questions.id")
+    questions.count
   end
 
   def questions_count_for_domain(profile_domain)
     return 0 unless domain_included?(profile_domain)
-    profile_domain.questions.count
+    assessment_domain = assessment_domains.find_by(profile_domain: profile_domain)
+    return 0 unless assessment_domain
+    assessment_domain.questions.count
   end
 
   def questions_in_order
-    # Returns all questions from all domains, ordered by domain position, then question position
-    Question.joins(profile_domain: :assessment_domains)
+    # Returns all questions from all assessment_domains, ordered by domain position, then question position
+    Question.joins(:assessment_domain)
             .where(assessment_domains: { assessment_id: id })
             .merge(AssessmentDomain.ordered)
             .order("assessment_domains.position ASC, questions.position ASC")
@@ -105,10 +111,11 @@ class Assessment < ApplicationRecord
 
   def domains_with_question_counts
     ordered_domains.map do |domain|
+      assessment_domain = assessment_domains.find_by(profile_domain: domain)
       {
         domain: domain,
-        question_count: questions_count_for_domain(domain),
-        position: assessment_domains.find_by(profile_domain: domain)&.position
+        question_count: assessment_domain&.question_count || 0,
+        position: assessment_domain&.position
       }
     end
   end

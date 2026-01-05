@@ -41,10 +41,25 @@ class ProfileGenerationService
     domains_to_process = assessment ? assessment.ordered_domains : ProfileDomain.all
 
     domains_to_process.each do |domain|
-      domain_answers = @onboarding_session.answers
-                                          .joins(question: :profile_domain)
-                                          .where(profile_domains: { id: domain.id })
-                                          .where.not(numeric_value: nil)
+      # Find the assessment_domain for this profile_domain in the assessment
+      if assessment
+        assessment_domain = assessment.assessment_domains.find_by(profile_domain: domain)
+        next unless assessment_domain
+
+        # Query answers through assessment_domain
+        domain_answers = @onboarding_session.answers
+                                            .joins(question: :assessment_domain)
+                                            .where(assessment_domains: { id: assessment_domain.id })
+                                            .where.not(numeric_value: nil)
+      else
+        # Fallback: query through profile_domain (for backward compatibility)
+        # This should not happen in practice, but kept for safety
+        domain_answers = @onboarding_session.answers
+                                            .joins(question: :assessment_domain)
+                                            .joins('JOIN assessment_domains ON assessment_domains.id = questions.assessment_domain_id')
+                                            .where(assessment_domains: { profile_domain_id: domain.id })
+                                            .where.not(numeric_value: nil)
+      end
 
       if domain_answers.any?
         avg_score = domain_answers.average(:numeric_value).to_f

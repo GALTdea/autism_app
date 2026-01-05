@@ -4,25 +4,25 @@ class QuestionManagementService
   class UpdateError < Error; end
   class DeleteError < Error; end
 
-  def self.create_question(profile_domain, params)
-    new(profile_domain).create_question(params)
+  def self.create_question(assessment_domain, params)
+    new(assessment_domain).create_question(params)
   end
 
   def self.update_question(question, params)
-    new(question.profile_domain).update_question(question, params)
+    new(question.assessment_domain).update_question(question, params)
   end
 
-  def self.reorder_questions(profile_domain, positions)
-    new(profile_domain).reorder_questions(positions)
+  def self.reorder_questions(assessment_domain, positions)
+    new(assessment_domain).reorder_questions(positions)
   end
 
   def self.delete_question(question)
-    new(question.profile_domain).delete_question(question)
+    new(question.assessment_domain).delete_question(question)
   end
 
-  def initialize(profile_domain)
-    @profile_domain = profile_domain
-    raise Error, "Profile domain is required" if @profile_domain.nil?
+  def initialize(assessment_domain)
+    @assessment_domain = assessment_domain
+    raise Error, "Assessment domain is required" if @assessment_domain.nil?
   end
 
   def create_question(params)
@@ -35,11 +35,11 @@ class QuestionManagementService
       # Auto-assign position if not provided
       params['position'] ||= next_position
 
-      # Ensure profile_domain is set
-      params['profile_domain_id'] = @profile_domain.id
+      # Ensure assessment_domain is set
+      params['assessment_domain_id'] = @assessment_domain.id
 
       # Ensure domain field matches profile_domain key (for backwards compatibility)
-      params['domain'] = @profile_domain.key
+      params['domain'] = @assessment_domain.profile_domain.key
 
       question = Question.new(params)
       question.save!
@@ -53,17 +53,19 @@ class QuestionManagementService
   end
 
   def update_question(question, params)
-    raise InvalidQuestionError, "Question does not belong to this domain" unless question.profile_domain_id == @profile_domain.id
+    raise InvalidQuestionError, "Question does not belong to this assessment domain" unless question.assessment_domain_id == @assessment_domain.id
 
     params = params.stringify_keys
 
     ActiveRecord::Base.transaction do
-      # Don't allow changing profile_domain_id
-      params.delete('profile_domain_id')
-      params.delete('profile_domain')
+      # Don't allow changing assessment_domain_id
+      params.delete('assessment_domain_id')
+      params.delete('assessment_domain')
 
       # Ensure domain field stays in sync
-      params['domain'] = @profile_domain.key if params.key?('domain') || question.domain != @profile_domain.key
+      if params.key?('domain') || question.domain != @assessment_domain.profile_domain.key
+        params['domain'] = @assessment_domain.profile_domain.key
+      end
 
       question.update!(params)
 
@@ -81,7 +83,7 @@ class QuestionManagementService
 
     ActiveRecord::Base.transaction do
       positions.each do |question_id, position|
-        question = @profile_domain.questions.find_by(id: question_id)
+        question = @assessment_domain.questions.find_by(id: question_id)
         next unless question
 
         new_position = position.to_i
@@ -91,7 +93,7 @@ class QuestionManagementService
       # Renormalize positions to ensure they're sequential starting from 0
       normalize_positions
 
-      @profile_domain
+      @assessment_domain
     rescue ActiveRecord::RecordInvalid => e
       raise UpdateError, "Failed to reorder questions: #{e.message}"
     rescue StandardError => e
@@ -100,7 +102,7 @@ class QuestionManagementService
   end
 
   def delete_question(question)
-    raise InvalidQuestionError, "Question does not belong to this domain" unless question.profile_domain_id == @profile_domain.id
+    raise InvalidQuestionError, "Question does not belong to this assessment domain" unless question.assessment_domain_id == @assessment_domain.id
     raise DeleteError, "Cannot delete question that has answers" if question.answers.any?
 
     ActiveRecord::Base.transaction do
@@ -123,11 +125,11 @@ class QuestionManagementService
     # Example: COMM_1, COMM_2, SOCIAL_1, etc.
 
     # Normalize domain key to valid code format (uppercase, only alphanumeric and underscores)
-    domain_prefix = normalize_domain_key(@profile_domain.key)
+    domain_prefix = normalize_domain_key(@assessment_domain.profile_domain.key)
     raise InvalidQuestionError, "Invalid domain key for code generation" if domain_prefix.blank?
 
-    # Get the highest number for questions with this domain prefix
-    existing_codes = @profile_domain.questions.pluck(:code)
+    # Get the highest number for questions with this domain prefix in this assessment_domain
+    existing_codes = @assessment_domain.questions.pluck(:code)
     max_number = existing_codes
                   .select { |code| code&.match?(/^#{Regexp.escape(domain_prefix)}_\d+$/) }
                   .map { |code| code.split('_').last.to_i }
@@ -137,13 +139,12 @@ class QuestionManagementService
     new_number = max_number + 1
     new_code = "#{domain_prefix}_#{new_number}"
 
-    # Ensure uniqueness across the entire Question table (not just domain)
-    # This handles edge cases where codes might conflict
+    # Ensure uniqueness within this assessment_domain (code is unique per assessment_domain)
     counter = new_number
     max_attempts = 1000 # Safety limit to prevent infinite loops
     attempts = 0
 
-    while Question.exists?(code: new_code)
+    while @assessment_domain.questions.exists?(code: new_code)
       counter += 1
       new_code = "#{domain_prefix}_#{counter}"
       attempts += 1
@@ -173,14 +174,14 @@ class QuestionManagementService
   end
 
   def next_position
-    # Get the maximum position for questions in this domain, add 1
-    max_position = @profile_domain.questions.maximum(:position)
+    # Get the maximum position for questions in this assessment_domain, add 1
+    max_position = @assessment_domain.questions.maximum(:position)
     (max_position || -1) + 1
   end
 
   def normalize_positions
     # Ensure positions are sequential starting from 0
-    @profile_domain.questions.ordered.each_with_index do |question, index|
+    @assessment_domain.questions.ordered.each_with_index do |question, index|
       question.update_column(:position, index)
     end
   end

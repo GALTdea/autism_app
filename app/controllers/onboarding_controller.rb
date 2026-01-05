@@ -14,15 +14,26 @@ class OnboardingController < ApplicationController
   def show
     authorize @onboarding_session
 
-    # Get domains from the assessment, or fall back to all domains
+    # Get assessment_sections from the assessment
     assessment = @onboarding_session.assessment || Assessment.default.first || Assessment.active.first
-    @domains = assessment ? assessment.ordered_domains.includes(:questions) : ProfileDomain.ordered.includes(:questions)
+
+    if assessment
+      # Get assessment_domains (sections) with their questions
+      @assessment_sections = assessment.assessment_domains.includes(:questions, :profile_domain).ordered
+      @domains = assessment.ordered_domains  # For backward compatibility in views
+    else
+      # Fallback (should not happen in practice)
+      @assessment_sections = AssessmentDomain.none
+      @domains = ProfileDomain.ordered
+    end
+
     @current_step = params[:step]&.to_i || 1
     @total_steps = calculate_total_steps
 
-    # Get current domain and questions
-    @current_domain = @domains[@current_step - 1]
-    @questions = @current_domain&.questions&.ordered || []
+    # Get current section and questions
+    @current_section = @assessment_sections[@current_step - 1]
+    @current_domain = @current_section&.profile_domain  # For backward compatibility
+    @questions = @current_section&.questions&.ordered || []
 
     # Load existing answers for current questions
     @answers = {}

@@ -1,11 +1,16 @@
 class ProfileDomain < ApplicationRecord
+  # NOTE: Questions no longer belong directly to ProfileDomain.
+  # They belong to AssessmentDomain. ProfileDomain is now only a semantic reference
+  # used by child profiles, goals, and for organizing assessment sections.
+
   # Associations
-  has_many :questions, dependent: :destroy
+  # REMOVED: has_many :questions (questions now belong to assessment_domains)
   has_many :child_domain_profiles, dependent: :destroy
   has_many :child_profiles, through: :child_domain_profiles
   has_many :child_goals, dependent: :destroy
   has_many :assessment_domains, dependent: :destroy
   has_many :assessments, through: :assessment_domains
+  # Questions are accessed through assessment_domains: assessment_domains.flat_map(&:questions)
 
   # Validations
   validates :key, presence: true, uniqueness: true
@@ -16,14 +21,14 @@ class ProfileDomain < ApplicationRecord
 
   # Validation Helpers
 
-  # Check if domain has any questions
+  # Check if domain has any questions (through assessment_domains)
   def has_questions?
-    questions.any?
+    assessment_domains.joins(:questions).exists?
   end
 
   # Check if domain can be safely deleted
   # Returns false if domain is being used in:
-  # - Assessments
+  # - Assessments (through assessment_domains)
   # - Child profiles (through child_domain_profiles)
   # - Onboarding sessions (through assessments)
   def can_be_deleted?
@@ -55,38 +60,15 @@ class ProfileDomain < ApplicationRecord
     blockers
   end
 
-  # Check if all questions have required options
-  # Scale and multi_choice questions must have at least one option
-  # Text questions don't require options
-  def is_complete?
-    return false unless has_questions?
-
-    questions.each do |question|
-      # Scale and multi_choice questions require options
-      if question.scale? || question.multi_choice?
-        return false if question.question_options.empty?
-      end
-      # Text questions don't require options, so they're always "complete"
-    end
-
-    true
-  end
-
-  # Get list of incomplete questions (questions missing required options)
-  def incomplete_questions
-    questions.select do |question|
-      (question.scale? || question.multi_choice?) && question.question_options.empty?
-    end
-  end
-
   # Get validation status with details
+  # Note: Question validation is now done at the assessment_domain level, not profile_domain
   def validation_status
     {
       has_questions: has_questions?,
-      is_complete: is_complete?,
       can_be_deleted: can_be_deleted?,
-      incomplete_questions_count: incomplete_questions.count,
-      deletion_blockers: deletion_blockers
+      deletion_blockers: deletion_blockers,
+      assessment_count: assessments.count,
+      child_profile_count: child_profiles.count
     }
   end
 
