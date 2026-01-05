@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_01_05_202205) do
+ActiveRecord::Schema[8.0].define(version: 2026_01_05_220631) do
   create_table "activity_logs", force: :cascade do |t|
     t.integer "child_profile_id", null: false
     t.integer "activity_template_id", null: false
@@ -104,14 +104,19 @@ ActiveRecord::Schema[8.0].define(version: 2026_01_05_202205) do
   end
 
   create_table "assessment_domains", force: :cascade do |t|
-    t.integer "assessment_id", null: false
-    t.integer "profile_domain_id", null: false
-    t.integer "position", null: false
+    t.integer "assessment_id"
+    t.integer "profile_domain_id"
+    t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
+    t.string "version"
+    t.text "description"
     t.index ["assessment_id", "position"], name: "index_assessment_domains_on_assessment_id_and_position"
-    t.index ["assessment_id", "profile_domain_id"], name: "index_assessment_domains_on_assessment_and_profile_domain", unique: true
+    t.index ["assessment_id", "profile_domain_id"], name: "index_assessment_domains_on_assessment_and_profile_domain_unique", unique: true, where: "assessment_id IS NOT NULL"
     t.index ["assessment_id"], name: "index_assessment_domains_on_assessment_id"
+    t.index ["name", "version"], name: "index_assessment_domains_on_name_and_version_unique", unique: true, where: "assessment_id IS NULL AND name IS NOT NULL"
+    t.index ["name"], name: "index_assessment_domains_on_name_standalone", where: "assessment_id IS NULL"
     t.index ["profile_domain_id"], name: "index_assessment_domains_on_profile_domain_id"
   end
 
