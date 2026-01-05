@@ -29,29 +29,76 @@ class Assessment < ApplicationRecord
     update(active: false, is_default: false)
   end
 
-  def add_domain(profile_domain, position: nil)
+  # Add a domain to this assessment
+  # Accepts either ProfileDomain (creates new AssessmentDomain) or AssessmentDomain (adds standalone domain)
+  def add_domain(domain, position: nil)
     position ||= assessment_domains.maximum(:position).to_i + 1
-    assessment_domains.find_or_create_by!(profile_domain: profile_domain) do |ad|
-      ad.position = position
+
+    case domain
+    when ProfileDomain
+      # Legacy: Create AssessmentDomain from ProfileDomain
+      assessment_domains.find_or_create_by!(profile_domain: domain) do |ad|
+        ad.position = position
+      end
+    when AssessmentDomain
+      # New: Add standalone AssessmentDomain to this assessment
+      raise ArgumentError, "AssessmentDomain is already in an assessment" if domain.in_assessment?
+      domain.add_to_assessment(self, position: position)
+      domain
+    else
+      raise ArgumentError, "Domain must be a ProfileDomain or AssessmentDomain"
     end
   end
 
-  def remove_domain(profile_domain)
-    assessment_domains.where(profile_domain: profile_domain).destroy_all
+  # Remove a domain from this assessment
+  # Accepts either ProfileDomain or AssessmentDomain
+  def remove_domain(domain)
+    case domain
+    when ProfileDomain
+      # Legacy: Remove by ProfileDomain
+      assessment_domains.where(profile_domain: domain).destroy_all
+    when AssessmentDomain
+      # New: Remove specific AssessmentDomain
+      raise ArgumentError, "AssessmentDomain does not belong to this assessment" unless domain.assessment == self
+      domain.remove_from_assessment
+    else
+      raise ArgumentError, "Domain must be a ProfileDomain or AssessmentDomain"
+    end
+  end
+
+  # Convenience method: Add an AssessmentDomain explicitly
+  def add_assessment_domain(assessment_domain, position: nil)
+    add_domain(assessment_domain, position: position)
+  end
+
+  # Convenience method: Remove an AssessmentDomain explicitly
+  def remove_assessment_domain(assessment_domain)
+    remove_domain(assessment_domain)
   end
 
   def domain_count
-    profile_domains.count
+    assessment_domains.count
   end
 
+  # Returns ProfileDomains (for backward compatibility)
+  # Filters out AssessmentDomains that don't have a profile_domain
   def ordered_domains
     profile_domains.joins(:assessment_domains)
                    .merge(AssessmentDomain.ordered)
                    .distinct
   end
 
+  # Returns AssessmentDomains directly (preferred for new code)
+  def ordered_assessment_domains
+    assessment_domains.ordered
+  end
+
   # Validation helpers
   def has_domains?
+    assessment_domains.any?
+  end
+
+  def has_profile_domains?
     profile_domains.any?
   end
 
@@ -75,6 +122,11 @@ class Assessment < ApplicationRecord
     profile_domains.include?(profile_domain)
   end
 
+  # Check if an AssessmentDomain belongs to this assessment
+  def includes_assessment_domain?(assessment_domain)
+    assessment_domains.include?(assessment_domain)
+  end
+
   # Query methods for questions
   # Questions now belong to assessment_domains, not profile_domains
   def questions_for_domain(profile_domain)
@@ -84,10 +136,23 @@ class Assessment < ApplicationRecord
     assessment_domain.questions.ordered
   end
 
+  # Get questions for an AssessmentDomain directly
+  def questions_for_assessment_domain(assessment_domain)
+    return Question.none unless includes_assessment_domain?(assessment_domain)
+    assessment_domain.questions.ordered
+  end
+
   def questions_for_domain_by_key(domain_key)
     domain = profile_domains.find_by(key: domain_key)
     return Question.none unless domain
     questions_for_domain(domain)
+  end
+
+  # Get questions for AssessmentDomain by its domain_key (handles both profile_domain and name-based keys)
+  def questions_for_assessment_domain_by_key(domain_key)
+    assessment_domain = assessment_domains.find { |ad| ad.domain_key == domain_key.to_s }
+    return Question.none unless assessment_domain
+    assessment_domain.questions.ordered
   end
 
   def total_questions_count
@@ -101,6 +166,12 @@ class Assessment < ApplicationRecord
     assessment_domain.questions.count
   end
 
+  # Get question count for an AssessmentDomain directly
+  def questions_count_for_assessment_domain(assessment_domain)
+    return 0 unless includes_assessment_domain?(assessment_domain)
+    assessment_domain.questions.count
+  end
+
   def questions_in_order
     # Returns all questions from all assessment_domains, ordered by domain position, then question position
     Question.joins(:assessment_domain)
@@ -109,6 +180,7 @@ class Assessment < ApplicationRecord
             .order("assessment_domains.position ASC, questions.position ASC")
   end
 
+  # Returns domains with question counts (ProfileDomain-based, for backward compatibility)
   def domains_with_question_counts
     ordered_domains.map do |domain|
       assessment_domain = assessment_domains.find_by(profile_domain: domain)
@@ -116,6 +188,20 @@ class Assessment < ApplicationRecord
         domain: domain,
         question_count: assessment_domain&.question_count || 0,
         position: assessment_domain&.position
+      }
+    end
+  end
+
+  # Returns AssessmentDomains with question counts (preferred for new code)
+  def assessment_domains_with_question_counts
+    ordered_assessment_domains.map do |assessment_domain|
+      {
+        assessment_domain: assessment_domain,
+        profile_domain: assessment_domain.profile_domain,
+        question_count: assessment_domain.question_count,
+        position: assessment_domain.position,
+        domain_key: assessment_domain.domain_key,
+        domain_label: assessment_domain.domain_label
       }
     end
   end
