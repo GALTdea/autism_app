@@ -8,9 +8,8 @@ class AssessmentDomain < ApplicationRecord
   belongs_to :assessment
   belongs_to :profile_domain  # Semantic reference for child profiles/goals
 
-  # Questions will belong to AssessmentDomain (to be enabled in next migration step)
-  # TODO: Uncomment after migrating questions from profile_domain to assessment_domain
-  # has_many :questions, dependent: :destroy
+  # Questions belong to AssessmentDomain (enabled after migration)
+  has_many :questions, dependent: :destroy
 
   # Validations
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
@@ -31,15 +30,13 @@ class AssessmentDomain < ApplicationRecord
     profile_domain.label
   end
 
-  # Question count (will work after questions migration)
-  # TODO: Uncomment after migrating questions
-  # def question_count
-  #   questions.count
-  # end
+  # Question count
+  def question_count
+    questions.count
+  end
 
-  # Check if section has questions (will work after questions migration)
-  # TODO: Uncomment after migrating questions
-  # def has_questions?
-  #   questions.any?
-  # end
+  # Check if section has questions
+  def has_questions?
+    questions.any?
+  end
 end

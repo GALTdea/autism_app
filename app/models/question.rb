@@ -1,8 +1,11 @@
 class Question < ApplicationRecord
   # Associations
-  belongs_to :profile_domain
+  belongs_to :assessment_domain
   has_many :question_options, -> { order(:position) }, dependent: :destroy
   has_many :answers, dependent: :destroy
+
+  # Delegate to profile_domain through assessment_domain for semantic reference
+  delegate :profile_domain, :assessment, to: :assessment_domain
 
   # Enums
   enum :response_type, {
@@ -12,7 +15,7 @@ class Question < ApplicationRecord
   }
 
   # Validations
-  validates :code, presence: true, uniqueness: true, format: {
+  validates :code, presence: true, uniqueness: { scope: :assessment_domain_id }, format: {
     with: /\A[A-Z0-9_]+\z/,
     message: "must contain only uppercase letters, numbers, and underscores (e.g., COMM_1, SOCIAL_2)"
   }
