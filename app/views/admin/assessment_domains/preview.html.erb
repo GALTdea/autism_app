@@ -1,0 +1,131 @@
+<% content_for :title, "Preview: #{@assessment_domain.display_name}" %>
+
+<div class="space-y-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Domain Preview</h1>
+      <p class="text-base-content/60 mt-1">
+        <%= @assessment_domain.display_name %>
+        <% if @assessment_domain.version.present? %>
+          - Version <%= @assessment_domain.version %>
+        <% end %>
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "← Back to Domain", admin_assessment_domain_path(@assessment_domain), class: "btn btn-ghost" %>
+      <%= link_to "Manage Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "btn btn-primary" %>
+    </div>
+  </div>
+
+  <!-- Stats Summary -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Questions</div>
+      <div class="stat-value text-primary"><%= number_with_delimiter(@stats[:total_questions]) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Options</div>
+      <div class="stat-value text-secondary"><%= number_with_delimiter(@stats[:total_options]) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Questions with Options</div>
+      <div class="stat-value text-accent"><%= number_with_delimiter(@stats[:questions_with_options]) %></div>
+    </div>
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Question Types</div>
+      <div class="stat-value text-info"><%= @stats[:questions_by_type].keys.count %></div>
+      <div class="stat-desc">
+        <%= @stats[:questions_by_type].map { |k, v| "#{k.humanize}: #{v}" }.join(", ") %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Questions Preview -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-4">Questions Preview</h2>
+      
+      <% if @questions.any? %>
+        <div class="space-y-6">
+          <% @questions.each_with_index do |question, index| %>
+            <div class="border-l-4 border-primary pl-4 py-2">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="badge badge-primary badge-lg">Q<%= index + 1 %></span>
+                <span class="badge badge-outline font-mono text-xs"><%= question.code %></span>
+                <span class="badge <%= question.scale? ? 'badge-primary' : (question.multi_choice? ? 'badge-secondary' : 'badge-accent') %>">
+                  <%= question.response_type.humanize %>
+                </span>
+              </div>
+              <h3 class="text-lg font-semibold mb-3"><%= question.text %></h3>
+              
+              <% if question.question_options.any? %>
+                <div class="ml-6">
+                  <div class="text-sm font-semibold mb-2 text-base-content/70">Answer Options:</div>
+                  <div class="space-y-1">
+                    <% question.question_options.ordered.each do |option| %>
+                      <div class="flex items-center gap-2">
+                        <span class="badge badge-info badge-sm"><%= option.value %></span>
+                        <span><%= option.label %></span>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              <% else %>
+                <div class="ml-6 text-sm text-base-content/60 italic">No options defined</div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="alert alert-warning">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <h3 class="font-bold">No questions found</h3>
+            <div class="text-xs">Add questions to this domain to see a preview.</div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Domain Information -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Domain Information</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Name</div>
+          <div class="font-semibold"><%= @assessment_domain.name %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Version</div>
+          <div class="font-mono font-semibold"><%= @assessment_domain.version %></div>
+        </div>
+        <% if @assessment_domain.profile_domain %>
+          <div>
+            <div class="text-sm text-base-content/60 mb-1">Profile Domain</div>
+            <div class="font-semibold"><%= @assessment_domain.profile_domain.label %></div>
+          </div>
+        <% end %>
+        <% if @assessment_domain.description.present? %>
+          <div class="md:col-span-2">
+            <div class="text-sm text-base-content/60 mb-1">Description</div>
+            <div class="text-base-content/80"><%= @assessment_domain.description %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="flex justify-between items-center pt-4 border-t border-base-300">
+    <%= link_to "← Back to Domain", admin_assessment_domain_path(@assessment_domain), class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "Manage Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "btn btn-primary" %>
+    </div>
+  </div>
+</div>
+

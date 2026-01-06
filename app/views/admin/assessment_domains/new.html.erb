@@ -1,0 +1,65 @@
+<% content_for :title, "New Assessment Domain" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Create New Assessment Domain</h1>
+      <p class="text-base-content/70 mt-2">
+        Create a standalone question bank that can be added to assessments later.
+      </p>
+    </div>
+    <%= link_to "← Back to Domains", admin_assessment_domains_path, class: "btn btn-ghost" %>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <%= render "form" %>
+    </div>
+  </div>
+
+  <!-- Help Section -->
+  <div class="card bg-base-200 shadow">
+    <div class="card-body">
+      <h2 class="card-title text-lg">Assessment Domain Builder Steps</h2>
+      <div class="steps steps-vertical lg:steps-horizontal">
+        <div class="step step-primary">
+          <div class="step-content">
+            <div class="font-semibold">Step 1: Basic Info</div>
+            <div class="text-sm text-base-content/60">Name, version, description</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 2: Add Questions</div>
+            <div class="text-sm text-base-content/60">Create questions for this domain</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 3: Configure Options</div>
+            <div class="text-sm text-base-content/60">Set up question options</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-content">
+            <div class="font-semibold">Step 4: Add to Assessment</div>
+            <div class="text-sm text-base-content/60">Use in assessments</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-4 alert alert-info">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <div>
+          <div class="font-bold">Standalone Question Banks</div>
+          <div class="text-sm">
+            Assessment domains can be created independently and reused across multiple assessments. 
+            After creating the domain and adding questions, you can add it to any assessment.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

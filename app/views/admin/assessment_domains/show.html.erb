@@ -1,0 +1,226 @@
+<% content_for :title, @assessment_domain.display_name %>
+
+<div class="space-y-6">
+  <!-- Header Section -->
+  <div class="flex justify-between items-start">
+    <div>
+      <div class="flex items-center gap-3 mb-2">
+        <h1 class="text-3xl font-bold"><%= @assessment_domain.display_name %></h1>
+        <% if @assessment_domain.has_questions? %>
+          <span class="badge badge-success badge-lg">Has Questions</span>
+        <% else %>
+          <span class="badge badge-warning badge-lg">No Questions</span>
+        <% end %>
+        <% if @assessment_domain.standalone? %>
+          <span class="badge badge-info badge-lg">Standalone</span>
+        <% else %>
+          <span class="badge badge-secondary badge-lg">In Assessment</span>
+        <% end %>
+      </div>
+      <div class="flex items-center gap-2 mb-2">
+        <% if @assessment_domain.version.present? %>
+          <span class="badge badge-outline font-mono"><%= @assessment_domain.version %></span>
+          <span class="text-sm text-base-content/60">Version</span>
+        <% end %>
+        <% if @assessment_domain.profile_domain %>
+          <span class="badge badge-info"><%= @assessment_domain.profile_domain.label %></span>
+          <span class="text-sm text-base-content/60">Profile Domain</span>
+        <% end %>
+      </div>
+      <% if @assessment_domain.description.present? %>
+        <p class="text-base-content/70 text-lg max-w-3xl mt-2"><%= @assessment_domain.description %></p>
+      <% else %>
+        <p class="text-base-content/50 text-sm mt-2 italic">No description provided</p>
+      <% end %>
+    </div>
+    <div class="flex gap-2">
+      <%= link_to "Edit", edit_admin_assessment_domain_path(@assessment_domain), class: "btn btn-primary" %>
+      <% if @assessment_domain.has_questions? %>
+        <%= link_to "Manage Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "btn btn-info" %>
+      <% else %>
+        <%= link_to "Add Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "btn btn-success" %>
+      <% end %>
+      <%= button_to "Clone", clone_admin_assessment_domain_path(@assessment_domain),
+          method: :post,
+          class: "btn btn-secondary",
+          data: { turbo_confirm: "Clone this assessment domain?" } %>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Total Questions</div>
+      <div class="stat-value text-primary"><%= number_with_delimiter(@stats[:total_questions]) %></div>
+      <div class="stat-desc">
+        <% if @stats[:total_questions] > 0 %>
+          <%= link_to "Manage Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "link link-primary" %>
+        <% else %>
+          No questions yet
+        <% end %>
+      </div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Question Options</div>
+      <div class="stat-value text-secondary"><%= number_with_delimiter(@stats[:total_options]) %></div>
+      <div class="stat-desc">
+        Total options across all questions
+      </div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Questions with Options</div>
+      <div class="stat-value text-accent"><%= number_with_delimiter(@stats[:questions_with_options]) %></div>
+      <div class="stat-desc">
+        Out of <%= @stats[:total_questions] %> questions
+      </div>
+    </div>
+
+    <div class="stat bg-base-100 shadow rounded-box">
+      <div class="stat-title">Question Types</div>
+      <div class="stat-value text-info"><%= @stats[:questions_by_type].keys.count %></div>
+      <div class="stat-desc">
+        <%= @stats[:questions_by_type].map { |k, v| "#{k}: #{v}" }.join(", ") %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Domain Actions</h2>
+      <div class="flex flex-wrap gap-2">
+        <%= link_to "Manage Questions", manage_questions_admin_assessment_domain_path(@assessment_domain),
+            class: "btn btn-outline #{'btn-disabled' if @questions.empty?}" %>
+        <%= link_to "Preview Domain", preview_admin_assessment_domain_path(@assessment_domain),
+            class: "btn btn-outline #{'btn-disabled' if @questions.empty?}" %>
+        <%= button_to "Clone Domain", clone_admin_assessment_domain_path(@assessment_domain),
+            method: :post,
+            class: "btn btn-outline",
+            data: { turbo_confirm: "Clone this assessment domain?" } %>
+      </div>
+      <p class="text-sm text-base-content/60 mt-2">
+        Manage questions, preview the complete domain structure, or clone this domain for reuse.
+      </p>
+    </div>
+  </div>
+
+  <!-- Questions Section -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="card-title">Questions (<%= @stats[:total_questions] %>)</h2>
+        <%= link_to "Manage Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "btn btn-sm btn-primary" %>
+      </div>
+
+      <% if @questions.any? %>
+        <div class="overflow-x-auto">
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th>Order</th>
+                <th>Code</th>
+                <th>Question Text</th>
+                <th>Type</th>
+                <th>Options</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @questions.each_with_index do |question, index| %>
+                <tr>
+                  <td>
+                    <span class="badge badge-outline"><%= question.position + 1 %></span>
+                  </td>
+                  <td>
+                    <span class="badge badge-ghost font-mono text-xs"><%= question.code %></span>
+                  </td>
+                  <td>
+                    <div class="font-semibold max-w-md"><%= question.text %></div>
+                  </td>
+                  <td>
+                    <span class="badge <%= question.scale? ? 'badge-primary' : (question.multi_choice? ? 'badge-secondary' : 'badge-accent') %>">
+                      <%= question.response_type.humanize %>
+                    </span>
+                  </td>
+                  <td>
+                    <% option_count = question.question_options.count %>
+                    <% if option_count > 0 %>
+                      <span class="badge badge-info"><%= option_count %> option<%= 's' unless option_count == 1 %></span>
+                    <% else %>
+                      <span class="text-base-content/60 text-sm">—</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <%= link_to "Manage Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "btn btn-xs btn-primary" %>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="alert alert-warning">
+          <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <h3 class="font-bold">No questions yet</h3>
+            <div class="text-xs">Add questions to this domain to make it usable in assessments.</div>
+          </div>
+          <%= link_to "Add Questions", manage_questions_admin_assessment_domain_path(@assessment_domain), class: "btn btn-sm btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Domain Details -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title">Domain Details</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Name</div>
+          <div class="font-semibold"><%= @assessment_domain.name %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Version</div>
+          <div class="font-mono font-semibold"><%= @assessment_domain.version %></div>
+        </div>
+        <% if @assessment_domain.profile_domain %>
+          <div>
+            <div class="text-sm text-base-content/60 mb-1">Profile Domain</div>
+            <div class="font-semibold"><%= @assessment_domain.profile_domain.label %></div>
+          </div>
+          <div>
+            <div class="text-sm text-base-content/60 mb-1">Profile Domain Key</div>
+            <div class="font-mono font-semibold"><%= @assessment_domain.profile_domain.key %></div>
+          </div>
+        <% end %>
+        <div class="md:col-span-2">
+          <div class="text-sm text-base-content/60 mb-1">Description</div>
+          <div class="text-base-content/80"><%= @assessment_domain.description.presence || "No description provided" %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Created</div>
+          <div class="text-base-content/80"><%= @assessment_domain.created_at.strftime("%B %d, %Y at %I:%M %p") %></div>
+        </div>
+        <div>
+          <div class="text-sm text-base-content/60 mb-1">Last Updated</div>
+          <div class="text-base-content/80"><%= @assessment_domain.updated_at.strftime("%B %d, %Y at %I:%M %p") %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="flex justify-between items-center pt-4 border-t border-base-300">
+    <%= link_to "← Back to Domains", admin_assessment_domains_path, class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "Manage Assessments", admin_assessments_path, class: "btn btn-ghost btn-sm" %>
+      <%= link_to "Profile Domains", admin_profile_domains_path, class: "btn btn-ghost btn-sm" %>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,81 @@
+<%= form_with model: [:admin, @assessment_domain], local: true, class: "space-y-6" do |form| %>
+  <% if @assessment_domain.errors.any? %>
+    <div class="alert alert-error">
+      <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <div>
+        <h3 class="font-bold">Please fix the following errors:</h3>
+        <ul class="list-disc list-inside mt-2">
+          <% @assessment_domain.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-control w-full">
+    <%= form.label :name, class: "label" do %>
+      <span class="label-text">Name <span class="text-error">*</span></span>
+    <% end %>
+    <%= form.text_field :name, 
+        class: "input input-bordered w-full #{'input-error' if @assessment_domain.errors[:name].any?}", 
+        placeholder: "e.g., Communication Section v2.0, Social Skills Assessment",
+        required: true %>
+    <label class="label">
+      <span class="label-text-alt">
+        A descriptive name for this assessment domain (question bank). This name + version must be unique.
+      </span>
+    </label>
+  </div>
+
+  <div class="form-control w-full">
+    <%= form.label :version, class: "label" do %>
+      <span class="label-text">Version <span class="text-error">*</span></span>
+    <% end %>
+    <%= form.text_field :version, 
+        class: "input input-bordered w-full #{'input-error' if @assessment_domain.errors[:version].any?}", 
+        placeholder: "e.g., 1.0, 2.0, v2.1",
+        required: true %>
+    <label class="label">
+      <span class="label-text-alt">
+        Version identifier (used with name for uniqueness). Examples: "1.0", "2.0", "v2.1"
+      </span>
+    </label>
+  </div>
+
+  <div class="form-control w-full">
+    <%= form.label :profile_domain_id, class: "label" do %>
+      <span class="label-text">Profile Domain (Optional)</span>
+    <% end %>
+    <%= form.select :profile_domain_id,
+        options_from_collection_for_select(@profile_domains, :id, :label, @assessment_domain.profile_domain_id),
+        { include_blank: "None (standalone only)" },
+        { class: "select select-bordered w-full" } %>
+    <label class="label">
+      <span class="label-text-alt">
+        Optionally link this assessment domain to a profile domain for semantic reference (child profiles/goals).
+      </span>
+    </label>
+  </div>
+
+  <div class="form-control w-full">
+    <%= form.label :description, class: "label" do %>
+      <span class="label-text">Description</span>
+    <% end %>
+    <%= form.text_area :description, 
+        rows: 4,
+        class: "textarea textarea-bordered w-full #{'textarea-error' if @assessment_domain.errors[:description].any?}", 
+        placeholder: "Describe what this assessment domain covers and what types of questions it contains..." %>
+    <label class="label">
+      <span class="label-text-alt">Optional description of the domain's purpose and scope</span>
+    </label>
+  </div>
+
+  <div class="flex justify-end gap-3 pt-4 border-t">
+    <%= link_to "Cancel", @assessment_domain.persisted? ? admin_assessment_domain_path(@assessment_domain) : admin_assessment_domains_path, class: "btn btn-ghost" %>
+    <%= form.submit @assessment_domain.persisted? ? "Update Domain" : "Create Domain", class: "btn btn-primary" %>
+  </div>
+<% end %>
+

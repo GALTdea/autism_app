@@ -1,0 +1,164 @@
+<% content_for :title, "Assessment Domains (Question Banks)" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Assessment Domains</h1>
+      <p class="text-base-content/70 mt-1">
+        Standalone question banks that can be added to assessments
+      </p>
+    </div>
+    <%= link_to "New Domain", new_admin_assessment_domain_path, class: "btn btn-primary" %>
+  </div>
+
+  <!-- Stats Summary -->
+  <% if @stats %>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="stat bg-base-100 shadow rounded-box">
+        <div class="stat-title">Total Domains</div>
+        <div class="stat-value text-primary"><%= number_with_delimiter(@stats[:total_standalone]) %></div>
+        <div class="stat-desc">Standalone domains</div>
+      </div>
+      <div class="stat bg-base-100 shadow rounded-box">
+        <div class="stat-title">With Questions</div>
+        <div class="stat-value text-success"><%= number_with_delimiter(@stats[:domains_with_questions]) %></div>
+        <div class="stat-desc">Domains with questions</div>
+      </div>
+      <div class="stat bg-base-100 shadow rounded-box">
+        <div class="stat-title">Total Questions</div>
+        <div class="stat-value text-secondary"><%= number_with_delimiter(@stats[:total_questions]) %></div>
+        <div class="stat-desc">Across all domains</div>
+      </div>
+    </div>
+  <% end %>
+
+  <!-- Domains Table -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title mb-4">All Assessment Domains</h2>
+      <div class="overflow-x-auto">
+        <% if @assessment_domains.any? %>
+          <table class="table table-zebra w-full">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Version</th>
+                <th>Profile Domain</th>
+                <th>Description</th>
+                <th>Questions</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th class="text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @assessment_domains.each do |domain| %>
+                <tr>
+                  <td>
+                    <div class="font-semibold">
+                      <%= link_to domain.display_name, admin_assessment_domain_path(domain), class: "link link-primary" %>
+                    </div>
+                  </td>
+                  <td>
+                    <span class="badge badge-outline font-mono text-xs"><%= domain.version %></span>
+                  </td>
+                  <td>
+                    <% if domain.profile_domain %>
+                      <span class="badge badge-info"><%= domain.profile_domain.label %></span>
+                    <% else %>
+                      <span class="text-base-content/50 text-sm">—</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <div class="text-sm text-base-content/70 max-w-xs">
+                      <%= domain.description.present? ? truncate(domain.description, length: 60) : "—" %>
+                    </div>
+                  </td>
+                  <td>
+                    <% question_count = domain.question_count %>
+                    <% if question_count > 0 %>
+                      <span class="badge badge-primary badge-lg"><%= question_count %></span>
+                    <% else %>
+                      <span class="badge badge-ghost">0</span>
+                    <% end %>
+                  </td>
+                  <td>
+                    <div class="flex flex-col gap-1">
+                      <% if domain.standalone? %>
+                        <span class="badge badge-success badge-sm">Standalone</span>
+                      <% else %>
+                        <span class="badge badge-info badge-sm">In Assessment</span>
+                      <% end %>
+                      <% if domain.has_questions? %>
+                        <span class="badge badge-success badge-sm">Has Questions</span>
+                      <% else %>
+                        <span class="badge badge-warning badge-sm">No Questions</span>
+                      <% end %>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="text-sm text-base-content/60">
+                      <%= domain.created_at.strftime("%b %d, %Y") %>
+                    </div>
+                  </td>
+                  <td class="text-right">
+                    <div class="flex justify-end gap-2">
+                      <%= link_to "View", admin_assessment_domain_path(domain), class: "btn btn-sm btn-ghost" %>
+                      <%= link_to "Edit", edit_admin_assessment_domain_path(domain), class: "btn btn-sm btn-ghost" %>
+                      <% if domain.has_questions? %>
+                        <%= link_to "Questions", manage_questions_admin_assessment_domain_path(domain), class: "btn btn-sm btn-primary" %>
+                      <% else %>
+                        <%= link_to "Add Questions", manage_questions_admin_assessment_domain_path(domain), class: "btn btn-sm btn-info" %>
+                      <% end %>
+                      <%= button_to "Clone", clone_admin_assessment_domain_path(domain),
+                          method: :post,
+                          class: "btn btn-sm btn-secondary",
+                          data: { turbo_confirm: "Clone this assessment domain?" } %>
+                      <% if current_user.super_admin? %>
+                        <% if domain.standalone? && !domain.has_questions? %>
+                          <%= link_to "Delete", admin_assessment_domain_path(domain),
+                              method: :delete,
+                              data: {
+                                turbo_method: :delete,
+                                turbo_confirm: "Are you sure you want to delete this assessment domain? This action cannot be undone."
+                              },
+                              class: "btn btn-sm btn-error btn-ghost" %>
+                        <% else %>
+                          <button class="btn btn-sm btn-error btn-ghost btn-disabled" 
+                                  title="<%= domain.has_questions? ? 'Cannot delete domains with questions' : 'Domain is not standalone' %>">
+                            Delete
+                          </button>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% else %>
+          <div class="text-center py-12 text-base-content/60">
+            <div class="flex flex-col items-center gap-4">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-base-content/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <p class="text-lg font-semibold">No assessment domains found</p>
+              <p class="text-sm">Create your first standalone assessment domain (question bank) to get started</p>
+              <%= link_to "Create Your First Domain", new_admin_assessment_domain_path, class: "btn btn-primary" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="flex justify-between items-center pt-4 border-t border-base-300">
+    <%= link_to "← Back to Dashboard", admin_root_path, class: "btn btn-ghost" %>
+    <div class="flex gap-2">
+      <%= link_to "Manage Assessments", admin_assessments_path, class: "btn btn-ghost btn-sm" %>
+      <%= link_to "Profile Domains", admin_profile_domains_path, class: "btn btn-ghost btn-sm" %>
+    </div>
+  </div>
+</div>
+

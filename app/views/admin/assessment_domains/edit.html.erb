@@ -1,0 +1,20 @@
+<% content_for :title, "Edit Assessment Domain: #{@assessment_domain.display_name}" %>
+
+<div class="space-y-6">
+  <div class="flex justify-between items-center">
+    <div>
+      <h1 class="text-3xl font-bold">Edit Assessment Domain</h1>
+      <p class="text-base-content/70 mt-2">
+        Update the basic information for this assessment domain.
+      </p>
+    </div>
+    <%= link_to "← Back to Domain", admin_assessment_domain_path(@assessment_domain), class: "btn btn-ghost" %>
+  </div>
+
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <%= render "form" %>
+    </div>
+  </div>
+</div>
+
