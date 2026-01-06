@@ -26,6 +26,29 @@ Rails.application.routes.draw do
     resources :activity_logs, only: [ :index ]
     resources :analytics, only: [ :index ]
     resources :questions, only: [ :index ]
+
+    # Standalone AssessmentDomains (question banks/templates)
+    resources :assessment_domains do
+      member do
+        get :manage_questions
+        post :create_question
+        patch :update_question
+        delete :destroy_question
+        patch :reorder_questions
+        get :preview
+        post :clone
+      end
+
+      # Nested question resources for question options
+      resources :questions, only: [] do
+        resources :question_options, only: [ :create, :update, :destroy ], param: :option_id, controller: "assessment_domains/question_options" do
+          collection do
+            patch :reorder
+          end
+        end
+      end
+    end
+
     resources :assessments do
       # Assessment Builder wizard routes
       member do
