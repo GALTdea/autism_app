@@ -38,8 +38,8 @@ class QuestionManagementService
       # Ensure assessment_domain is set
       params['assessment_domain_id'] = @assessment_domain.id
 
-      # Ensure domain field matches profile_domain key (for backwards compatibility)
-      params['domain'] = @assessment_domain.profile_domain.key
+      # Ensure domain field matches domain key (handles both profile_domain and name-based keys)
+      params['domain'] = @assessment_domain.domain_key
 
       question = Question.new(params)
       question.save!
@@ -62,9 +62,9 @@ class QuestionManagementService
       params.delete('assessment_domain_id')
       params.delete('assessment_domain')
 
-      # Ensure domain field stays in sync
-      if params.key?('domain') || question.domain != @assessment_domain.profile_domain.key
-        params['domain'] = @assessment_domain.profile_domain.key
+      # Ensure domain field stays in sync (handles both profile_domain and name-based keys)
+      if params.key?('domain') || question.domain != @assessment_domain.domain_key
+        params['domain'] = @assessment_domain.domain_key
       end
 
       question.update!(params)
@@ -125,7 +125,11 @@ class QuestionManagementService
     # Example: COMM_1, COMM_2, SOCIAL_1, etc.
 
     # Normalize domain key to valid code format (uppercase, only alphanumeric and underscores)
-    domain_prefix = normalize_domain_key(@assessment_domain.profile_domain.key)
+    # Use domain_key method which handles both profile_domain and name-based keys
+    domain_key = @assessment_domain.domain_key
+    raise InvalidQuestionError, "Assessment domain must have a profile_domain or name for code generation" if domain_key.blank?
+
+    domain_prefix = normalize_domain_key(domain_key)
     raise InvalidQuestionError, "Invalid domain key for code generation" if domain_prefix.blank?
 
     # Get the highest number for questions with this domain prefix in this assessment_domain

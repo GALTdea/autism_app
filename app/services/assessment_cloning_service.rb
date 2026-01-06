@@ -27,12 +27,36 @@ class AssessmentCloningService
         scoring_config: @assessment.scoring_config.deep_dup
       )
 
-      # Clone assessment domains with their positions
+      # Clone assessment domains with their questions
       @assessment.assessment_domains.ordered.each do |assessment_domain|
-        cloned_assessment.assessment_domains.create!(
+        # Clone the assessment domain with all attributes
+        cloned_domain = cloned_assessment.assessment_domains.create!(
           profile_domain_id: assessment_domain.profile_domain_id,
+          name: assessment_domain.name,
+          version: assessment_domain.version,
+          description: assessment_domain.description,
           position: assessment_domain.position
         )
+
+        # Clone questions for this domain
+        assessment_domain.questions.ordered.each do |question|
+          cloned_question = cloned_domain.questions.create!(
+            code: question.code,
+            text: question.text,
+            response_type: question.response_type,
+            domain: question.domain,
+            position: question.position
+          )
+
+          # Clone question options
+          question.question_options.ordered.each do |option|
+            cloned_question.question_options.create!(
+              label: option.label,
+              value: option.value,
+              position: option.position
+            )
+          end
+        end
       end
 
       cloned_assessment
@@ -93,5 +117,3 @@ class AssessmentCloningService
     new_version
   end
 end
-
-
