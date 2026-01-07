@@ -23,7 +23,7 @@
           <span class="text-sm text-base-content/60">Version</span>
         <% end %>
         <% if @assessment_domain.profile_domain %>
-          <span class="badge badge-info"><%= @assessment_domain.profile_domain.label %></span>
+          <span class="badge badge-info"><%= @assessment_domain.domain_label %></span>
           <span class="text-sm text-base-content/60">Profile Domain</span>
         <% end %>
       </div>
@@ -191,11 +191,11 @@
         <% if @assessment_domain.profile_domain %>
           <div>
             <div class="text-sm text-base-content/60 mb-1">Profile Domain</div>
-            <div class="font-semibold"><%= @assessment_domain.profile_domain.label %></div>
+            <div class="font-semibold"><%= @assessment_domain.domain_label %></div>
           </div>
           <div>
             <div class="text-sm text-base-content/60 mb-1">Profile Domain Key</div>
-            <div class="font-mono font-semibold"><%= @assessment_domain.profile_domain.key %></div>
+            <div class="font-mono font-semibold"><%= @assessment_domain.domain_key %></div>
           </div>
         <% end %>
         <div class="md:col-span-2">

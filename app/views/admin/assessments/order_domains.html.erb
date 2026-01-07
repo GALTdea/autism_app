@@ -87,9 +87,9 @@
               
               <!-- Domain Info -->
               <div class="flex-1">
-                <div class="font-semibold text-lg"><%= assessment_domain.profile_domain.label %></div>
+                <div class="font-semibold text-lg"><%= assessment_domain.domain_label %></div>
                 <div class="text-sm text-base-content/60">
-                  <%= assessment_domain.profile_domain.description.presence || assessment_domain.profile_domain.key %>
+                  <%= assessment_domain.profile_domain&.description || assessment_domain.domain_key || assessment_domain.name %>
                 </div>
                 <div class="text-xs text-base-content/50 mt-1">
                   <%= assessment_domain.questions.count %> questions

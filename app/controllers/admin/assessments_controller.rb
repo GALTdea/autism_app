@@ -101,7 +101,7 @@ module Admin
       begin
         # Use the new service method for adding standalone AssessmentDomains
         AssessmentDomainService.add_assessment_domains(@assessment, domain_ids)
-        redirect_to order_domains_admin_assessment_path(@assessment),
+        redirect_to admin_assessment_path(@assessment),
                     notice: "Domains added successfully."
       rescue AssessmentDomainService::Error => e
         redirect_to select_domains_admin_assessment_path(@assessment),
