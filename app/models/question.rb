@@ -4,14 +4,17 @@ class Question < ApplicationRecord
   has_many :question_options, -> { order(:position) }, dependent: :destroy
   has_many :answers, dependent: :destroy
 
+  # Nested attributes for question options
+  accepts_nested_attributes_for :question_options, allow_destroy: true, reject_if: :all_blank
+
   # Delegate to profile_domain through assessment_domain for semantic reference
   delegate :profile_domain, :assessment, to: :assessment_domain
 
   # Enums
   enum :response_type, {
-    scale: 'scale',
-    multi_choice: 'multi_choice',
-    text: 'text'
+    scale: "scale",
+    multi_choice: "multi_choice",
+    text: "text"
   }
 
   # Validations

@@ -1,6 +1,6 @@
 <% content_for :title, "Manage Questions: #{@assessment_domain.display_name}" %>
 
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-8" data-controller="question-form">
   <!-- Header -->
   <div class="flex justify-between items-center mb-6">
     <div>
@@ -28,12 +28,11 @@
         </div>
         <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-64 z-[1]">
           <li>
-            <%= link_to "Blank Question", "#",
-                class: "btn-ghost",
-                data: { 
-                  action: "click->question-form#showBlankForm",
-                  question_form_domain_id_param: @assessment_domain.id
-                } %>
+            <a href="#" 
+               data-action="click->question-form#showBlankForm"
+               data-question-form-domain-id-param="<%= @assessment_domain.id %>">
+              Blank Question
+            </a>
           </li>
         </ul>
       </div>
@@ -60,9 +59,10 @@
   <% end %>
 
   <!-- Questions List -->
-  <% if @questions.any? %>
-    <div class="space-y-6">
-      <% @questions.each do |question| %>
+  <div id="questions-list">
+    <% if @questions.any? %>
+      <div class="space-y-6">
+        <% @questions.each do |question| %>
         <div class="card bg-base-100 shadow-lg">
           <div class="card-body">
             <div class="flex justify-between items-start">
@@ -89,12 +89,12 @@
                 <% end %>
               </div>
               <div class="flex gap-2">
-                <%= link_to "Edit", "#",
-                    class: "btn btn-sm btn-ghost",
-                    data: { 
-                      action: "click->question-form#showEditForm",
-                      question_form_question_id_param: question.id
-                    } %>
+                <a href="#" 
+                   class="btn btn-sm btn-ghost"
+                   data-action="click->question-form#showEditForm"
+                   data-question-form-question-id-param="<%= question.id %>">
+                  Edit
+                </a>
                 <%= link_to "Delete", destroy_question_admin_assessment_domain_path(@assessment_domain, question_id: question.id),
                     method: :delete,
                     data: {
@@ -118,11 +118,34 @@
         <div class="text-xs">Add your first question to get started.</div>
       </div>
     </div>
-  <% end %>
+    <% end %>
+  </div>
 
-  <!-- Question Form Modal (simplified for now) -->
-  <div id="question-form-modal" class="hidden">
-    <!-- Form would be rendered here via Turbo or Stimulus -->
+  <!-- Question Form Modal -->
+  <div data-controller="question-modal">
+    <div data-question-modal-target="modal" 
+         class="modal hidden">
+      <div data-question-modal-target="backdrop" 
+           class="modal-backdrop"
+           data-action="click->question-modal#handleBackdropClick"></div>
+      <div class="modal-box max-w-4xl max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-2xl">Question</h3>
+          <button type="button"
+                  class="btn btn-sm btn-circle btn-ghost"
+                  data-question-modal-target="closeButton"
+                  data-action="click->question-modal#close">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div data-question-modal-target="formContainer" class="mt-4">
+          <!-- Form will be loaded here via AJAX -->
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Navigation -->

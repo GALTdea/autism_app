@@ -83,9 +83,10 @@ class Assessment < ApplicationRecord
   # Returns ProfileDomains (for backward compatibility)
   # Filters out AssessmentDomains that don't have a profile_domain
   def ordered_domains
-    profile_domains.joins(:assessment_domains)
-                   .merge(AssessmentDomain.ordered)
-                   .distinct
+    ProfileDomain.joins(:assessment_domains)
+                 .where(assessment_domains: { assessment_id: id })
+                 .order(Arel.sql("COALESCE(assessment_domains.position, 999999)"), "assessment_domains.name")
+                 .distinct
   end
 
   # Returns AssessmentDomains directly (preferred for new code)

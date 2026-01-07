@@ -79,12 +79,15 @@
           <h3 class="text-lg font-semibold mb-4">Domains in Assessment</h3>
           <div class="space-y-2">
             <% @domains.each_with_index do |domain, index| %>
+              <% assessment_domain = @assessment.assessment_domains.find_by(profile_domain: domain) %>
               <div class="flex items-center justify-between p-3 bg-base-200 rounded-box">
                 <div class="flex items-center gap-3">
                   <span class="badge badge-lg"><%= index + 1 %></span>
                   <div>
                     <div class="font-semibold"><%= domain.label %></div>
-                    <div class="text-xs text-base-content/60"><%= domain.questions.count %> questions</div>
+                    <div class="text-xs text-base-content/60">
+                      <%= assessment_domain ? assessment_domain.questions.count : 0 %> questions
+                    </div>
                   </div>
                 </div>
                 <div class="text-sm text-base-content/60">

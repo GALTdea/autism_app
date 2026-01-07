@@ -71,7 +71,7 @@
                       <%= assessment_domain.profile_domain.description.presence || assessment_domain.profile_domain.key %>
                     </div>
                     <div class="text-xs text-base-content/50 mt-1">
-                      <%= assessment_domain.profile_domain.questions.count %> questions
+                      <%= assessment_domain.questions.count %> questions
                     </div>
                   </div>
                 </div>
@@ -109,7 +109,7 @@
                       <%= domain.description.presence || domain.key %>
                     </div>
                     <div class="text-xs text-base-content/50 mt-1">
-                      <%= domain.questions.count %> questions
+                      <%= Question.joins(:assessment_domain).where(assessment_domains: { profile_domain_id: domain.id }).count %> questions
                     </div>
                   </div>
                 </div>

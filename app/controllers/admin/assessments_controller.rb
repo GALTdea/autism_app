@@ -14,7 +14,7 @@ module Admin
 
     def show
       authorize [ :admin, @assessment ]
-      @domains = @assessment.ordered_domains.includes(:questions)
+      @domains = @assessment.ordered_domains
       @stats = {
         total_questions: @assessment.total_questions_count,
         total_sessions: @assessment.onboarding_sessions.count,
@@ -43,7 +43,7 @@ module Admin
     def edit
       authorize [ :admin, @assessment ]
       # Load domains for display in edit view
-      @domains = @assessment.ordered_domains.includes(:questions) if @assessment.domain_count > 0
+      @domains = @assessment.ordered_domains if @assessment.domain_count > 0
     end
 
     def update
@@ -147,7 +147,7 @@ module Admin
 
     def preview
       authorize [ :admin, @assessment ]
-      @domains = @assessment.ordered_domains.includes(:questions)
+      @domains = @assessment.ordered_domains
       redirect_to select_domains_admin_assessment_path(@assessment),
                   alert: "Please select at least one domain first." if @domains.empty?
     end
@@ -166,7 +166,7 @@ module Admin
 
     def configure_scoring
       authorize [ :admin, @assessment ]
-      @domains = @assessment.ordered_domains.includes(:questions)
+      @domains = @assessment.ordered_domains
     end
 
     private

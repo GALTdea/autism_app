@@ -16,7 +16,7 @@
     </div>
     <div class="stat bg-base-100 shadow rounded-box">
       <div class="stat-title">Profile Domains</div>
-      <div class="stat-value text-secondary"><%= number_with_delimiter(@questions.select('DISTINCT questions.profile_domain_id').count) %></div>
+      <div class="stat-value text-secondary"><%= number_with_delimiter(@questions.joins(assessment_domain: :profile_domain).select('DISTINCT profile_domains.id').count) %></div>
     </div>
     <div class="stat bg-base-100 shadow rounded-box">
       <div class="stat-title">Scale Questions</div>
@@ -47,7 +47,8 @@
           </thead>
           <tbody>
             <% if @questions.any? %>
-              <% @questions.group_by(&:profile_domain).each do |domain, domain_questions| %>
+              <% @questions.group_by { |q| q.assessment_domain&.profile_domain }.each do |domain, domain_questions| %>
+                <% next unless domain %>
                 <% domain_questions.each do |question| %>
                   <tr>
                     <td>
@@ -85,8 +86,12 @@
                     </td>
                     <td>
                       <div class="flex gap-2">
-                        <%= link_to "Domain", admin_profile_domain_path(question.profile_domain), class: "btn btn-sm btn-ghost" %>
-                        <%= link_to "Manage", manage_questions_admin_profile_domain_path(question.profile_domain), class: "btn btn-sm btn-primary" %>
+                        <% if question.assessment_domain&.profile_domain %>
+                          <%= link_to "Domain", admin_profile_domain_path(question.assessment_domain.profile_domain), class: "btn btn-sm btn-ghost" %>
+                          <%= link_to "Manage", manage_questions_admin_profile_domain_path(question.assessment_domain.profile_domain), class: "btn btn-sm btn-primary" %>
+                        <% else %>
+                          <span class="text-base-content/40 text-xs">No domain</span>
+                        <% end %>
                       </div>
                     </td>
                   </tr>

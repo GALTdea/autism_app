@@ -26,14 +26,22 @@ class QuestionManagementService
   end
 
   def create_question(params)
-    params = params.stringify_keys
+    # Convert ActionController::Parameters to a regular hash to avoid permission issues
+    # This handles nested parameters (like question_options_attributes) properly
+    if params.is_a?(ActionController::Parameters)
+      params = params.to_unsafe_h.deep_stringify_keys
+    else
+      params = params.stringify_keys
+    end
 
     ActiveRecord::Base.transaction do
-      # Auto-generate code if not provided
-      params['code'] ||= generate_question_code
+      # Auto-generate code if not provided or if blank
+      if params['code'].blank?
+        params['code'] = generate_question_code
+      end
 
-      # Auto-assign position if not provided
-      params['position'] ||= next_position
+      # Auto-assign position if not provided or blank (empty string)
+      params['position'] = next_position if params['position'].blank?
 
       # Ensure assessment_domain is set
       params['assessment_domain_id'] = @assessment_domain.id
@@ -41,14 +49,78 @@ class QuestionManagementService
       # Ensure domain field matches domain key (handles both profile_domain and name-based keys)
       params['domain'] = @assessment_domain.domain_key
 
+      # Set positions for question options if not provided, and ensure they're integers
+      if params['question_options_attributes'].present?
+        params['question_options_attributes'].each_with_index do |(key, option_attrs), index|
+          # Option attrs should already be a hash after deep_stringify_keys
+          option_hash = option_attrs.is_a?(Hash) ? option_attrs : option_attrs.to_h
+
+          # Set position and convert value to integer
+          option_hash['position'] = (option_hash['position'] || index).to_i
+          option_hash['value'] = option_hash['value'].to_i if option_hash['value'].present?
+
+          # Update the params
+          params['question_options_attributes'][key] = option_hash
+        end
+      end
+
       question = Question.new(params)
+
+      Rails.logger.info "About to validate question. Params keys: #{params.keys.inspect}"
+      Rails.logger.info "Question options attributes present: #{params['question_options_attributes'].present?}"
+      Rails.logger.info "Question options count: #{params['question_options_attributes']&.count}"
+
+      # Validate and log errors before attempting save
+      is_valid = question.valid?
+      Rails.logger.info "Question valid?: #{is_valid}"
+
+      unless is_valid
+        error_details = []
+        error_details << "Question: #{question.errors.full_messages.join(', ')}"
+        question.question_options.each_with_index do |opt, i|
+          opt_valid = opt.valid?
+          Rails.logger.info "Option #{i+1} valid?: #{opt_valid}, errors: #{opt.errors.full_messages}"
+          if opt.errors.any? || !opt_valid
+            error_details << "Option #{i+1}: #{opt.errors.full_messages.join(', ')}"
+          end
+        end
+        error_msg = error_details.join(' | ')
+        Rails.logger.error "Validation failed: #{error_msg}"
+        raise InvalidQuestionError, "Validation failed: #{error_msg}"
+      end
+
+      Rails.logger.info "Validation passed, attempting save..."
       question.save!
+      Rails.logger.info "Save successful! Question ID: #{question.id}"
+
+      # Normalize question option positions after save (ensure they're sequential)
+      if question.question_options.any?
+        question.question_options.ordered.each_with_index do |option, index|
+          option.update_column(:position, index) if option.position != index
+        end
+      end
 
       question
     rescue ActiveRecord::RecordInvalid => e
-      raise InvalidQuestionError, "Failed to create question: #{e.message}"
+      error_messages = []
+      error_messages << "Question errors: #{e.record.errors.full_messages.join(", ")}"
+      if e.record.question_options.any?
+        e.record.question_options.each_with_index do |option, index|
+          if option.errors.any?
+            error_messages << "Option #{index + 1} errors: #{option.errors.full_messages.join(", ")}"
+          end
+        end
+      end
+      error_msg = "Failed to create question: #{error_messages.join("; ")}"
+      Rails.logger.error "Question creation failed (RecordInvalid): #{error_msg}"
+      Rails.logger.error "Exception: #{e.class} - #{e.message}"
+      Rails.logger.error e.backtrace.first(10).join("\n")
+      raise InvalidQuestionError, error_msg
     rescue StandardError => e
-      raise InvalidQuestionError, "Unexpected error creating question: #{e.message}"
+      error_msg = "Unexpected error creating question: #{e.class} - #{e.message}"
+      Rails.logger.error error_msg
+      Rails.logger.error e.backtrace.first(10).join("\n")
+      raise InvalidQuestionError, error_msg
     end
   end
 
@@ -68,6 +140,13 @@ class QuestionManagementService
       end
 
       question.update!(params)
+
+      # Normalize question option positions if options were updated
+      if question.question_options.any?
+        question.question_options.ordered.each_with_index do |option, index|
+          option.update_column(:position, index) if option.position != index
+        end
+      end
 
       question
     rescue ActiveRecord::RecordInvalid => e

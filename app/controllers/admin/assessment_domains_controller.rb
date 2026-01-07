@@ -276,7 +276,8 @@ module Admin
     end
 
     def question_params
-      params.require(:question).permit(:code, :text, :response_type, :position)
+      params.require(:question).permit(:code, :text, :response_type, :position,
+        question_options_attributes: [ :id, :label, :value, :position, :_destroy ])
     end
 
     def reorder_questions_params
