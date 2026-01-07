@@ -6,7 +6,7 @@
     <div>
       <h1 class="text-3xl font-bold">Select Domains</h1>
       <p class="text-base-content/70 mt-2">
-        Choose which profile domains to include in <strong><%= @assessment.name %></strong> (v<%= @assessment.version %>).
+        Choose which assessment domains to include in <strong><%= @assessment.name %></strong> (v<%= @assessment.version %>).
       </p>
     </div>
     <%= link_to "← Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
@@ -59,17 +59,25 @@
       <div class="card bg-base-100 shadow-xl">
         <div class="card-body">
           <h2 class="card-title">Currently Selected (<%= @assessment_domains.count %>)</h2>
-          <p class="text-sm text-base-content/60 mb-4">Uncheck to remove from assessment</p>
+          <p class="text-sm text-base-content/60 mb-4">These domains are already added to this assessment</p>
           <div class="space-y-2">
             <% @assessment_domains.each do |assessment_domain| %>
               <div class="flex items-center justify-between p-3 bg-base-200 rounded-box">
                 <div class="flex items-center gap-3">
-                  <%= check_box_tag "domain_ids[]", assessment_domain.profile_domain_id, true, class: "checkbox checkbox-primary" %>
+                  <!-- Display only, not editable in this flow -->
+                  <div class="w-5 h-5 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
                   <div>
-                    <div class="font-semibold"><%= assessment_domain.profile_domain.label %></div>
+                    <div class="font-semibold"><%= assessment_domain.display_name %></div>
                     <div class="text-xs text-base-content/60">
-                      <%= assessment_domain.profile_domain.description.presence || assessment_domain.profile_domain.key %>
+                      <%= assessment_domain.description.presence || assessment_domain.domain_key %>
                     </div>
+                    <% if assessment_domain.version.present? %>
+                      <div class="text-xs text-base-content/50">v<%= assessment_domain.version %></div>
+                    <% end %>
                     <div class="text-xs text-base-content/50 mt-1">
                       <%= assessment_domain.questions.count %> questions
                     </div>
@@ -104,12 +112,15 @@
                 <div class="flex items-center gap-3">
                   <%= check_box_tag "domain_ids[]", domain.id, false, class: "checkbox checkbox-primary" %>
                   <div>
-                    <div class="font-semibold"><%= domain.label %></div>
+                    <div class="font-semibold"><%= domain.display_name %></div>
                     <div class="text-xs text-base-content/60">
-                      <%= domain.description.presence || domain.key %>
+                      <%= domain.description.presence || domain.domain_key %>
                     </div>
+                    <% if domain.version.present? %>
+                      <div class="text-xs text-base-content/50">v<%= domain.version %></div>
+                    <% end %>
                     <div class="text-xs text-base-content/50 mt-1">
-                      <%= Question.joins(:assessment_domain).where(assessment_domains: { profile_domain_id: domain.id }).count %> questions
+                      <%= domain.questions.count %> questions
                     </div>
                   </div>
                 </div>
@@ -121,7 +132,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span>All available domains are already selected.</span>
+            <span>No standalone assessment domains available. Create assessment domains first in the Assessment Domains section.</span>
           </div>
         <% end %>
       </div>
@@ -131,10 +142,10 @@
     <div class="flex justify-between items-center pt-4 border-t">
       <%= link_to "Back to Assessment", admin_assessment_path(@assessment), class: "btn btn-ghost" %>
       <div class="flex gap-2">
-        <%= form.submit "Continue to Order Domains", 
+        <%= form.submit "Add Selected Domains & Continue", 
             class: "btn btn-primary",
             id: "submit-domains",
-            onclick: "const checked = document.querySelectorAll('input[type=checkbox]:checked').length; if (checked === 0) { alert('Please select at least one domain'); return false; } return true;" %>
+            onclick: "const checked = document.querySelectorAll('input[type=checkbox]:checked').length; if (checked === 0) { alert('Please select at least one domain to add'); return false; } return true;" %>
       </div>
     </div>
   <% end %>
