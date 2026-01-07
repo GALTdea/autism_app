@@ -14,7 +14,7 @@ module Admin
 
     def show
       authorize [ :admin, @assessment ]
-      @domains = @assessment.ordered_domains
+      @assessment_domains = @assessment.assessment_domains.includes(:profile_domain, :questions).ordered
       @stats = {
         total_questions: @assessment.total_questions_count,
         total_sessions: @assessment.onboarding_sessions.count,

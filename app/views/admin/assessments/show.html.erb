@@ -76,14 +76,14 @@
     <div class="card-body">
       <h2 class="card-title">Assessment Builder Actions</h2>
       <div class="flex flex-wrap gap-2">
-        <%= link_to "Select Domains", select_domains_admin_assessment_path(@assessment), 
-            class: "btn btn-outline #{'btn-disabled' unless @domains.empty?}" %>
+        <%= link_to "Manage Domains", select_domains_admin_assessment_path(@assessment),
+            class: "btn btn-outline" %>
         <%= link_to "Order Domains", order_domains_admin_assessment_path(@assessment), 
-            class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
+            class: "btn btn-outline #{'btn-disabled' if @assessment_domains.empty?}" %>
         <%= link_to "Preview Assessment", preview_admin_assessment_path(@assessment), 
-            class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
+            class: "btn btn-outline #{'btn-disabled' if @assessment_domains.empty?}" %>
         <%= link_to "Configure Scoring", configure_scoring_admin_assessment_path(@assessment), 
-            class: "btn btn-outline #{'btn-disabled' if @domains.empty?}" %>
+            class: "btn btn-outline #{'btn-disabled' if @assessment_domains.empty?}" %>
       </div>
       <p class="text-sm text-base-content/60 mt-2">
         Use the Assessment Builder to manage domains, configure ordering, and set up scoring criteria.
@@ -102,7 +102,7 @@
         <%= link_to "Manage Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-sm btn-ghost" %>
       </div>
 
-      <% if @domains.any? %>
+      <% if @assessment_domains.any? %>
         <div class="overflow-x-auto">
           <table class="table table-zebra">
             <thead>
@@ -115,31 +115,35 @@
               </tr>
             </thead>
             <tbody>
-              <% @domains.each_with_index do |domain, index| %>
+              <% @assessment_domains.each do |assessment_domain| %>
                 <tr>
                   <td>
-                    <span class="badge badge-outline"><%= index + 1 %></span>
+                    <span class="badge badge-outline"><%= assessment_domain.position + 1 %></span>
                   </td>
                   <td>
-                    <div class="font-semibold"><%= domain.label %></div>
-                    <div class="text-xs text-base-content/60"><%= domain.key %></div>
+                    <div class="font-semibold"><%= assessment_domain.domain_label %></div>
+                    <div class="text-xs text-base-content/60"><%= assessment_domain.domain_key %></div>
                   </td>
                   <td>
                     <span class="text-sm text-base-content/70">
-                      <%= domain.description.presence || "No description" %>
+                      <%= assessment_domain.profile_domain&.description.presence || assessment_domain.description.presence || "No description" %>
                     </span>
                   </td>
                   <td>
                     <span class="badge badge-primary">
-                      <%= @assessment.questions_count_for_domain(domain) %>
+                      <%= assessment_domain.questions.size %>
                     </span>
                   </td>
                   <td>
                     <div class="flex gap-1">
-                      <%= link_to "Manage", admin_profile_domain_path(domain), 
+                      <%= link_to "Details", admin_assessment_domain_path(assessment_domain),
                           class: "btn btn-xs btn-primary" %>
-                      <%= link_to "Questions", madmin_questions_path(profile_domain_id: domain.id), 
+                      <%= link_to "Questions", manage_questions_admin_assessment_domain_path(assessment_domain),
                           class: "btn btn-xs btn-ghost" %>
+                      <% if assessment_domain.profile_domain.present? %>
+                        <%= link_to "Profile Domain", admin_profile_domain_path(assessment_domain.profile_domain),
+                            class: "btn btn-xs btn-ghost" %>
+                      <% end %>
                     </div>
                   </td>
                 </tr>
