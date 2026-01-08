@@ -9,19 +9,117 @@ export default class extends Controller {
 
   connect() {
     this.draggedElement = null
+    this.eventListeners = new Map() // Track event listeners for cleanup
+    this.settingUp = false
+    this.reconnectTimeout = null
     this.setupDragAndDrop()
+    
+    // Listen for Turbo Stream updates to reinitialize after DOM changes
+    this.boundHandleStreamRender = this.handleStreamRender.bind(this)
+    document.addEventListener("turbo:after-stream-render", this.boundHandleStreamRender)
+  }
+
+  disconnect() {
+    this.cleanupDragAndDrop()
+    document.removeEventListener("turbo:after-stream-render", this.boundHandleStreamRender)
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout)
+      this.reconnectTimeout = null
+    }
+  }
+
+  handleStreamRender(event) {
+    // Re-setup after any Turbo Stream renders
+    // The debouncing in scheduleReconnect will prevent excessive calls
+    this.scheduleReconnect()
+  }
+
+  scheduleReconnect() {
+    // Debounce reconnection to avoid multiple calls
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout)
+    }
+    this.reconnectTimeout = setTimeout(() => {
+      if (this.hasListTarget && this.hasItemTarget) {
+        this.setupDragAndDrop()
+      }
+      this.reconnectTimeout = null
+    }, 50)
+  }
+
+  itemTargetConnected(item) {
+    // When a new item target is connected (after Turbo Stream update)
+    // Schedule a re-setup, but debounce it to avoid multiple calls
+    this.scheduleReconnect()
+  }
+  
+  itemTargetDisconnected(item) {
+    // Clean up listeners when item is removed
+    if (this.eventListeners.has(item)) {
+      const listeners = this.eventListeners.get(item)
+      listeners.forEach(({ event, handler }) => {
+        item.removeEventListener(event, handler)
+      })
+      this.eventListeners.delete(item)
+    }
+  }
+
+  cleanupDragAndDrop() {
+    // Remove all event listeners
+    this.eventListeners.forEach((listeners, item) => {
+      listeners.forEach(({ event, handler }) => {
+        item.removeEventListener(event, handler)
+      })
+    })
+    this.eventListeners.clear()
   }
 
   setupDragAndDrop() {
-    this.itemTargets.forEach((item, index) => {
-      item.setAttribute("draggable", "true")
-      item.dataset.index = index
+    if (this.settingUp) return // Prevent re-entrant calls
+    this.settingUp = true
+    
+    try {
+      // Clean up existing listeners first
+      this.cleanupDragAndDrop()
       
-      item.addEventListener("dragstart", this.handleDragStart.bind(this))
-      item.addEventListener("dragover", this.handleDragOver.bind(this))
-      item.addEventListener("drop", this.handleDrop.bind(this))
-      item.addEventListener("dragend", this.handleDragEnd.bind(this))
-    })
+      // Only proceed if we have targets
+      if (!this.hasListTarget || !this.hasItemTarget) {
+        return
+      }
+      
+      this.itemTargets.forEach((item, index) => {
+        // Skip if already has listeners
+        if (this.eventListeners.has(item)) {
+          return
+        }
+        
+        item.setAttribute("draggable", "true")
+        item.dataset.index = index
+        
+        // Create bound handlers
+        const dragStartHandler = this.handleDragStart.bind(this)
+        const dragOverHandler = this.handleDragOver.bind(this)
+        const dropHandler = this.handleDrop.bind(this)
+        const dragEndHandler = this.handleDragEnd.bind(this)
+        
+        // Store handlers for cleanup
+        const listeners = [
+          { event: "dragstart", handler: dragStartHandler },
+          { event: "dragover", handler: dragOverHandler },
+          { event: "drop", handler: dropHandler },
+          { event: "dragend", handler: dragEndHandler }
+        ]
+        this.eventListeners.set(item, listeners)
+        
+        // Add event listeners
+        item.addEventListener("dragstart", dragStartHandler)
+        item.addEventListener("dragover", dragOverHandler)
+        item.addEventListener("drop", dropHandler)
+        item.addEventListener("dragend", dragEndHandler)
+      })
+    } finally {
+      this.settingUp = false
+    }
   }
 
   handleDragStart(event) {
