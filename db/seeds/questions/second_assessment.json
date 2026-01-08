@@ -1,0 +1,429 @@
+{
+    "domain": {
+        "key": "social_communication",
+        "label": "Social Communication & Social Motivation",
+        "description": "Social attention, reciprocity, shared enjoyment, pragmatic social communication, and peer engagement.",
+        "name": "Social Communication & Social Motivation Assessment",
+        "version": "1.0"
+    },
+    "questions": [
+        {
+            "code": "SOC_1",
+            "text": "Responds to name when not absorbed in an activity.",
+            "response_type": "scale",
+            "position": 0,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_2",
+            "text": "Makes eye contact to connect (not just to request).",
+            "response_type": "scale",
+            "position": 1,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_3",
+            "text": "Shares enjoyment (shows/points to interesting things, “look!”).",
+            "response_type": "scale",
+            "position": 2,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_4",
+            "text": "Seeks you out just to be with you (not only for help/items).",
+            "response_type": "scale",
+            "position": 3,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_5",
+            "text": "Back-and-forth conversation (age/development-appropriate).",
+            "response_type": "scale",
+            "position": 4,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_6",
+            "text": "Understands non-literal language (jokes, sarcasm, implied meaning).",
+            "response_type": "scale",
+            "position": 5,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_7",
+            "text": "Uses gestures naturally (pointing, nodding, shrugging).",
+            "response_type": "scale",
+            "position": 6,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_8",
+            "text": "Takes turns in interaction (talking, games, play).",
+            "response_type": "scale",
+            "position": 7,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_9",
+            "text": "Recognizes others’ feelings (notices upset/happy, responds).",
+            "response_type": "scale",
+            "position": 8,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_10",
+            "text": "Plays with peers in a cooperative way (not just side-by-side).",
+            "response_type": "scale",
+            "position": 9,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "SOC_FU_1",
+            "text": "What does it look like when social communication goes poorly? (Describe what you see/hear/notice.)",
+            "response_type": "text",
+            "position": 10,
+            "options": []
+        },
+        {
+            "code": "SOC_FU_2",
+            "text": "Best situations where it improves (choose all that apply).",
+            "response_type": "multi_choice",
+            "position": 11,
+            "options": [
+                {
+                    "label": "1:1 interaction",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Small group",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Familiar people",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Structured games/activities",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Quiet/low sensory environment",
+                    "value": 4,
+                    "position": 4
+                },
+                {
+                    "label": "With visual supports (pictures, written steps)",
+                    "value": 5,
+                    "position": 5
+                },
+                {
+                    "label": "Other",
+                    "value": 6,
+                    "position": 6
+                }
+            ]
+        },
+        {
+            "code": "SOC_FU_3",
+            "text": "Biggest barrier to social communication most of the time (choose the best fit).",
+            "response_type": "multi_choice",
+            "position": 12,
+            "options": [
+                {
+                    "label": "Anxiety / worry",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Attention / distractibility",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Language / comprehension",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Sensory overwhelm",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Rigidity / needs sameness",
+                    "value": 4,
+                    "position": 4
+                },
+                {
+                    "label": "Not sure",
+                    "value": 5,
+                    "position": 5
+                }
+            ]
+        }
+    ]
+}

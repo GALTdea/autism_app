@@ -85,34 +85,64 @@ class QuestionBulkImportService
     domain_key = domain_data&.dig('key')&.strip
     raise InvalidFormatError, "Domain key is required" if domain_key.blank?
 
-    # Create or find domain
-    domain = ProfileDomain.find_by(key: domain_key)
-    domain_created = false
+    # Step 1: Create or find ProfileDomain (for semantic reference)
+    profile_domain = ProfileDomain.find_by(key: domain_key)
+    profile_domain_created = false
 
-    if domain.nil?
+    if profile_domain.nil?
       domain_label = domain_data['label']&.strip || domain_key.humanize
       domain_description = domain_data['description']&.strip
 
-      domain = ProfileDomain.create!(
+      profile_domain = ProfileDomain.create!(
         key: domain_key,
         label: domain_label,
         description: domain_description
       )
-      domain_created = true
-      @created_domains << domain
-      result[:warnings] << { domain: domain_key, message: "Created new domain: #{domain_label}" }
+      profile_domain_created = true
+      result[:warnings] << { domain: domain_key, message: "Created new profile domain: #{domain_label}" }
     else
       # Update domain metadata if provided (optional updates)
-      if domain_data['label']&.strip.present? && domain.label != domain_data['label'].strip
-        domain.update(label: domain_data['label'].strip)
-        result[:warnings] << { domain: domain_key, message: "Updated domain label" }
+      if domain_data['label']&.strip.present? && profile_domain.label != domain_data['label'].strip
+        profile_domain.update(label: domain_data['label'].strip)
+        result[:warnings] << { domain: domain_key, message: "Updated profile domain label" }
       end
-      if domain_data['description']&.strip.present? && domain.description != domain_data['description'].strip
-        domain.update(description: domain_data['description'].strip)
+      if domain_data['description']&.strip.present? && profile_domain.description != domain_data['description'].strip
+        profile_domain.update(description: domain_data['description'].strip)
       end
     end
 
-    result[:domain] = domain
+    # Step 2: Create or find standalone AssessmentDomain
+    # For standalone domains: name is required, version is optional
+    assessment_domain_name = domain_data['name']&.strip || domain_data['label']&.strip || domain_key.humanize
+    assessment_domain_version = domain_data['version']&.strip || "1.0"
+
+    # Find existing standalone AssessmentDomain with same name+version, or create new
+    assessment_domain = AssessmentDomain.standalone.find_by(
+      name: assessment_domain_name,
+      version: assessment_domain_version,
+      profile_domain: profile_domain
+    )
+
+    if assessment_domain.nil?
+      assessment_domain = AssessmentDomain.create!(
+        name: assessment_domain_name,
+        version: assessment_domain_version,
+        profile_domain: profile_domain,
+        description: domain_data['description']&.strip,
+        assessment: nil # Standalone domain
+      )
+      domain_created = true
+      @created_domains << assessment_domain
+      result[:warnings] << { domain: domain_key, message: "Created new assessment domain: #{assessment_domain_name} v#{assessment_domain_version}" }
+    else
+      domain_created = false
+      # Update description if provided
+      if domain_data['description']&.strip.present? && assessment_domain.description != domain_data['description'].strip
+        assessment_domain.update(description: domain_data['description'].strip)
+      end
+    end
+
+    result[:domain] = assessment_domain
     result[:domain_created] = domain_created
 
     # Import questions
@@ -120,7 +150,7 @@ class QuestionBulkImportService
 
     questions_data.each_with_index do |question_data, index|
       begin
-        question_result = import_question(domain, question_data, index + 1)
+        question_result = import_question(assessment_domain, question_data, index + 1)
         if question_result[:imported]
           result[:imported] << question_result[:question]
         elsif question_result[:updated]
@@ -139,7 +169,7 @@ class QuestionBulkImportService
     result
   end
 
-  def import_question(domain, question_data, question_number)
+  def import_question(assessment_domain, question_data, question_number)
     result = {
       question: nil,
       imported: false,
@@ -166,8 +196,8 @@ class QuestionBulkImportService
       raise ImportError, "Invalid code format: #{code}. Must contain only uppercase letters, numbers, and underscores"
     end
 
-    # Find or initialize question (idempotent - update existing by code)
-    question = Question.find_by(code: code)
+    # Find or initialize question (idempotent - update existing by code within this assessment_domain)
+    question = assessment_domain.questions.find_by(code: code)
     was_new = question.nil?
 
     if question.nil?
@@ -179,21 +209,21 @@ class QuestionBulkImportService
         position: question_data['position']&.to_i
       }
 
-      question = QuestionManagementService.create_question(domain, question_params)
+      question = QuestionManagementService.create_question(assessment_domain, question_params)
       result[:imported] = true
       @imported_questions << question
     else
       # Update existing question (idempotent re-import)
-      if question.profile_domain_id != domain.id
+      if question.assessment_domain_id != assessment_domain.id
         result[:warnings] << {
           code: code,
-          message: "Question belongs to different domain (#{question.profile_domain.key}). Moving to #{domain.key}"
+          message: "Question belongs to different assessment domain. Moving to #{assessment_domain.name}"
         }
       end
 
       question.update!(
-        profile_domain_id: domain.id,
-        domain: domain.key,
+        assessment_domain: assessment_domain,
+        domain: assessment_domain.domain_key,
         text: text,
         response_type: response_type,
         position: question_data['position']&.to_i || question.position

@@ -110,7 +110,14 @@ namespace :questions do
     if results[:domains_created].any?
       puts "   ✅ Domains created: #{results[:domains_created].count}"
       results[:domains_created].each do |domain|
-        puts "      • #{domain.label} (#{domain.key})"
+        # Handle both AssessmentDomain and ProfileDomain for backward compatibility
+        if domain.is_a?(AssessmentDomain)
+          domain_label = domain.domain_label
+          domain_key = domain.domain_key
+          puts "      • #{domain_label} (#{domain_key}) - #{domain.name} v#{domain.version}"
+        else
+          puts "      • #{domain.label} (#{domain.key})"
+        end
       end
     end
 

@@ -1,0 +1,203 @@
+{
+    "domain": {
+        "key": "setup_context",
+        "label": "Setup & Context",
+        "description": "Profile anchors that power personalization and help interpret answers.",
+        "name": "Setup & Context (Profile Anchors)",
+        "version": "1.0"
+    },
+    "questions": [
+        {
+            "code": "CTX_1",
+            "text": "Child age (in years).",
+            "response_type": "text",
+            "position": 0,
+            "options": []
+        },
+        {
+            "code": "CTX_2",
+            "text": "Child grade (or developmental stage).",
+            "response_type": "text",
+            "position": 1,
+            "options": []
+        },
+        {
+            "code": "CTX_3",
+            "text": "Primary language(s) spoken at home.",
+            "response_type": "text",
+            "position": 2,
+            "options": []
+        },
+        {
+            "code": "CTX_4",
+            "text": "Current supports (check all that apply).",
+            "response_type": "multi_choice",
+            "position": 3,
+            "options": [
+                {
+                    "label": "ABA therapy",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Speech therapy",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Occupational therapy (OT)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "School services / IEP / 504",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Social skills group",
+                    "value": 4,
+                    "position": 4
+                },
+                {
+                    "label": "Other",
+                    "value": 5,
+                    "position": 5
+                }
+            ]
+        },
+        {
+            "code": "CTX_5",
+            "text": "Communication level (choose the best fit).",
+            "response_type": "multi_choice",
+            "position": 4,
+            "options": [
+                {
+                    "label": "Uses full sentences conversationally",
+                    "value": 4,
+                    "position": 0
+                },
+                {
+                    "label": "Speaks in short phrases",
+                    "value": 3,
+                    "position": 1
+                },
+                {
+                    "label": "Single words / mostly labels",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Uses AAC / gestures / limited spoken words",
+                    "value": 1,
+                    "position": 3
+                },
+                {
+                    "label": "Minimally speaking",
+                    "value": 0,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "CTX_6",
+            "text": "Which best describes understanding of language (choose the best fit).",
+            "response_type": "multi_choice",
+            "position": 5,
+            "options": [
+                {
+                    "label": "Understands most everyday instructions",
+                    "value": 3,
+                    "position": 0
+                },
+                {
+                    "label": "Understands simple instructions but misses nuance",
+                    "value": 2,
+                    "position": 1
+                },
+                {
+                    "label": "Needs gestures/visuals to understand consistently",
+                    "value": 1,
+                    "position": 2
+                },
+                {
+                    "label": "Often seems not to understand spoken language",
+                    "value": 0,
+                    "position": 3
+                }
+            ]
+        },
+        {
+            "code": "CTX_7",
+            "text": "Any diagnosed conditions (optional list). Examples: ASD, ADHD, anxiety, sensory processing, language disorder, GI issues, sleep issues.",
+            "response_type": "text",
+            "position": 6,
+            "options": []
+        },
+        {
+            "code": "CTX_8",
+            "text": "Medications and/or supplements (optional).",
+            "response_type": "text",
+            "position": 7,
+            "options": []
+        },
+        {
+            "code": "CTX_9",
+            "text": "Biggest goals for the next 3 months (pick up to 3).",
+            "response_type": "multi_choice",
+            "position": 8,
+            "options": [
+                {
+                    "label": "Social engagement / friendships",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Back-and-forth conversation",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Reducing meltdowns",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Flexibility with changes",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Independence (self-care)",
+                    "value": 4,
+                    "position": 4
+                },
+                {
+                    "label": "School participation",
+                    "value": 5,
+                    "position": 5
+                },
+                {
+                    "label": "Emotional regulation",
+                    "value": 6,
+                    "position": 6
+                },
+                {
+                    "label": "Sleep",
+                    "value": 7,
+                    "position": 7
+                },
+                {
+                    "label": "Feeding variety",
+                    "value": 8,
+                    "position": 8
+                },
+                {
+                    "label": "Safety (elopement/aggression)",
+                    "value": 9,
+                    "position": 9
+                }
+            ]
+        }
+    ]
+}
