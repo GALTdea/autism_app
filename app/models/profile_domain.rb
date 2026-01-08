@@ -26,6 +26,13 @@ class ProfileDomain < ApplicationRecord
     assessment_domains.joins(:questions).exists?
   end
 
+  # Get total count of questions across all assessment_domains
+  def questions_count
+    Question.joins(assessment_domain: :profile_domain)
+            .where(profile_domains: { id: id })
+            .count
+  end
+
   # Check if domain can be safely deleted
   # Returns false if domain is being used in:
   # - Assessments (through assessment_domains)

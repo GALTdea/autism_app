@@ -10,11 +10,11 @@ module Admin
 
     def index
       authorize [ :admin, AssessmentDomain ]
-      @assessment_domains = policy_scope([ :admin, AssessmentDomain ]).standalone
-                                                                      .includes(:profile_domain, :questions)
+      @assessment_domains = policy_scope([ :admin, AssessmentDomain ])
+                                                                      .includes(:profile_domain, :questions, :assessment)
                                                                       .order(:name, :version)
       @stats = {
-        total_standalone: @assessment_domains.count,
+        total_standalone: @assessment_domains.count(&:standalone?),
         total_questions: @assessment_domains.sum { |ad| ad.questions.count },
         domains_with_questions: @assessment_domains.count(&:has_questions?)
       }
