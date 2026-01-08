@@ -116,17 +116,21 @@ class AssessmentDomain < ApplicationRecord
   end
 
   # Clone this domain (can be standalone or in-assessment)
-  def clone(new_name: nil, new_version: nil, assessment: nil)
+  # assessment: nil means make it standalone, :keep_original (default) means keep original assessment
+  def clone(new_name: nil, new_version: nil, assessment: :keep_original)
     new_name ||= "#{name} (Copy)" if name.present?
     new_version ||= version
 
+    # Determine assessment: if :keep_original, use self.assessment; otherwise use provided (can be nil for standalone)
+    cloned_assessment = (assessment == :keep_original) ? self.assessment : assessment
+
     cloned = AssessmentDomain.create!(
-      assessment: assessment || self.assessment,
+      assessment: cloned_assessment,
       profile_domain: profile_domain,
       name: new_name,
       version: new_version,
       description: description,
-      position: assessment ? nil : position
+      position: cloned_assessment ? nil : position
     )
 
     # Clone questions

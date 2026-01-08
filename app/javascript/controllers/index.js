@@ -39,3 +39,6 @@ application.register("question-modal", QuestionModalController)
 
 import QuestionTemplatesController from "./question_templates_controller"
 application.register("question-templates", QuestionTemplatesController)
+
+import CloneDomainController from "./clone_domain_controller"
+application.register("clone-domain", CloneDomainController)

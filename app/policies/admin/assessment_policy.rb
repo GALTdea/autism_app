@@ -60,6 +60,10 @@ module Admin
       update?
     end
 
+    def clone_domain_for_assessment?
+      update?
+    end
+
     class Scope < ApplicationPolicy::Scope
       def resolve
         if user.admin? || user.super_admin?

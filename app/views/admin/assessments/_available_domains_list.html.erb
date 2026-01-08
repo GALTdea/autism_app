@@ -1,0 +1,58 @@
+<% if @available_domains.any? %>
+  <div id="available-domains-list" class="space-y-2">
+    <% @available_domains.each do |domain| %>
+      <% can_add = domain.standalone? %>
+      <div id="domain-<%= domain.id %>" class="flex items-center justify-between p-3 border border-base-300 rounded-box hover:bg-base-200 transition <%= 'opacity-60' unless can_add %>">
+        <div class="flex items-center gap-3 flex-1">
+          <%= check_box_tag "domain_ids[]", domain.id, false, 
+              class: "checkbox checkbox-primary",
+              disabled: !can_add,
+              id: "domain_checkbox_#{domain.id}",
+              title: can_add ? "Select to add" : "Domain is already in another assessment. Clone it first to add." %>
+          <div class="flex-1">
+            <div class="flex items-center gap-2">
+              <div class="font-semibold"><%= domain.display_name %></div>
+              <% if domain.standalone? %>
+                <span class="badge badge-success badge-sm">Standalone</span>
+              <% elsif domain.assessment.present? %>
+                <span class="badge badge-info badge-sm">In: <%= domain.assessment.name %></span>
+              <% end %>
+            </div>
+            <div class="text-xs text-base-content/60">
+              <%= domain.description.presence || domain.domain_key %>
+            </div>
+            <% if domain.version.present? %>
+              <div class="text-xs text-base-content/50">v<%= domain.version %></div>
+            <% end %>
+            <div class="text-xs text-base-content/50 mt-1">
+              <%= domain.questions.count %> questions
+            </div>
+            <% unless can_add %>
+              <div class="flex items-center gap-2 mt-2">
+                <div class="text-xs text-warning">
+                  ⚠️ Clone this domain first to add it to this assessment
+                </div>
+                <button type="button" 
+                    class="btn btn-xs btn-secondary"
+                    data-controller="clone-domain"
+                    data-clone-domain-url-value="<%= clone_domain_for_assessment_admin_assessment_path(@assessment) %>"
+                    data-clone-domain-name-value="<%= domain.display_name %>"
+                    data-clone-domain-domain-id-value="<%= domain.id %>"
+                    data-action="click->clone-domain#clone">
+                  Clone Domain
+                </button>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% else %>
+  <div class="alert alert-info">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+    <span>No assessment domains available. Create assessment domains first in the Assessment Domains section.</span>
+  </div>
+<% end %>

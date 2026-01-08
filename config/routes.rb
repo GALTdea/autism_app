@@ -59,6 +59,7 @@ Rails.application.routes.draw do
         get :preview
         post :clone
         get :configure_scoring
+        post :clone_domain_for_assessment
       end
 
       # Manage questions through assessment sections (assessment_domains)

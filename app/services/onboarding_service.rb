@@ -37,6 +37,14 @@ class OnboardingService
     # Get default or active assessment
     assessment = Assessment.default.first || Assessment.active.first
 
+    if assessment.nil?
+      raise Error, "No default or active assessment found. Please configure an assessment first."
+    end
+
+    unless assessment.has_domains?
+      raise Error, "The selected assessment has no domains. Please add domains to the assessment first."
+    end
+
     OnboardingSession.create!(
       child_profile: @child_profile,
       user: @user,

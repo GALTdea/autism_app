@@ -11,17 +11,20 @@
       </div>
     </div>
 
-    <% if @current_domain %>
-      <h1 class="text-2xl font-bold text-gray-900 mb-2"><%= @current_domain.label %></h1>
-      <% if @current_domain.description.present? %>
+    <% if @current_section.present? %>
+      <h1 class="text-2xl font-bold text-gray-900 mb-2"><%= @current_section.domain_label %></h1>
+      <% if @current_section.description.present? %>
+        <p class="text-gray-600 mb-6"><%= @current_section.description %></p>
+      <% elsif @current_domain&.description.present? %>
         <p class="text-gray-600 mb-6"><%= @current_domain.description %></p>
       <% end %>
 
-      <%= form_with url: onboarding_child_profile_path(@child_profile), method: :patch, local: true, data: { turbo_frame: "question_form", controller: "onboarding-form" } do |form| %>
-        <%= hidden_field_tag :current_step, @current_step %>
-        
-        <div class="space-y-6">
-          <% @questions.each do |question| %>
+      <% if @questions.any? %>
+        <%= form_with url: onboarding_child_profile_path(@child_profile), method: :patch, local: true, data: { turbo_frame: "question_form", controller: "onboarding-form" } do |form| %>
+          <%= hidden_field_tag :current_step, @current_step %>
+          
+          <div class="space-y-6">
+            <% @questions.each do |question| %>
             <div class="border border-gray-200 rounded-lg p-4" data-question-id="<%= question.id %>">
               <h3 class="text-lg font-semibold text-gray-900 mb-4"><%= question.text %></h3>
               
@@ -62,8 +65,16 @@
               <%= hidden_field_tag :question_id, question.id %>
             </div>
           <% end %>
+          </div>
+        <% end %>
+      <% else %>
+        <div class="text-center py-8 border border-gray-200 rounded-lg">
+          <p class="text-gray-600 mb-4">No questions available for this section yet.</p>
+          <% if @current_step < @total_steps %>
+            <%= link_to "Continue to Next Section →", onboarding_child_profile_path(@child_profile, step: @current_step + 1), 
+                class: "px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
+          <% end %>
         </div>
-
       <% end %>
 
       <!-- Navigation outside form to avoid conflicts -->
@@ -93,7 +104,9 @@
       </div>
     <% else %>
       <div class="text-center py-8">
-        <p class="text-gray-600">Loading questions...</p>
+        <p class="text-gray-600">No questions available for this section. Please contact support if this issue persists.</p>
+        <%= link_to "← Back to Profile", child_profile_path(@child_profile), 
+            class: "mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" %>
       </div>
     <% end %>
   </div>

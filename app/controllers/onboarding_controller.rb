@@ -1,7 +1,7 @@
 class OnboardingController < ApplicationController
   before_action :authenticate_user!
   before_action :set_child_profile
-  before_action :set_onboarding_session, only: [:show, :update, :complete]
+  before_action :set_onboarding_session, only: [ :show, :update, :complete ]
   after_action :verify_authorized
 
   def start
@@ -35,6 +35,12 @@ class OnboardingController < ApplicationController
     @current_domain = @current_section&.profile_domain  # For backward compatibility
     @questions = @current_section&.questions&.ordered || []
 
+    # If no current section found, redirect to start or show error
+    unless @current_section.present?
+      flash[:alert] = "Invalid step. Please start the onboarding process again."
+      redirect_to start_onboarding_child_profile_path(@child_profile) and return
+    end
+
     # Load existing answers for current questions
     @answers = {}
     @questions.each do |question|
@@ -57,8 +63,8 @@ class OnboardingController < ApplicationController
       OnboardingService.save_answer(@onboarding_session, question_id, answer_data)
 
       # Handle AJAX/fetch requests (from Stimulus)
-      if request.xhr? || request.headers['X-Requested-With'] == 'XMLHttpRequest'
-        render json: { status: 'ok' }, status: :ok
+      if request.xhr? || request.headers["X-Requested-With"] == "XMLHttpRequest"
+        render json: { status: "ok" }, status: :ok
       elsif turbo_frame_request?
         head :ok
       else
@@ -67,7 +73,7 @@ class OnboardingController < ApplicationController
       end
     rescue OnboardingService::Error => e
       # Handle errors for AJAX requests
-      if request.xhr? || request.headers['X-Requested-With'] == 'XMLHttpRequest'
+      if request.xhr? || request.headers["X-Requested-With"] == "XMLHttpRequest"
         render json: { error: e.message }, status: :unprocessable_entity
       else
         flash[:alert] = e.message
@@ -78,11 +84,11 @@ class OnboardingController < ApplicationController
 
   def complete
     @onboarding_session = @child_profile.onboarding_sessions
-                                        .where(user: current_user, status: 'in_progress')
+                                        .where(user: current_user, status: "in_progress")
                                         .first
 
     unless @onboarding_session
-      redirect_to start_onboarding_child_profile_path(@child_profile), alert: 'No active onboarding session found.'
+      redirect_to start_onboarding_child_profile_path(@child_profile), alert: "No active onboarding session found."
       return
     end
 
@@ -90,7 +96,7 @@ class OnboardingController < ApplicationController
 
     begin
       OnboardingService.complete_session(@onboarding_session)
-      redirect_to @child_profile, notice: 'Onboarding completed! Your child\'s profile has been generated.'
+      redirect_to @child_profile, notice: "Onboarding completed! Your child's profile has been generated."
     rescue OnboardingService::Error => e
       flash[:alert] = e.message
       redirect_to onboarding_child_profile_path(@child_profile)
@@ -105,13 +111,13 @@ class OnboardingController < ApplicationController
 
   def set_onboarding_session
     @onboarding_session = @child_profile.onboarding_sessions
-                                        .where(user: current_user, status: 'in_progress')
+                                        .where(user: current_user, status: "in_progress")
                                         .first
 
     return if @onboarding_session.present?
 
     # If no session exists, redirect to start
-    redirect_to start_onboarding_child_profile_path(@child_profile), alert: 'Please start the onboarding process.'
+    redirect_to start_onboarding_child_profile_path(@child_profile), alert: "Please start the onboarding process."
   end
 
   def calculate_total_steps

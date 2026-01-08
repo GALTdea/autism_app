@@ -3,7 +3,8 @@ module Admin
         before_action :set_assessment, only: [ :show, :edit, :update, :destroy,
                                               :select_domains, :update_domains,
                                               :order_domains, :reorder_domains,
-                                              :preview, :clone, :configure_scoring ]
+                                              :preview, :clone, :configure_scoring,
+                                              :clone_domain_for_assessment ]
     after_action :verify_authorized
 
     def index
@@ -187,6 +188,70 @@ module Admin
     def configure_scoring
       authorize [ :admin, @assessment ]
       @domains = @assessment.ordered_domains
+    end
+
+    def clone_domain_for_assessment
+      authorize [ :admin, @assessment ]
+
+      source_domain = AssessmentDomain.find(params[:domain_id])
+
+      begin
+        # Clone the domain as standalone (assessment: nil)
+        cloned = source_domain.clone(
+          new_name: "#{source_domain.display_name} (Copy)",
+          new_version: source_domain.version,
+          assessment: nil  # Make it standalone
+        )
+
+        # Reload available domains list
+        @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
+        @available_domains = AssessmentDomain
+          .includes(:profile_domain, :assessment, :questions)
+          .where.not(id: @assessment.assessment_domains.select(:id))
+          .ordered
+
+        respond_to do |format|
+          format.html {
+            redirect_to select_domains_admin_assessment_path(@assessment),
+                        notice: "Domain cloned successfully. You can now select it."
+          }
+          format.turbo_stream {
+            flash.now[:notice] = "Domain cloned successfully. You can now select it."
+            render :clone_domain_for_assessment
+          }
+          format.json {
+            render json: {
+              status: "success",
+              cloned_domain: {
+                id: cloned.id,
+                name: cloned.display_name,
+                standalone: cloned.standalone?
+              }
+            }
+          }
+        end
+      rescue StandardError => e
+        # Reload available domains even on error
+        @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
+        @available_domains = AssessmentDomain
+          .includes(:profile_domain, :assessment, :questions)
+          .where.not(id: @assessment.assessment_domains.select(:id))
+          .ordered
+
+        respond_to do |format|
+          format.html {
+            redirect_to select_domains_admin_assessment_path(@assessment),
+                        alert: "Failed to clone domain: #{e.message}"
+          }
+          format.turbo_stream {
+            flash.now[:alert] = "Failed to clone domain: #{e.message}"
+            render :clone_domain_for_assessment
+          }
+          format.json {
+            render json: { status: "error", message: e.message }, status: :unprocessable_entity
+          }
+        end
+      end
     end
 
     private

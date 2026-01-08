@@ -1,0 +1,9 @@
+<%= turbo_stream.replace "available-domains-list" do %>
+  <%= render partial: "available_domains_list" %>
+<% end %>
+
+<% if flash.now[:notice] || flash.now[:alert] %>
+  <%= turbo_stream.update "flash-container" do %>
+    <%= render partial: "shared/flash" %>
+  <% end %>
+<% end %>
