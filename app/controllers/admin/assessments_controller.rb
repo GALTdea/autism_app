@@ -122,7 +122,8 @@ module Admin
       domain_positions = reorder_domains_params
 
       begin
-        AssessmentDomainService.reorder_domains(@assessment, domain_positions)
+        # Use assessment_domain_ids (both pages now use assessment_domain.id)
+        AssessmentDomainService.reorder_assessment_domains(@assessment, domain_positions)
 
         # Reload to get updated positions
         @assessment.reload
@@ -132,8 +133,14 @@ module Admin
           format.json { render json: { status: "success", message: "Domain order updated successfully." } }
           format.turbo_stream { render :reorder_domains }
           format.html {
-            redirect_to order_domains_admin_assessment_path(@assessment),
-                        notice: "Domain order updated successfully."
+            # Redirect based on referer to maintain context
+            if request.referer&.include?("order_domains")
+              redirect_to order_domains_admin_assessment_path(@assessment),
+                          notice: "Domain order updated successfully."
+            else
+              redirect_to admin_assessment_path(@assessment),
+                          notice: "Domain order updated successfully."
+            end
           }
         end
       rescue AssessmentDomainService::Error => e
@@ -144,7 +151,7 @@ module Admin
               locals: { flash: { alert: e.message } })
           }
           format.html {
-            redirect_to order_domains_admin_assessment_path(@assessment),
+            redirect_to admin_assessment_path(@assessment),
                         alert: "Failed to reorder domains: #{e.message}"
           }
         end

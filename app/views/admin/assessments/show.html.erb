@@ -95,61 +95,58 @@
   </div>
 
   <!-- Domains Section -->
-  <div class="card bg-base-100 shadow-xl">
+  <div class="card bg-base-100 shadow-xl" data-controller="sortable-domains" data-sortable-domains-update-url-value="<%= reorder_domains_admin_assessment_path(@assessment) %>" data-sortable-domains-assessment-id-value="<%= @assessment.id %>">
     <div class="card-body">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="card-title">Domains</h2>
+        <div>
+          <h2 class="card-title">Domains</h2>
+          <p class="text-sm text-base-content/60 mt-1">Drag and drop to reorder domains</p>
+        </div>
         <%= link_to "Manage Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-sm btn-ghost" %>
       </div>
 
       <% if @assessment_domains.any? %>
-        <div class="overflow-x-auto">
-          <table class="table table-zebra">
-            <thead>
-              <tr>
-                <th>Order</th>
-                <th>Domain</th>
-                <th>Description</th>
-                <th>Questions</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @assessment_domains.each do |assessment_domain| %>
-                <tr>
-                  <td>
-                    <span class="badge badge-outline"><%= assessment_domain.position + 1 %></span>
-                  </td>
-                  <td>
-                    <div class="font-semibold"><%= assessment_domain.domain_label %></div>
-                    <div class="text-xs text-base-content/60"><%= assessment_domain.domain_key %></div>
-                  </td>
-                  <td>
-                    <span class="text-sm text-base-content/70">
-                      <%= assessment_domain.profile_domain&.description.presence || assessment_domain.description.presence || "No description" %>
-                    </span>
-                  </td>
-                  <td>
-                    <span class="badge badge-primary">
-                      <%= assessment_domain.questions.size %>
-                    </span>
-                  </td>
-                  <td>
-                    <div class="flex gap-1">
-                      <%= link_to "Details", admin_assessment_domain_path(assessment_domain),
-                          class: "btn btn-xs btn-primary" %>
-                      <%= link_to "Questions", manage_questions_admin_assessment_domain_path(assessment_domain),
-                          class: "btn btn-xs btn-ghost" %>
-                      <% if assessment_domain.profile_domain.present? %>
-                        <%= link_to "Profile Domain", admin_profile_domain_path(assessment_domain.profile_domain),
-                            class: "btn btn-xs btn-ghost" %>
-                      <% end %>
-                    </div>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
+        <div id="domain-list" data-sortable-domains-target="list" class="space-y-3">
+          <% @assessment_domains.each do |assessment_domain| %>
+            <div data-sortable-domains-target="item" 
+                 data-domain-id="<%= assessment_domain.id %>" 
+                 class="flex items-center gap-4 p-4 border-2 border-base-300 rounded-box bg-base-200 cursor-move hover:border-primary hover:shadow-md transition-all">
+              <!-- Drag Handle -->
+              <div class="flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-base-content/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16" />
+                </svg>
+              </div>
+              
+              <!-- Position Number -->
+              <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold">
+                <%= assessment_domain.position + 1 %>
+              </div>
+              
+              <!-- Domain Info -->
+              <div class="flex-1">
+                <div class="font-semibold text-lg"><%= assessment_domain.domain_label %></div>
+                <div class="text-sm text-base-content/60">
+                  <%= assessment_domain.profile_domain&.description.presence || assessment_domain.description.presence || assessment_domain.domain_key || "No description" %>
+                </div>
+                <div class="text-xs text-base-content/50 mt-1">
+                  <%= assessment_domain.questions.size %> questions
+                </div>
+              </div>
+              
+              <!-- Actions -->
+              <div class="flex-shrink-0 flex gap-1">
+                <%= link_to "Details", admin_assessment_domain_path(assessment_domain),
+                    class: "btn btn-xs btn-primary" %>
+                <%= link_to "Questions", manage_questions_admin_assessment_domain_path(assessment_domain),
+                    class: "btn btn-xs btn-ghost" %>
+                <% if assessment_domain.profile_domain.present? %>
+                  <%= link_to "Profile", admin_profile_domain_path(assessment_domain.profile_domain),
+                      class: "btn btn-xs btn-ghost" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
         </div>
         <div class="card-actions justify-end mt-4">
           <%= link_to "Manage All Profile Domains", admin_profile_domains_path, class: "btn btn-sm btn-ghost" %>

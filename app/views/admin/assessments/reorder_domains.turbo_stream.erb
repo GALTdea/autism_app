@@ -1,9 +1,12 @@
 <%# Turbo Stream to update the domain list after reordering %>
+<%# Detect if we're on the show page or order_domains page based on referer %>
+<% is_show_page = request.referer&.include?("admin/assessments/#{@assessment.id}") && !request.referer&.include?("order_domains") %>
+
 <%= turbo_stream.replace "domain-list" do %>
   <div id="domain-list" data-sortable-domains-target="list" class="space-y-3">
     <% @assessment_domains.each do |assessment_domain| %>
       <div data-sortable-domains-target="item" 
-           data-domain-id="<%= assessment_domain.profile_domain_id %>"
+           data-domain-id="<%= assessment_domain.id %>"
            class="flex items-center gap-4 p-4 border-2 border-base-300 rounded-box bg-base-200 cursor-move hover:border-primary hover:shadow-md transition-all">
         <!-- Drag Handle -->
         <div class="flex-shrink-0">
@@ -21,19 +24,33 @@
         <div class="flex-1">
           <div class="font-semibold text-lg"><%= assessment_domain.domain_label %></div>
           <div class="text-sm text-base-content/60">
-            <%= assessment_domain.profile_domain&.description || assessment_domain.domain_key || assessment_domain.name %>
+            <%= assessment_domain.profile_domain&.description || assessment_domain.description.presence || assessment_domain.domain_key || assessment_domain.name %>
           </div>
           <div class="text-xs text-base-content/50 mt-1">
             <%= assessment_domain.questions.count %> questions
           </div>
         </div>
         
-        <!-- Visual Indicator -->
-        <div class="flex-shrink-0 text-base-content/30">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </div>
+        <% if is_show_page %>
+          <!-- Actions (show page only) -->
+          <div class="flex-shrink-0 flex gap-1">
+            <%= link_to "Details", admin_assessment_domain_path(assessment_domain),
+                class: "btn btn-xs btn-primary" %>
+            <%= link_to "Questions", manage_questions_admin_assessment_domain_path(assessment_domain),
+                class: "btn btn-xs btn-ghost" %>
+            <% if assessment_domain.profile_domain.present? %>
+              <%= link_to "Profile", admin_profile_domain_path(assessment_domain.profile_domain),
+                  class: "btn btn-xs btn-ghost" %>
+            <% end %>
+          </div>
+        <% else %>
+          <!-- Visual Indicator (order_domains page) -->
+          <div class="flex-shrink-0 text-base-content/30">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>
