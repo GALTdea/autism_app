@@ -86,11 +86,12 @@ module Admin
       authorize [ :admin, @assessment ]
       @assessment_domains = @assessment.assessment_domains.includes(:profile_domain).ordered
 
-      # Load standalone AssessmentDomains (not ProfileDomains)
+      # Load all AssessmentDomains (standalone and from other assessments)
       # Exclude domains that are already in this assessment
-      @available_domains = AssessmentDomain.standalone
-                                           .ordered
+      @available_domains = AssessmentDomain
+                                           .includes(:profile_domain, :assessment, :questions)
                                            .where.not(id: @assessment.assessment_domains.select(:id))
+                                           .ordered
     end
 
     def update_domains
@@ -98,9 +99,15 @@ module Admin
 
       domain_ids = params[:domain_ids] || []
 
+      # Filter to only include standalone domains (domains in other assessments cannot be added directly)
+      standalone_domain_ids = AssessmentDomain.where(id: domain_ids)
+                                             .standalone
+                                             .pluck(:id)
+                                             .map(&:to_s)
+
       begin
         # Use the new service method for adding standalone AssessmentDomains
-        AssessmentDomainService.add_assessment_domains(@assessment, domain_ids)
+        AssessmentDomainService.add_assessment_domains(@assessment, standalone_domain_ids)
         redirect_to admin_assessment_path(@assessment),
                     notice: "Domains added successfully."
       rescue AssessmentDomainService::Error => e

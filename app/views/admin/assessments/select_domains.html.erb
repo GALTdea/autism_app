@@ -108,11 +108,22 @@
         <% if @available_domains.any? %>
           <div class="space-y-2">
             <% @available_domains.each do |domain| %>
-              <div class="flex items-center justify-between p-3 border border-base-300 rounded-box hover:bg-base-200 transition">
-                <div class="flex items-center gap-3">
-                  <%= check_box_tag "domain_ids[]", domain.id, false, class: "checkbox checkbox-primary" %>
-                  <div>
-                    <div class="font-semibold"><%= domain.display_name %></div>
+              <% can_add = domain.standalone? %>
+              <div class="flex items-center justify-between p-3 border border-base-300 rounded-box hover:bg-base-200 transition <%= 'opacity-60' unless can_add %>">
+                <div class="flex items-center gap-3 flex-1">
+                  <%= check_box_tag "domain_ids[]", domain.id, false, 
+                      class: "checkbox checkbox-primary",
+                      disabled: !can_add,
+                      title: can_add ? "Select to add" : "Domain is already in another assessment. Clone it first to add." %>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2">
+                      <div class="font-semibold"><%= domain.display_name %></div>
+                      <% if domain.standalone? %>
+                        <span class="badge badge-success badge-sm">Standalone</span>
+                      <% elsif domain.assessment.present? %>
+                        <span class="badge badge-info badge-sm">In: <%= domain.assessment.name %></span>
+                      <% end %>
+                    </div>
                     <div class="text-xs text-base-content/60">
                       <%= domain.description.presence || domain.domain_key %>
                     </div>
@@ -122,6 +133,11 @@
                     <div class="text-xs text-base-content/50 mt-1">
                       <%= domain.questions.count %> questions
                     </div>
+                    <% unless can_add %>
+                      <div class="text-xs text-warning mt-1">
+                        ⚠️ Clone this domain first to add it to this assessment
+                      </div>
+                    <% end %>
                   </div>
                 </div>
               </div>
@@ -132,7 +148,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <span>No standalone assessment domains available. Create assessment domains first in the Assessment Domains section.</span>
+            <span>No assessment domains available. Create assessment domains first in the Assessment Domains section.</span>
           </div>
         <% end %>
       </div>
@@ -145,7 +161,7 @@
         <%= form.submit "Add Selected Domains & Continue", 
             class: "btn btn-primary",
             id: "submit-domains",
-            onclick: "const checked = document.querySelectorAll('input[type=checkbox]:checked').length; if (checked === 0) { alert('Please select at least one domain to add'); return false; } return true;" %>
+            onclick: "const checked = document.querySelectorAll('input[type=checkbox]:checked:not(:disabled)').length; if (checked === 0) { alert('Please select at least one available domain to add'); return false; } return true;" %>
       </div>
     </div>
   <% end %>
