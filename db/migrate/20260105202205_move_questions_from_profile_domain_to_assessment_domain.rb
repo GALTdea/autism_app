@@ -15,10 +15,18 @@ class MoveQuestionsFromProfileDomainToAssessmentDomain < ActiveRecord::Migration
     orphaned_question_ids = []
 
     Question.find_each do |original_question|
-      profile_domain = original_question.profile_domain
+      # Read profile_domain_id directly from the database to avoid delegation issues
+      # During migration, assessment_domain_id is nil, so delegation would fail
+      profile_domain_id = original_question.read_attribute(:profile_domain_id)
+
+      if profile_domain_id.nil?
+        say "Warning: Question #{original_question.code} (#{original_question.id}) has no profile_domain_id - skipping", true
+        orphaned_question_ids << original_question.id
+        next
+      end
 
       # Find all assessment_domains that reference this profile_domain
-      assessment_domains = AssessmentDomain.where(profile_domain_id: profile_domain.id)
+      assessment_domains = AssessmentDomain.where(profile_domain_id: profile_domain_id)
 
       if assessment_domains.empty?
         say "Warning: Question #{original_question.code} (#{original_question.id}) has no assessment_domains to migrate to - will be deleted", true
