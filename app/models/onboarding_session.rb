@@ -35,9 +35,11 @@ class OnboardingSession < ApplicationRecord
     domains_to_check = assessment&.profile_domains || child_profile.profile_domains
     return 0 if domains_to_check.empty?
 
-    answered_domains = answers.joins(question: :profile_domain)
-                             .where(profile_domains: { id: domains_to_check.pluck(:id) })
-                             .select('DISTINCT profile_domains.id')
+    profile_domain_ids = domains_to_check.pluck(:id)
+    answered_domains = answers.joins(question: :assessment_domain)
+                             .where(assessment_domains: { profile_domain_id: profile_domain_ids })
+                             .where.not(assessment_domains: { profile_domain_id: nil })
+                             .select('DISTINCT assessment_domains.profile_domain_id')
                              .count
     total_domains = domains_to_check.count
 

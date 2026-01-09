@@ -222,7 +222,7 @@ module Admin
         # For clone, question doesn't need to belong to this domain
         # For edit_form, we check below
         if action_name == 'edit_form'
-          unless @question.profile_domain_id == @profile_domain.id
+          unless @question.assessment_domain&.profile_domain_id == @profile_domain.id
             raise ActiveRecord::RecordNotFound, "Question not found in this profile domain"
           end
         end
