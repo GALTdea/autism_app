@@ -4,14 +4,17 @@ class MoveQuestionsFromProfileDomainToAssessmentDomain < ActiveRecord::Migration
     # Note: add_reference automatically creates an index, so we don't need a separate add_index
     add_reference :questions, :assessment_domain, null: true, foreign_key: true
 
-    # Step 2: Temporarily remove unique constraint on code to allow duplicates during migration
+    # Step 2: Temporarily make profile_domain_id nullable to allow creating new records without it
+    change_column_null :questions, :profile_domain_id, true
+
+    # Step 3: Temporarily remove unique constraint on code to allow duplicates during migration
     remove_index :questions, :code
 
-    # Step 3: Create a mapping to track original question -> new question copies
+    # Step 4: Create a mapping to track original question -> new question copies
     # This will help us update answers later
     question_mapping = {} # { original_question_id => { assessment_id => new_question_id } }
 
-    # Step 4: Migrate questions - copy each question to all relevant assessment_domains
+    # Step 5: Migrate questions - copy each question to all relevant assessment_domains
     orphaned_question_ids = []
 
     Question.find_each do |original_question|
@@ -68,7 +71,7 @@ class MoveQuestionsFromProfileDomainToAssessmentDomain < ActiveRecord::Migration
       end
     end
 
-    # Step 5: Update answers to point to the correct question copies
+    # Step 6: Update answers to point to the correct question copies
     Answer.find_each do |answer|
       original_question_id = answer.question_id
       onboarding_session = answer.onboarding_session
@@ -105,7 +108,7 @@ class MoveQuestionsFromProfileDomainToAssessmentDomain < ActiveRecord::Migration
       end
     end
 
-    # Step 6: Delete original questions (they've been copied to assessment_domains)
+    # Step 7: Delete original questions (they've been copied to assessment_domains)
     # Delete questions that still have profile_domain_id (originals) but no assessment_domain_id
     # Also delete orphaned questions (those with no assessment_domains)
     questions_to_delete = Question.where.not(profile_domain_id: nil).where(assessment_domain_id: nil)
@@ -117,19 +120,19 @@ class MoveQuestionsFromProfileDomainToAssessmentDomain < ActiveRecord::Migration
       say "Deleted #{orphaned_question_ids.count} orphaned questions with no assessment_domains", true
     end
 
-    # Step 7: Make assessment_domain_id required (all remaining questions should have it)
+    # Step 8: Make assessment_domain_id required (all remaining questions should have it)
     change_column_null :questions, :assessment_domain_id, false
 
-    # Step 8: Remove profile_domain_id and update indexes
-    remove_index :questions, [:profile_domain_id, :position] if index_exists?(:questions, [:profile_domain_id, :position])
+    # Step 9: Remove profile_domain_id and update indexes
+    remove_index :questions, [ :profile_domain_id, :position ] if index_exists?(:questions, [ :profile_domain_id, :position ])
     remove_index :questions, :profile_domain_id if index_exists?(:questions, :profile_domain_id)
     remove_foreign_key :questions, :profile_domains if foreign_key_exists?(:questions, :profile_domains)
     # Remove the column (foreign key already removed above)
     remove_column :questions, :profile_domain_id
 
-    # Step 9: Add new unique constraint on code scoped to assessment_domain_id
-    add_index :questions, [:code, :assessment_domain_id], unique: true, name: 'index_questions_on_code_and_assessment_domain_id'
-    add_index :questions, [:assessment_domain_id, :position], name: 'index_questions_on_assessment_domain_id_and_position'
+    # Step 10: Add new unique constraint on code scoped to assessment_domain_id
+    add_index :questions, [ :code, :assessment_domain_id ], unique: true, name: 'index_questions_on_code_and_assessment_domain_id'
+    add_index :questions, [ :assessment_domain_id, :position ], name: 'index_questions_on_assessment_domain_id_and_position'
   end
 
   def down
