@@ -142,6 +142,9 @@ Rails.application.routes.draw do
       post "onboarding/complete", to: "onboarding#complete", as: :complete_onboarding
     end
 
+    # Onboarding Sessions (Assessment History)
+    resources :onboarding_sessions, only: [ :show ], param: :session_id
+
     # Activities (Phase 2b)
     resources :activities, only: [ :index ], controller: "activities"
 

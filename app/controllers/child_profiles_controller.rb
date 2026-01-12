@@ -36,6 +36,12 @@ class ChildProfilesController < ApplicationController
     @profile_summary = @child_profile.ai_documents.profile_summary.recent.first
     @suggested_goals = @child_profile.child_goals.suggested.ordered_by_priority.includes(:profile_domain)
     @domain_profiles = @child_profile.child_domain_profiles.includes(:profile_domain).ordered
+
+    # Load completed assessments (simplified - details shown on dedicated page)
+    @completed_sessions = @child_profile.onboarding_sessions
+      .completed
+      .includes(assessment: [], answers: [])
+      .order(created_at: :desc)
   end
 
   private

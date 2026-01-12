@@ -7,38 +7,41 @@ import { application } from "./application"
 import AssessmentBuilderController from "./assessment_builder_controller"
 application.register("assessment-builder", AssessmentBuilderController)
 
-import QuestionFormController from "./question_form_controller"
-application.register("question-form", QuestionFormController)
+import CloneDomainController from "./clone_domain_controller"
+application.register("clone-domain", CloneDomainController)
 
-import QuestionOptionsManagerController from "./question_options_manager_controller"
-application.register("question-options-manager", QuestionOptionsManagerController)
-
-import QuestionOptionFormController from "./question_option_form_controller"
-application.register("question-option-form", QuestionOptionFormController)
+import CollapsibleController from "./collapsible_controller"
+application.register("collapsible", CollapsibleController)
 
 import DomainBuilderController from "./domain_builder_controller"
 application.register("domain-builder", DomainBuilderController)
 
-import SortableQuestionsController from "./sortable_questions_controller"
-application.register("sortable-questions", SortableQuestionsController)
-
-import SortableOptionsController from "./sortable_options_controller"
-application.register("sortable-options", SortableOptionsController)
-
 import OnboardingWizardController from "./onboarding_wizard_controller"
 application.register("onboarding-wizard", OnboardingWizardController)
-
-import SortableDomainsController from "./sortable_domains_controller"
-application.register("sortable-domains", SortableDomainsController)
 
 import QuestionCardController from "./question_card_controller"
 application.register("question-card", QuestionCardController)
 
+import QuestionFormController from "./question_form_controller"
+application.register("question-form", QuestionFormController)
+
 import QuestionModalController from "./question_modal_controller"
 application.register("question-modal", QuestionModalController)
+
+import QuestionOptionFormController from "./question_option_form_controller"
+application.register("question-option-form", QuestionOptionFormController)
+
+import QuestionOptionsManagerController from "./question_options_manager_controller"
+application.register("question-options-manager", QuestionOptionsManagerController)
 
 import QuestionTemplatesController from "./question_templates_controller"
 application.register("question-templates", QuestionTemplatesController)
 
-import CloneDomainController from "./clone_domain_controller"
-application.register("clone-domain", CloneDomainController)
+import SortableDomainsController from "./sortable_domains_controller"
+application.register("sortable-domains", SortableDomainsController)
+
+import SortableOptionsController from "./sortable_options_controller"
+application.register("sortable-options", SortableOptionsController)
+
+import SortableQuestionsController from "./sortable_questions_controller"
+application.register("sortable-questions", SortableQuestionsController)

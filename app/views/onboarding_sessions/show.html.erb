@@ -1,0 +1,131 @@
+<div class="max-w-5xl mx-auto px-4 py-8 print:max-w-full">
+  <!-- Header -->
+  <div class="mb-8 print:mb-4">
+    <div class="flex justify-between items-start">
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <h1 class="text-4xl font-bold text-gray-900 print:text-2xl">
+            <%= @assessment&.name || 'Assessment' %>
+            <% if @assessment&.version.present? %>
+              <span class="text-2xl font-normal text-gray-500 print:text-xl">v<%= @assessment.version %></span>
+            <% end %>
+          </h1>
+        </div>
+        <p class="text-gray-600 mt-2 print:text-sm">
+          Completed: <%= @onboarding_session.created_at.strftime("%B %d, %Y at %I:%M %p") %>
+        </p>
+        <% if @assessment&.description.present? %>
+          <p class="text-gray-500 text-sm mt-1 print:text-xs"><%= @assessment.description %></p>
+        <% end %>
+      </div>
+      <div class="print:hidden">
+        <%= link_to "← Back to Profile", child_profile_path(@child_profile), class: "px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
+        <%= link_to "Print", "#", onclick: "window.print(); return false;", class: "ml-2 px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Assessment Metadata -->
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6 print:shadow-none print:border print:border-gray-300">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm print:text-xs">
+      <div>
+        <span class="font-medium text-gray-700">Total Questions:</span>
+        <span class="text-gray-600 ml-1"><%= @answers.count %></span>
+      </div>
+      <div>
+        <span class="font-medium text-gray-700">Completed:</span>
+        <span class="text-gray-600 ml-1"><%= @onboarding_session.created_at.strftime("%B %d, %Y at %I:%M %p") %></span>
+      </div>
+      <div>
+        <span class="font-medium text-gray-700">Progress:</span>
+        <span class="text-gray-600 ml-1"><%= @onboarding_session.progress_percentage %>%</span>
+      </div>
+      <% if @assessment.present? %>
+        <div>
+          <span class="font-medium text-gray-700">Domains:</span>
+          <span class="text-gray-600 ml-1"><%= @assessment.domain_count %></span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Answers Grouped by Domain -->
+  <% if @answers_by_domain.any? %>
+    <% @answers_by_domain.each do |assessment_domain, domain_answers| %>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6 print:shadow-none print:border print:border-gray-300">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 print:text-xl">
+          <%= assessment_domain.domain_label || assessment_domain.profile_domain&.label || assessment_domain.name || 'Domain' %>
+        </h2>
+        
+        <div class="space-y-4">
+          <% domain_answers.each do |answer| %>
+            <div class="bg-gray-50 rounded-lg p-5 border border-gray-200 print:bg-white print:border-gray-400">
+              <div class="flex items-start gap-3">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-3">
+                    <span class="font-mono text-xs text-gray-500 bg-white px-2 py-1 rounded border print:bg-gray-100">
+                      <%= answer.question.code %>
+                    </span>
+                    <span class="text-xs font-medium text-gray-500 bg-gray-200 px-2 py-1 rounded">
+                      <%= answer.question.response_type.humanize %>
+                    </span>
+                  </div>
+                  
+                  <p class="font-medium text-lg text-gray-900 mb-4 print:text-base"><%= answer.question.text %></p>
+                  
+                  <!-- Answer Display -->
+                  <div class="mt-3">
+                    <%= answer_display(answer) %>
+                  </div>
+                  
+                  <!-- Show Question Options (if multi-choice) -->
+                  <% if answer.question.response_type == 'multi_choice' && answer.question.question_options.any? %>
+                    <div class="mt-4 pt-4 border-t border-gray-200 print:border-gray-400">
+                      <p class="text-xs font-medium text-gray-500 mb-2">Available Options:</p>
+                      <div class="flex flex-wrap gap-2">
+                        <% answer.question.question_options.ordered.each do |option| %>
+                          <span class="inline-block px-2 py-1 text-xs rounded <%= option.id == answer.question_option_id ? 'bg-blue-200 text-blue-800 font-semibold' : 'bg-gray-100 text-gray-600' %>">
+                            <%= option.label %> <%= option.value.present? ? "(#{option.value})" : '' %>
+                          </span>
+                        <% end %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6 print:shadow-none print:border print:border-gray-300">
+      <p class="text-gray-600">No answers found for this assessment.</p>
+    </div>
+  <% end %>
+
+  <!-- Back Link -->
+  <div class="mt-6 print:hidden">
+    <%= link_to "← Back to Profile", child_profile_path(@child_profile), class: "text-blue-600 hover:text-blue-800 font-medium" %>
+  </div>
+</div>
+
+<!-- Print Styles -->
+<style media="print">
+  @media print {
+    .print\:hidden { display: none !important; }
+    .print\:max-w-full { max-width: 100% !important; }
+    .print\:text-2xl { font-size: 1.5rem !important; }
+    .print\:text-xl { font-size: 1.25rem !important; }
+    .print\:text-base { font-size: 1rem !important; }
+    .print\:text-sm { font-size: 0.875rem !important; }
+    .print\:text-xs { font-size: 0.75rem !important; }
+    .print\:mb-4 { margin-bottom: 1rem !important; }
+    .print\:shadow-none { box-shadow: none !important; }
+    .print\:border { border-width: 1px !important; }
+    .print\:border-gray-300 { border-color: #d1d5db !important; }
+    .print\:border-gray-400 { border-color: #9ca3af !important; }
+    .print\:bg-gray-100 { background-color: #f3f4f6 !important; }
+    .print\:bg-white { background-color: #ffffff !important; }
+  }
+</style>

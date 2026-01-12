@@ -119,6 +119,52 @@
       </div>
     <% end %>
 
+    <!-- Assessment History Section -->
+    <% if @completed_sessions.any? %>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-6 print:shadow-none print:border print:border-gray-300">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4 print:text-xl">Assessment History</h2>
+        
+        <div class="space-y-3">
+          <% @completed_sessions.each do |session| %>
+            <%= link_to child_profile_onboarding_session_path(@child_profile, session), 
+                class: "block border border-gray-200 rounded-lg p-5 hover:shadow-md hover:border-blue-300 transition-all print:border-gray-400" do %>
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="flex items-center gap-2 mb-2">
+                    <h3 class="text-lg font-semibold text-gray-900 print:text-base">
+                      <%= session.assessment&.name || 'Assessment' %>
+                    </h3>
+                    <% if session.assessment&.version.present? %>
+                      <span class="text-sm font-normal text-gray-500">v<%= session.assessment.version %></span>
+                    <% end %>
+                  </div>
+                  <% if session.assessment&.description.present? %>
+                    <p class="text-sm text-gray-600 mb-2 print:text-xs line-clamp-2">
+                      <%= truncate(session.assessment.description, length: 150) %>
+                    </p>
+                  <% end %>
+                  <div class="flex items-center gap-4 text-sm text-gray-500 print:text-xs">
+                    <span>Completed: <%= session.created_at.strftime("%B %d, %Y") %></span>
+                    <span>•</span>
+                    <span><%= pluralize(session.answers.size, 'question') %> answered</span>
+                    <% if session.assessment.present? %>
+                      <span>•</span>
+                      <span><%= pluralize(session.assessment.domain_count, 'domain') %></span>
+                    <% end %>
+                  </div>
+                </div>
+                <div class="ml-4 flex-shrink-0">
+                  <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </div>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <!-- Actions -->
     <div class="bg-gray-50 rounded-lg p-4 print:hidden">
       <div class="flex gap-4 flex-wrap">
