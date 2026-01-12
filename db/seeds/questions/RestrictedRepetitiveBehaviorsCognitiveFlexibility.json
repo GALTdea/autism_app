@@ -1,0 +1,341 @@
+{
+    "domain": {
+        "key": "restricted_repetitive_flexibility",
+        "label": "Restricted/Repetitive Behaviors & Cognitive Flexibility",
+        "description": "Rigidity, repetitive behaviors, restricted interests, and difficulty shifting/adjusting.",
+        "name": "Restricted/Repetitive Behaviors & Cognitive Flexibility Assessment",
+        "version": "1.0"
+    },
+    "questions": [
+        {
+            "code": "RRB_1",
+            "text": "Strong distress with changes in routine/plans.",
+            "response_type": "scale",
+            "position": 0,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_2",
+            "text": "Needs things “just so” (order, sameness, exactness).",
+            "response_type": "scale",
+            "position": 1,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_3",
+            "text": "Repeats phrases/scripts (from shows, past conversations) outside of context.",
+            "response_type": "scale",
+            "position": 2,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_4",
+            "text": "Repetitive movements (hand flapping, rocking, pacing).",
+            "response_type": "scale",
+            "position": 3,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_5",
+            "text": "Intense special interests that crowd out other activities.",
+            "response_type": "scale",
+            "position": 4,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_6",
+            "text": "Difficulty shifting attention from a preferred activity to a new demand.",
+            "response_type": "scale",
+            "position": 5,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_7",
+            "text": "Repeats questions even after answered (reassurance loops).",
+            "response_type": "scale",
+            "position": 6,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_8",
+            "text": "Becomes “stuck” on a topic/idea and can’t let it go.",
+            "response_type": "scale",
+            "position": 7,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_9",
+            "text": "Becomes upset if others don’t follow their rules in play.",
+            "response_type": "scale",
+            "position": 8,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        },
+        {
+            "code": "RRB_10",
+            "text": "Unusual attachment to objects (string, labels, specific toy parts).",
+            "response_type": "scale",
+            "position": 9,
+            "options": [
+                {
+                    "label": "Never / Not observed",
+                    "value": 0,
+                    "position": 0
+                },
+                {
+                    "label": "Rarely (monthly)",
+                    "value": 1,
+                    "position": 1
+                },
+                {
+                    "label": "Sometimes (weekly)",
+                    "value": 2,
+                    "position": 2
+                },
+                {
+                    "label": "Often (daily)",
+                    "value": 3,
+                    "position": 3
+                },
+                {
+                    "label": "Very Often (many times/day)",
+                    "value": 4,
+                    "position": 4
+                }
+            ]
+        }
+    ]
+}
