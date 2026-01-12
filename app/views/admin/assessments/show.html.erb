@@ -1,4 +1,4 @@
-<% content_for :title, @assessment.name %>sdf
+<% content_for :title, @assessment.name %>
 
 <div class="space-y-6">
   <!-- Header Section -->
@@ -158,6 +158,108 @@
             <%= link_to "Add Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-primary" %>
             <%= link_to "Manage All Domains", admin_profile_domains_path, class: "btn btn-ghost" %>
           </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Questions Section -->
+  <div class="card bg-base-100 shadow-xl">
+    <div class="card-body">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <h2 class="card-title">Assessment Questions</h2>
+          <p class="text-sm text-base-content/60 mt-1">View all questions organized by domain</p>
+        </div>
+      </div>
+
+      <% if @assessment_domains.any? %>
+        <div class="space-y-3">
+          <% @assessment_domains.each do |assessment_domain| %>
+            <% domain_questions = assessment_domain.questions.ordered %>
+            <% if domain_questions.any? %>
+              <div class="collapse collapse-arrow bg-base-200 border border-base-300">
+                <input type="checkbox" />
+                <div class="collapse-title text-lg font-semibold flex items-center gap-3">
+                  <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-content flex items-center justify-center font-bold text-sm">
+                    <%= assessment_domain.position + 1 %>
+                  </div>
+                  <div class="flex-1">
+                    <div><%= assessment_domain.domain_label %></div>
+                    <div class="text-xs font-normal text-base-content/60 mt-1">
+                      <%= pluralize(domain_questions.count, 'question') %>
+                    </div>
+                  </div>
+                </div>
+                <div class="collapse-content">
+                  <div class="space-y-4 pt-4">
+                    <% domain_questions.each_with_index do |question, q_index| %>
+                      <div class="card bg-base-100 border border-base-300">
+                        <div class="card-body p-4">
+                          <div class="flex items-start gap-3 mb-3">
+                            <div class="flex-shrink-0 w-6 h-6 rounded-full bg-secondary text-secondary-content flex items-center justify-center font-bold text-xs">
+                              <%= q_index + 1 %>
+                            </div>
+                            <div class="flex-1">
+                              <div class="flex items-center gap-2 mb-1">
+                                <span class="font-mono text-xs text-base-content/60 bg-base-200 px-2 py-1 rounded">
+                                  <%= question.code %>
+                                </span>
+                                <span class="badge badge-sm badge-outline">
+                                  <%= question.response_type.humanize %>
+                                </span>
+                              </div>
+                              <p class="font-medium text-base"><%= question.text %></p>
+                            </div>
+                          </div>
+                          
+                          <% if question.question_options.any? %>
+                            <div class="ml-9 mt-3 pt-3 border-t border-base-300">
+                              <div class="text-xs font-semibold text-base-content/60 mb-2 uppercase tracking-wide">
+                                Options
+                              </div>
+                              <div class="space-y-2">
+                                <% question.question_options.each do |option| %>
+                                  <div class="flex items-center gap-3 p-2 bg-base-200 rounded">
+                                    <div class="flex-shrink-0 w-6 h-6 rounded-full bg-accent text-accent-content flex items-center justify-center font-bold text-xs">
+                                      <%= option.position + 1 %>
+                                    </div>
+                                    <div class="flex-1">
+                                      <div class="font-medium text-sm"><%= option.label %></div>
+                                    </div>
+                                    <div class="flex-shrink-0">
+                                      <span class="badge badge-sm badge-ghost">
+                                        Value: <%= option.value %>
+                                      </span>
+                                    </div>
+                                  </div>
+                                <% end %>
+                              </div>
+                            </div>
+                          <% end %>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+            <% else %>
+              <div class="alert alert-warning">
+                <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <span>
+                  <strong><%= assessment_domain.domain_label %></strong> - No questions added yet.
+                  <%= link_to "Add Questions", manage_questions_admin_assessment_domain_path(assessment_domain), class: "link link-primary ml-1" %>
+                </span>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="text-center py-8">
+          <p class="text-base-content/60 mb-4">No domains added to this assessment yet.</p>
+          <%= link_to "Add Domains", select_domains_admin_assessment_path(@assessment), class: "btn btn-primary" %>
         </div>
       <% end %>
     </div>
